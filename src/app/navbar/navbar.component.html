@@ -1,0 +1,22 @@
+<mat-toolbar color="primary">
+    <mat-toolbar-row>
+        <h3>Recipe Book</h3>
+    </mat-toolbar-row>
+
+    <mat-toolbar-row>
+        <button mat-raised-button color="primary" routerLink='/angular-material'
+            routerLinkActive="active">Angular-Material</button>
+
+        <span class="spacer"></span>
+        <div>
+            <ng-template [ngIf]="!authService.isAunthenticated()">
+                <button mat-raised-button color="primary" routerLink="/logIn" routerLinkActive="active">LogIn</button>
+                <button mat-raised-button color="primary" routerLink="/register"
+                    routerLinkActive="active">Register</button>
+            </ng-template>
+            <button mat-raised-button color="primary" (click)="logOut()" *ngIf="isAuthenticated()">Logout</button>
+            <button mat-raised-button color="primary" routerLink="/angular-material"
+                *ngIf="isAuthenticated()">{{displayName}}</button>
+        </div>
+    </mat-toolbar-row>
+</mat-toolbar>
