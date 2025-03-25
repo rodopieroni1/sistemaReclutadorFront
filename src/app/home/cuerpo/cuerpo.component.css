@@ -1,0 +1,106 @@
+/* General Styles */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+@font-face {
+  font-family: 'MiFuentePersonalizada';
+  src: url('/assets/fonts/CreatoDisplay-RegularItalic.otf') format('truetype'); /* Cambia el nombre y formato del archivo si es necesario */
+}
+
+
+header {
+  background-color: #333;
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header .logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  margin-right: 15px;
+}
+
+.cta-button {
+  background-color: #ff6600;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cta-button:hover {
+  background-color: #e65c00;
+}
+
+/* Banner Section */
+.banner {
+  text-align: center;
+  background: url('trabajadorPortada.avif') no-repeat center center/cover;
+  color: white;
+  padding: 200px 0px;
+}
+
+.banner p {
+  font-size: 2em; /* Tamaño grande como un encabezado */
+  font-weight: bold; /* Negrita similar al h1 */
+  text-align: center; /* Alinear el texto al centro (opcional) */
+  color: #ffffff; /* Cambia el color según sea necesario */
+  margin: 20px 0; /* Espaciado alrededor del párrafo */
+}
+
+
+.banner .learn-more {
+  background-color: #ff6600;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.banner .learn-more:hover {
+  background-color: #e65c00;
+}
+
+/* Amenities Section */
+.amenities {
+  padding: 50px 20px;
+  text-align: center;
+}
+
+.amenities img {
+  max-width: 100%;
+  height: auto;
+  margin-top: 20px;
+}
+
+/* About Us Section */
+.about-us,
+.community {
+  background-color: #f4f4f4;
+  padding: 50px 20px;
+  text-align: center;
+}
+
+.about-us h2,
+.community h2 {
+  margin-bottom: 20px;
+}
+
+.shippori-mincho-regular {
+  font-family: "Shippori Mincho", serif;
+  font-weight: 400;
+  font-style: normal;
+}

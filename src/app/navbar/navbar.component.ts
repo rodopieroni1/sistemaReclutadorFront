@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { AuthService } from './AuthService';
 import { MatCardModule } from '@angular/material/card';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,18 +16,9 @@ import { MatInputModule } from '@angular/material/input';
   ],
   styleUrls: ['./navbar.component.css'],
 })
-export class NavbarComponent implements OnInit {
-  displayName: string = '';
-  constructor(public authService: AuthService) {}
-  ngOnInit() {
-    this.displayName = this.authService.getUserDetails();
-  }
+export class NavbarComponent {
   logOut() {
-    this.authService.logout();
+    throw new Error('Method not implemented.');
   }
-
-  isAuthenticated() {
-    return this.authService.isAuthenticated();
-  }
-  login() {}
+  displayName: any;
 }

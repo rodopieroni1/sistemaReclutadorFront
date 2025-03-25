@@ -1,0 +1,62 @@
+.header {
+    background-color: #001a4d; /* Azul oscuro */
+    padding: 1rem;
+  }
+  .logo img {
+    height: 50px; /* Ajusta el tamaño del logo */
+    margin-right: 1rem;
+  }
+  
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .navbar-brand {
+    padding-top: .3125rem;
+    padding-bottom: .3125rem;
+    margin-right: 1rem;
+    font-size: 1.25rem;
+    text-decoration: none;
+    white-space: nowrap;
+}
+  .menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 1.5rem;
+  }
+  
+  .menu li a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+  }
+
+  .burguerButton {
+    
+    color: white;
+    border: none;
+
+  }
+  .navbar-collapse{
+    background-color: #001a4d;
+    text-align: end;
+    padding: 50px;
+      flex-basis: 100%;
+      flex-grow: 1;
+  
+  }
+  .nav-link-btn {
+    width: fit-content;
+    margin-top: 156px;
+    padding: 15px 20px 10px;
+    border-radius: 30px;
+    background: rgb(0, 133, 234);
+    background: linear-gradient(90deg, rgba(0, 133, 234, 1) 0%, rgba(0, 80, 222, 1) 100%);
+    cursor: pointer;
+
+    position: relative;
+    top: 10px;
+}
