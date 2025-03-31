@@ -74,13 +74,13 @@ nav a {
   background-color: #e65c00;
 }
 
-/* Amenities Section */
-.amenities {
+/* propuestas Section */
+.propuestas {
   padding: 50px 20px;
   text-align: center;
 }
 
-.amenities img {
+.propuestas img {
   max-width: 100%;
   height: auto;
   margin-top: 20px;
@@ -103,4 +103,14 @@ nav a {
   font-family: "Shippori Mincho", serif;
   font-weight: 400;
   font-style: normal;
+}
+.card-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.card {
+  width: 300px;
 }

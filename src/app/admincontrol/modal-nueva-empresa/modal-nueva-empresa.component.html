@@ -1,0 +1,63 @@
+<h2>Agregar Empresa</h2>
+
+
+<form [formGroup]="miFormulario">
+    <h3>Empresa</h3>
+    <mat-form-field appearance="fill" class="inputModal">
+        <mat-label>Nombre de Empresa</mat-label>
+        <input matInput class="inputModal" placeholder="nombre de la empresa" formControlName="nombreEmpresa"
+            name="nombreEmpresa" required />
+        <mat-error *ngIf="miFormulario.get('nombreEmpresa')?.invalid && miFormulario.get('nombreEmpresa')?.touched">
+            El nombre es obligatorio.
+        </mat-error>
+    </mat-form-field>
+
+
+    <mat-form-field appearance="fill" class="inputModal">
+        <mat-label>Direccion: </mat-label>
+        <input matInput class="inputModal" placeholder="Direccion" formControlName="direccionEmpresa"
+            name="direccionEmpresa" required />
+        <mat-error
+            *ngIf="miFormulario.get('direccionEmpresa')?.invalid && miFormulario.get('direccionEmpresa')?.touched">
+            La direccion es obligatorio.
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="inputModal">
+        <mat-label>Historia: </mat-label>
+        <input matInput class="inputModal" placeholder="Historias de esta empresa" formControlName="historiaEmpresa"
+            name="historiaEmpresa" />
+        <mat-error *ngIf="miFormulario.get('historiaEmpresa')?.invalid && miFormulario.get('historiaEmpresa')?.touched">
+            Contar la Historia es obligatorio.
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="inputModal">
+        <mat-label>CUIT: </mat-label>
+        <input matInput class="inputModal" placeholder="CUIT" formControlName="cuitEmpresa" name="cuitEmpresa"
+            required />
+        <mat-error *ngIf="miFormulario.get('cuitEmpresa')?.invalid && miFormulario.get('cuitEmpresa')?.touched">
+            El Cuit es obligatorio.
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="inputModal">
+        <mat-label>Email: </mat-label>
+        <input matInput class="inputModal" placeholder="email" formControlName="emailEmpresa" name="emailEmpresa"
+            required />
+        <mat-error *ngIf="miFormulario.get('emailEmpresa')?.invalid && miFormulario.get('emailEmpresa')?.touched">
+            El Email es obligatorio.
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="inputModal">
+        <mat-label>Observaciones(Si fuera necesario): </mat-label>
+        <input matInput class="inputModal" placeholder="Observaciones" formControlName="observacionesEmpresa"
+            name="observacionesEmpresa" />
+    </mat-form-field>
+
+    <div class="modal-buttons">
+        <button mat-button (click)="cerrar()">Cancelar</button>
+        <button mat-raised-button color="primary" (click)="guardar()">Guardar</button>
+    </div>
+</form>

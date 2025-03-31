@@ -63,13 +63,6 @@ nav a {
     font-size: 14px; /* Ajusta el tamaño de fuente de los enlaces */
     margin-bottom: 5px; /* Espaciado entre los enlaces */
   }
-
-  .social-menu img {
-    width: 30px; /* Reduce el tamaño de los íconos sociales */
-    height: 30px;
-    display: flex; /* Los íconos se alinean horizontalmente */
-    gap: 10px; /* Espaciado entre los íconos */
-  }
   .opciones nav {
     display: flex;  /* Mantiene los enlaces alineados horizontalmente */
     gap: 10px;  /* Espaciado entre enlaces */
@@ -124,7 +117,6 @@ nav a {
 
 .social-header {
   background-color: #FECA8E; /* Color de fondo */
-  padding-left: 200px; /* Espaciado interior */
 }
 
 .social-menu img {

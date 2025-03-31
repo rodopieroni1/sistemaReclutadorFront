@@ -35,7 +35,7 @@ export class LoginComponent {
     this.authService
       .login(this.email, this.password)
       .then(() => {
-        this.router.navigate(['/home']);
+        this.router.navigate(['/admincontrol']);
       })
       .catch(() => alert('Usuario o contraseña incorrectas'));
   }

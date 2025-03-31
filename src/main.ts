@@ -11,6 +11,7 @@ import { RegisterComponent } from './app/register/register.component';
 import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app/app.routes';
 import { HomeComponent } from './app/home/home.component';
+import { AdminControlComponent } from './app/admincontrol/admincontrol.component';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -18,6 +19,7 @@ bootstrapApplication(AppComponent, {
       { path: 'home', component: HomeComponent },
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
+      { path: 'admincontrol', component: AdminControlComponent },
       { path: '', redirectTo: 'login', pathMatch: 'full' }, // Redirigir al login por defecto
     ]),
     provideFirebaseApp(() => initializeApp(environment.firebase)),

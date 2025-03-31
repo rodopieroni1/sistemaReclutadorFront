@@ -5,10 +5,19 @@
         <p> es una oportunidad para crecer y marcar la diferencia."</p>
     </section>
 
-    <section class="amenities">
-        <h2>Amenities</h2>
-        <p>Discover our modern kitchen, collaborative spaces, and vibrant environment perfect for productivity.</p>
-        <img src="kitchen.jpg" alt="Modern kitchen area">
+    <section class="propuestas">
+        <h2>Propuestas</h2>
+        <div class="card-list">
+            <mat-card *ngFor="let oferta of ofertas" class="card">
+                <mat-card-header>
+                    <mat-card-title>Oferta ID: {{ oferta.idOferta }}</mat-card-title>
+                    <mat-card-subtitle>Empresa ID: {{ oferta.empresa.nombre}}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <p>{{ oferta.descripcionOferta }}</p>
+                </mat-card-content>
+            </mat-card>
+        </div>
     </section>
 
     <section class="about-us">
