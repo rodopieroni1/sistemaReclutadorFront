@@ -1,15 +1,10 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { AuthComponent } from './service/auth.component';
-
+import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-root',
   standalone: true,
-  template: ` <app-auth></app-auth> `,
-  imports: [AuthComponent],
+  imports: [RouterModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
-export class AppComponent {
-  title = 'proyectoReclutador';
-}
+export class AppComponent {}

@@ -1,0 +1,131 @@
+/* General */
+body {
+  margin: 0;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/* Estilos del encabezado */
+header {
+  position: fixed;  /* Mantiene la cabecera fija */
+  top: 0;
+  left: 0;
+  width: 100%;  /* Abarca todo el ancho de la pantalla */
+  z-index: 1000;  /* Garantiza que se mantenga sobre otros elementos */
+  background-color: #feca8e;  /* Fondo oscuro para destacar */
+  padding: 1px;
+  box-shadow: 0 2px 5px rgba(240, 105, 105, 0.2);  /* Añade una sombra elegante */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+.filaItems {
+  display: flex;
+  justify-content: space-between; /* Coloca espacio entre los elementos */
+  align-items: center; /* Alinea los elementos verticalmente */
+  padding: 0px 10px; /* Opcional: Añade algo de espacio interior */
+  flex-wrap: wrap; /* Permite que los elementos se ajusten cuando sea necesario */
+  width: 100%; /* Asegura que abarquen todo el ancho */
+  gap: 20px; /* Espaciado horizontal entre los elementos */
+}
+
+.logo img {
+  max-height: 90px; /* Ajusta el tamaño de la imagen del logo */
+}
+nav a {
+  text-decoration: none;  /* Opional: Quita el subrayado */
+  margin: 0 10px;  /* Espaciado entre los enlaces */
+  color: #000;  /* Cambia según tu preferencia */
+  font-weight: bold;  /* Opcional: Resalta los enlaces */
+}
+
+.social-menu .cta-button {
+  padding: 10px 20px;
+  background-color: #007BFF;  /* Color de fondo */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cta-button:hover {
+  background-color: #0056b3;
+  /* Color en hover */
+}
+
+@media (max-width: 768px) {
+  .filaItems {
+    flex-direction: column; /* Cambia el diseño a vertical */
+    align-items: left;
+  }
+  nav a {
+    font-size: 14px; /* Ajusta el tamaño de fuente de los enlaces */
+    margin-bottom: 5px; /* Espaciado entre los enlaces */
+  }
+  .opciones nav {
+    display: flex;  /* Mantiene los enlaces alineados horizontalmente */
+    gap: 10px;  /* Espaciado entre enlaces */
+    background-color: #feca8e;
+    border-radius: 10px;  /* Bordes redondeados */
+    padding-left: 0; /* Elimina el padding excesivo en pantallas pequeñas */
+  }
+
+  .cta-button {
+    margin-top: 10px; /* Espaciado superior */
+  }
+  
+  .filaItems {
+    display: flex;
+    justify-content: space-between; /* Coloca espacio entre los elementos */
+    align-items: left; /* Alinea los elementos verticalmente */
+    flex-wrap: wrap; /* Permite que los elementos se ajusten cuando sea necesario */
+  }
+}
+
+/* Estilo general para la navegación */
+.opciones nav {
+  display: flex;  /* Alinea los enlaces horizontalmente */
+  gap: 15px;  /* Espaciado entre enlaces */
+  background-color: #feca8e;  /* Fondo oscuro para resaltar */
+  border-radius: 10px;  /* Bordes redondeados */
+  padding-left: 20px;
+}
+
+/* Estilo para los enlaces */
+.opciones nav a {
+  text-decoration: none;  /* Elimina el subrayado */
+  font-size: 16px;  /* Tamaño de fuente */
+  color: black;  /* Color del texto */
+  font-weight: bold;  /* Texto en negrita */
+  transition: all 0.3s ease;  /* Transición suave para los efectos */
+  padding: 5px 1px;  /* Espaciado interno */
+  border-radius: 5px;  /* Bordes redondeados para los enlaces */
+}
+
+@font-face {
+  font-family: 'fuenteCabecera';
+  src: url('/assets/fonts/CreatoDisplay-Medium.otf') format('truetype'); /* Cambia el nombre y formato del archivo si es necesario */
+}
+
+/* Efecto hover para los enlaces */
+.opciones nav a:hover {
+  background-color: #ff6600; /* Cambia el fondo al pasar el mouse */
+  color: white; /* Asegura que el texto sea visible */
+  transform: scale(1.1);  /* Agranda el enlace ligeramente */
+}
+
+.social-header {
+  background-color: #FECA8E; /* Color de fondo */
+}
+
+.social-menu img {
+  width: 40px; /* Ajusta el tamaño de las imágenes */
+  height: 40px; /* Asegúrate de proporciones consistentes */
+  transition: transform 0.3s ease; /* Suavidad en efecto hover */
+  vertical-align: middle;
+}
+
+.social-menu img:hover {
+  transform: scale(1.2); /* Ampliar un poco el ícono en hover */
+}

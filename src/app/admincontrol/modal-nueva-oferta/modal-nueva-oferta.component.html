@@ -1,0 +1,47 @@
+<h2>Agregar Oferta</h2>
+
+<form [formGroup]="miFormulario">
+    <h3>Oferta</h3>
+
+    <!-- Campo: Descripción Oferta -->
+    <mat-form-field appearance="fill" class="inputModal">
+        <mat-label>Descripción de la Oferta</mat-label>
+        <textarea matInput class="inputModal" placeholder="Ingrese la descripción" formControlName="descripcionOferta"
+            name="descripcionOferta" required></textarea>
+        <mat-error
+            *ngIf="miFormulario.get('descripcionOferta')?.invalid && miFormulario.get('descripcionOferta')?.touched">
+            La descripción es obligatoria.
+        </mat-error>
+    </mat-form-field>
+
+    <!-- Campo: Foto Oferta -->
+    <mat-form-field appearance="fill" class="inputModal">
+        <mat-label>Foto de la Oferta</mat-label>
+        <input matInput class="inputModal" placeholder="URL de la foto" formControlName="fotoOferta" name="fotoOferta"
+            required />
+        <mat-error *ngIf="miFormulario.get('fotoOferta')?.invalid && miFormulario.get('fotoOferta')?.touched">
+            La URL de la foto es obligatoria.
+        </mat-error>
+    </mat-form-field>
+
+    <!-- Campo: Empresa -->
+    <mat-form-field appearance="fill" class="inputModal">
+        <mat-label>Empresa</mat-label>
+        <mat-select formControlName="idEmpresa" required>
+            <mat-option *ngFor="let empresa of empresas" [value]="empresa">
+                {{ empresa.nombre }}
+
+            </mat-option>
+        </mat-select>
+        <mat-error *ngIf="miFormulario.get('idEmpresa')?.invalid && miFormulario.get('idEmpresa')?.touched">
+            La empresa es obligatoria.
+        </mat-error>
+    </mat-form-field>
+
+
+    <!-- Botones -->
+    <div class="modal-buttons">
+        <button mat-button (click)="cerrar()">Cancelar</button>
+        <button mat-raised-button color="primary" (click)="guardar()">Guardar</button>
+    </div>
+</form>

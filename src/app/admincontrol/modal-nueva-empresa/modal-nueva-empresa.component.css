@@ -1,0 +1,106 @@
+/* Estilo para centrar el modal */
+:host {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    background: #feca8e;/* Fondo semi-transparente */
+  }
+  
+  /* Contenedor principal del modal */
+  h2 {
+    margin-bottom: 16px;
+    background:  #feca8e;
+    color: #000000; /* Tono azul de Angular Material */
+    font-weight: bold;
+    text-align: center;
+    font-family: 'Times New Roman', Times, serif;
+  }
+  
+  form {
+    background: white;
+    border-radius: 8px;
+    padding: 24px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Títulos internos */
+  h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    color: #333;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  /* Estilo para los botones */
+  .modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  
+/* Ajuste general del campo */
+.inputModal {
+  width: 100%; /* Hace que el campo ocupe todo el ancho disponible */
+  margin-bottom: 16px; /* Espaciado inferior */
+}
+
+/* Ajustes del placeholder y bordes */
+.mat-form-field {
+  background-color: #f9f9f9; /* Color de fondo suave */
+  border-radius: 4px; /* Bordes redondeados */
+  padding: 4px; /* Espaciado interno */
+}
+
+/* Texto del placeholder y etiqueta */
+.mat-form-field .mat-label {
+  font-weight: bold;
+  color: #3f51b5; /* Tono azul de Angular Material */
+}
+
+/* Campo de entrada */
+.mat-input-element {
+  color: #333; /* Color del texto */
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+}
+
+/* Estilo al enfocar el campo */
+.mat-form-field-appearance-fill .mat-form-field-flex {
+  border: 1px solid #3f51b5; /* Resalta el borde al enfocar */
+  box-shadow: 0 0 5px rgba(63, 81, 181, 0.5); /* Efecto de sombra */
+}
+.inputModal.hidden {
+  visibility: hidden; /* Oculta el elemento pero mantiene su espacio */
+}
+
+.inputModalID{
+  visibility: hidden;
+  display: none;
+}
+  button {
+    font-size: 14px;
+  }
+  
+  button[color="primary"] {
+    background-color: #3f51b5;
+    color: white;
+  }
+  
+  button[color="primary"]:hover {
+    background-color: #2c387e;
+  }
+  
+  button[mat-button] {
+    background-color: transparent;
+    color: #666;
+  }
+  
+  button[mat-button]:hover {
+    color: #333;
+  }  

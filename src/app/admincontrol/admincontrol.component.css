@@ -1,0 +1,153 @@
+mat-accordion {
+	width: 80%;
+
+  }
+
+mat-expansion-panel {
+	width: 100%;
+}
+  
+  ul {
+	max-height: 100%; /* Ajusta este valor según el diseño */
+	max-width: 100%; /* Ajusta este valor según el diseño */
+	overflow-y: scroll;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	border: 1px solid #ccc;
+  }
+  
+  li {
+	padding: 5px;
+	border-bottom: 1px solid #ddd;
+  }
+  h2{
+	margin-top: 200px; /* Ajusta el valor según lo necesites */
+
+  }
+  
+  .pagination {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-top: 20px;
+  }
+  
+  .pagination button {
+	margin: 0 10px;
+	padding: 5px 15px;
+	font-size: 14px;
+  }
+  
+  .pagination span {
+	font-size: 16px;
+	font-weight: bold;
+  }
+	
+  /* Estilo base */
+.container {
+	margin: 0 auto;
+	padding: 20px;
+	max-width: 1200px;
+  }
+  
+  .panel-title {
+	font-size: 24px;
+	text-align: center;
+	margin-bottom: 20px;
+  }
+  
+  .responsive-accordion mat-expansion-panel {
+	margin-bottom: 10px;
+  }
+  
+  .empresa-list,
+  .oferta-list {
+	list-style: none;
+	padding: 0;
+  }
+  
+  .empresa-list li,
+  .oferta-list li {
+	padding: 10px;
+	border-bottom: 1px solid #ccc;
+  }
+  
+  /* Estilo para pantallas más pequeñas */
+  @media (max-width: 768px) {
+	.container {
+	  padding: 50px;
+	}
+  
+	.panel-title {
+	  font-size: 20px;
+	}
+  
+	.empresa-list li,
+	.oferta-list li {
+	  font-size: 14px;
+	  padding: 8px;
+	}
+  
+	.pagination {
+	  display: flex;
+	  justify-content: center;
+	  margin-top: 20px;
+	}
+  
+	.pagination button {
+	  margin: 0 5px;
+	  padding: 5px 10px;
+	  font-size: 14px;
+	}
+  }
+  
+  /* Estilo para pantallas aún más pequeñas (móviles) */
+  @media (max-width: 480px) {
+	.panel-title {
+	  font-size: 18px;
+	}
+  
+	.empresa-list li,
+	.oferta-list li {
+	  font-size: 12px;
+	  padding: 6px;
+	}
+  
+	.pagination {
+	  flex-direction: column;
+	  align-items: center;
+	}
+  
+	.pagination button {
+	  margin-bottom: 5px;
+	  font-size: 12px;
+	}
+  }
+
+  .button-container {
+	display: flex;
+	justify-content: flex-end;
+	margin-bottom: 10px;
+  }
+  
+  button {
+	font-size: 14px;
+	padding: 8px 16px;
+  }
+
+  .empresa-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px; /* Espaciado entre elementos */
+}
+
+.descripcion {
+    flex: 1; /* Permite que la descripción tome el espacio necesario */
+}
+
+.botones {
+    display: flex;
+    gap: 8px; /* Espaciado entre los botones */
+}

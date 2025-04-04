@@ -1,0 +1,30 @@
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f4f4f9;
+  padding: 20px;
+}
+
+mat-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+mat-card-header {
+  text-align: center;
+}
+
+mat-card-actions {
+  text-align: center;
+  margin-top: 20px;
+}

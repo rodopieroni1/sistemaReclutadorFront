@@ -1,0 +1,59 @@
+<app-cabecera></app-cabecera>
+<div class="container">
+    <h2 class="panel-title">
+        <mat-panel-title>Panel de Control para Administradores</mat-panel-title>
+    </h2>
+    <mat-accordion class="responsive-accordion">
+        <!-- Sección de Empresas -->
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>Empresas: </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="button-container">
+                <button mat-raised-button color="primary" (click)="NuevaEmpresa()">Agregar Empresa</button>
+            </div>
+            <ul class="empresa-list">
+                <li *ngFor="let empresa of getPaginatedDataEmpresas()" class="empresa-item">
+                    <div class="descripcion">
+                        <strong>{{ empresa.nombre }}</strong>: {{ empresa.nombre }}
+                    </div>
+                    <div class="botones">
+                        <button mat-button color="accent" (click)="updateEmpresa(empresa)">Actualizar</button>
+                        <button mat-button color="warn" (click)="deleteEmpresa(empresa)">Eliminar</button>
+                    </div>
+                </li>
+            </ul>
+            <div class="pagination">
+                <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
+                <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
+                <button (click)="changePage(currentPage + 1)"
+                    [disabled]="currentPage === getTotalPages()">Siguiente</button>
+            </div>
+        </mat-expansion-panel>
+        <!-- Sección de Ofertas -->
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>Ofertas: </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="button-container">
+                <button mat-raised-button color="primary" (click)="NuevaOferta()">Agregar Oferta</button>
+
+            </div>
+            <ul>
+                <li *ngFor="let oferta of getPaginatedDataOfertas()">
+                    <strong>Descripción Oferta N° {{ oferta.idOferta }}</strong>: {{ oferta.descripcionOferta }}
+                    <div class="botones">
+                        <button mat-button color="accent" (click)="updateOferta(oferta)">Actualizar</button>
+                        <button mat-button color="warn" (click)="deleteOferta(oferta)">Eliminar</button>
+                    </div>
+                </li>
+            </ul>
+            <div class="pagination">
+                <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
+                <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
+                <button (click)="changePage(currentPage + 1)"
+                    [disabled]="currentPage === getTotalPages()">Siguiente</button>
+            </div>
+        </mat-expansion-panel>
+    </mat-accordion>
+</div>

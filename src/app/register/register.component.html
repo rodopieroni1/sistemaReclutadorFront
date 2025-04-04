@@ -1,0 +1,32 @@
+<div class="register-container">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>Registrar Usuario</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <form>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Correo Electrónico</mat-label>
+                    <input matInput type="email" [(ngModel)]="email" name="email" placeholder="Ingrese su correo"
+                        required>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Contraseña</mat-label>
+                    <input matInput type="password" [(ngModel)]="password" name="password"
+                        placeholder="Ingrese su contraseña" required>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Repetir Contraseña</mat-label>
+                    <input matInput type="password" [(ngModel)]="confirmPassword" name="confirmPassword"
+                        placeholder="Repita su contraseña" required>
+                </mat-form-field>
+
+
+
+                <button mat-raised-button color="primary" type="button" (click)="register()">Registrarse</button>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>
