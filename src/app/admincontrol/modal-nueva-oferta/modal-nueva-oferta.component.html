@@ -30,6 +30,7 @@
         <mat-select formControlName="idEmpresa" required>
             <mat-option *ngFor="let empresa of empresas" [value]="empresa">
                 {{ empresa.nombre }}
+
             </mat-option>
         </mat-select>
         <mat-error *ngIf="miFormulario.get('idEmpresa')?.invalid && miFormulario.get('idEmpresa')?.touched">

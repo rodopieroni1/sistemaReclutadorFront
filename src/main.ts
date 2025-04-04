@@ -12,6 +12,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app/app.routes';
 import { HomeComponent } from './app/home/home.component';
 import { AdminControlComponent } from './app/admincontrol/admincontrol.component';
+import { ModalNuevaOfertaComponent } from './app/admincontrol/modal-nueva-oferta/modal-nueva-oferta.component';
 
 bootstrapApplication(AppComponent, {
   providers: [

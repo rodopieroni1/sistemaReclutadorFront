@@ -1,8 +1,12 @@
 <h2>Agregar Empresa</h2>
 
-
 <form [formGroup]="miFormulario">
     <h3>Empresa</h3>
+    <!-- Campo oculto: id_empresa -->
+    <mat-form-field appearance="fill" class="inputModalID">
+        <input matInput placeholder="id" class="inputModal" formControlName="id_empresa" name="id_empresa" />
+    </mat-form-field>
+
     <mat-form-field appearance="fill" class="inputModal">
         <mat-label>Nombre de Empresa</mat-label>
         <input matInput class="inputModal" placeholder="nombre de la empresa" formControlName="nombreEmpresa"
@@ -11,7 +15,6 @@
             El nombre es obligatorio.
         </mat-error>
     </mat-form-field>
-
 
     <mat-form-field appearance="fill" class="inputModal">
         <mat-label>Direccion: </mat-label>

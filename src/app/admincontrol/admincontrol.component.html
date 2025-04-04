@@ -13,8 +13,14 @@
                 <button mat-raised-button color="primary" (click)="NuevaEmpresa()">Agregar Empresa</button>
             </div>
             <ul class="empresa-list">
-                <li *ngFor="let empresa of getPaginatedDataEmpresas()">
-                    <strong>{{ empresa.nombre }}</strong>: {{ empresa.nombre }}
+                <li *ngFor="let empresa of getPaginatedDataEmpresas()" class="empresa-item">
+                    <div class="descripcion">
+                        <strong>{{ empresa.nombre }}</strong>: {{ empresa.nombre }}
+                    </div>
+                    <div class="botones">
+                        <button mat-button color="accent" (click)="updateEmpresa(empresa)">Actualizar</button>
+                        <button mat-button color="warn" (click)="deleteEmpresa(empresa)">Eliminar</button>
+                    </div>
                 </li>
             </ul>
             <div class="pagination">
@@ -31,10 +37,15 @@
             </mat-expansion-panel-header>
             <div class="button-container">
                 <button mat-raised-button color="primary" (click)="NuevaOferta()">Agregar Oferta</button>
+
             </div>
             <ul>
                 <li *ngFor="let oferta of getPaginatedDataOfertas()">
                     <strong>Descripción Oferta N° {{ oferta.idOferta }}</strong>: {{ oferta.descripcionOferta }}
+                    <div class="botones">
+                        <button mat-button color="accent" (click)="updateOferta(oferta)">Actualizar</button>
+                        <button mat-button color="warn" (click)="deleteOferta(oferta)">Eliminar</button>
+                    </div>
                 </li>
             </ul>
             <div class="pagination">

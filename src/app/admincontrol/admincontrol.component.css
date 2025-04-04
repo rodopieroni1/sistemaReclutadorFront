@@ -135,5 +135,19 @@ mat-expansion-panel {
 	font-size: 14px;
 	padding: 8px 16px;
   }
-  
-  
+
+  .empresa-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px; /* Espaciado entre elementos */
+}
+
+.descripcion {
+    flex: 1; /* Permite que la descripción tome el espacio necesario */
+}
+
+.botones {
+    display: flex;
+    gap: 8px; /* Espaciado entre los botones */
+}

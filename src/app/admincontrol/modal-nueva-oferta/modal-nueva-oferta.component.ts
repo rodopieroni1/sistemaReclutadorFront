@@ -1,5 +1,9 @@
-import { Component } from '@angular/core';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -16,7 +20,6 @@ import {
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
-import { ModalNuevaEmpresaComponent } from '../modal-nueva-empresa/modal-nueva-empresa.component';
 @Component({
   selector: 'app-modal-nueva-oferta',
   standalone: true,
@@ -43,27 +46,53 @@ export class ModalNuevaOfertaComponent {
   idEmpresa: number = 1;
   miFormulario: FormGroup;
   empresas: any[] = [];
-
-  ngOnInit(): void {
-    this.http
-      .get<{ idEmpresa: number; nombre: string }[]>(
-        'http://localhost:8080/empresas'
-      )
-      .subscribe((data) => {
-        this.empresas = data;
-      });
-  }
+  ofertas: {
+    idOferta: number;
+    descripcion: string;
+    foto: string;
+    idEmpresa: number;
+  }[] = [];
+  @Output() datosActualizadosOferta = new EventEmitter<void>(); // Evento para notificar cambios
+  @Input() empresa: {
+    idOferta: number;
+    descripcion: string;
+    foto: string;
+    idEmpresa: number;
+  } = {
+    idOferta: 1,
+    descripcion: '',
+    foto: '',
+    idEmpresa: 1,
+  };
+  accion: string | undefined;
+  mostrarIdHidden: boolean = true; // Inicialmente oculto
   constructor(
     private http: HttpClient,
-    public dialogRef: MatDialogRef<ModalNuevaEmpresaComponent>,
+    public dialogRef: MatDialogRef<ModalNuevaOfertaComponent>,
     private snackBar: MatSnackBar,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    @Inject(MAT_DIALOG_DATA) public data: { accion: string; oferta?: any }
   ) {
     this.miFormulario = this.fb.group({
+      idOferta: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
       descripcionOferta: ['', Validators.required],
       fotoOferta: ['', Validators.required],
       idEmpresa: ['', [Validators.required]],
     });
+    this.accion = data.accion; // Recibe la acción (crear o actualizar)
+    this.ofertas = data.oferta || null; // Recibe la empresa si es actualización
+  }
+
+  ngOnInit(): void {
+    if (this.ofertas && Object.keys(this.ofertas).length > 0) {
+      // Asignar los valores de la empresa al formulario
+      this.miFormulario.patchValue({
+        idOferta: this.data.oferta?.idOferta || 0,
+        descripcionOferta: this.data.oferta?.descripcionOferta || '',
+        fotoOferta: this.data.oferta?.fotoOferta || '',
+        id_empresa: this.data.oferta?.id_empresa || 0,
+      });
+    }
   }
 
   guardar() {
@@ -86,14 +115,12 @@ export class ModalNuevaOfertaComponent {
             this.snackBar.open('Oferta creada satisfactoriamente', 'Cerrar', {
               duration: 3000,
             });
-
-            // Recargar los datos actualizados
-            this.cargarEmpresas();
+            // Notificar al componente padre que se deben recargar los datos
+            this.datosActualizadosOferta.emit();
+            this.miFormulario.reset();
           }
-          this.miFormulario.reset();
         },
-        error: (error) => {
-          console.error('Error al crear la oferta:', error);
+        error: () => {
           this.snackBar.open('Error al crear la oferta.', 'Cerrar', {
             duration: 3000,
           });
@@ -101,21 +128,6 @@ export class ModalNuevaOfertaComponent {
       });
   }
 
-  cargarEmpresas() {
-    this.http
-      .get<{ idEmpresa: number; nombre: string }[]>(
-        'http://localhost:8080/empresas'
-      )
-      .subscribe({
-        next: (data) => {
-          this.empresas = data; // Actualiza el arreglo local con los nuevos datos
-          console.log('Empresas actualizadas:', this.empresas);
-        },
-        error: (error) => {
-          console.error('Error al cargar las empresas:', error);
-        },
-      });
-  }
   cerrar() {
     this.dialogRef.close(); // Cierra el modal sin acción
   }
