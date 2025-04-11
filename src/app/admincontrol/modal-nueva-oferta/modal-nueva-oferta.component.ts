@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Inject,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -39,7 +46,7 @@ import { MatOptionModule } from '@angular/material/core';
   templateUrl: './modal-nueva-oferta.component.html',
   styleUrl: './modal-nueva-oferta.component.css',
 })
-export class ModalNuevaOfertaComponent {
+export class ModalNuevaOfertaComponent implements OnInit {
   [x: string]: any;
   descripcionOferta: string = '';
   fotoOferta: string = '';
@@ -66,68 +73,220 @@ export class ModalNuevaOfertaComponent {
   };
   accion: string | undefined;
   mostrarIdHidden: boolean = true; // Inicialmente oculto
+  archivoSeleccionado: File | null = null; // Archivo subido
   constructor(
     private http: HttpClient,
     public dialogRef: MatDialogRef<ModalNuevaOfertaComponent>,
     private snackBar: MatSnackBar,
     private fb: FormBuilder,
+
     @Inject(MAT_DIALOG_DATA) public data: { accion: string; oferta?: any }
   ) {
     this.miFormulario = this.fb.group({
-      idOferta: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
       descripcionOferta: ['', Validators.required],
-      fotoOferta: ['', Validators.required],
-      idEmpresa: ['', [Validators.required]],
+      fotoOferta: [null, Validators.required],
+      idEmpresa: ['', Validators.required], // Este debe coincidir con formControlName en HTML
+      idOferta: [''],
     });
     this.accion = data.accion; // Recibe la acción (crear o actualizar)
     this.ofertas = data.oferta || null; // Recibe la empresa si es actualización
   }
 
   ngOnInit(): void {
-    if (this.ofertas && Object.keys(this.ofertas).length > 0) {
-      // Asignar los valores de la empresa al formulario
+    this.obtenerEmpresas();
+    if (this.data.oferta) {
+      console.log('If ngOnInit:', this.data.oferta);
+
+      // Carga la oferta seleccionada para modificación
+      this.http
+        .get<any>(`http://localhost:8080/ofertas/${this.data.oferta.idOferta}`)
+        .subscribe({
+          next: () => {
+            this.miFormulario.patchValue({
+              descripcionOferta: this.data.oferta.descripcionOferta || '',
+              fotoOferta: this.data.oferta.fotoOferta || '',
+              idEmpresa: this.data.oferta.empresa?.id_empresa || '', // Asigna la empresa asignada previamente
+            });
+          },
+          error: () => {
+            this.snackBar.open(
+              'Error al cargar la oferta para modificar.',
+              'Cerrar',
+              {
+                duration: 3000,
+              }
+            );
+          },
+        });
+    } else {
+      console.log('Else ngOnInit:', this.data.oferta);
       this.miFormulario.patchValue({
-        idOferta: this.data.oferta?.idOferta || 0,
-        descripcionOferta: this.data.oferta?.descripcionOferta || '',
-        fotoOferta: this.data.oferta?.fotoOferta || '',
-        id_empresa: this.data.oferta?.id_empresa || 0,
+        descripcionOferta: this.data.oferta.descripcionOferta || '',
+        fotoOferta: this.data.oferta.fotoOferta || '',
+        idEmpresa: this.data.oferta.empresa?.id_empresa || '', // Asigna la empresa asignada previamente
       });
     }
   }
 
-  guardar() {
-    const oferta = {
-      descripcionOferta: this.miFormulario.value.descripcionOferta,
-      fotoOferta: this.miFormulario.value.fotoOferta,
-      idEmpresa: this.miFormulario.value.idEmpresa,
-    };
+  onEmpresaSeleccionada(event: any) {
+    console.log('Empresa seleccionada:', event.value); // Verifica el valor seleccionado
+    console.log('Valor en el formulario:', this.miFormulario.value.idEmpresa); // Verifica el estado del formulario
+  }
+
+  // Método para obtener empresas desde el backend
+  obtenerEmpresas(): void {
+    this.http.get<any[]>('http://localhost:8080/empresas').subscribe({
+      next: (data: any[]) => {
+        this.empresas = data; // Asegúrate de asignar los datos correctamente
+      },
+      error: (err) => {
+        this.snackBar.open('Error al cargar las empresas.', 'Cerrar', {
+          duration: 3000,
+        });
+      },
+    });
+  }
+
+  guardar(): void {
+    if (this.miFormulario.invalid) {
+      this.snackBar.open(
+        'Por favor, completa todos los campos antes de guardar.',
+        'Cerrar',
+        { duration: 3000 }
+      );
+      return;
+    }
+
+    if (this.accion === 'crear') {
+      const idEmpresa = this.miFormulario.value.idEmpresa;
+      console.log('Empresa::::::', idEmpresa);
+      // Realiza el GET para obtener la información de la empresa
+      this.http
+        .get<any>(`http://localhost:8080/empresas/existeId/${idEmpresa}`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        .subscribe({
+          next: (empresa) => {
+            // Completa los valores faltantes en el formulario
+            const oferta = {
+              descripcionOferta: this.miFormulario.value.descripcionOferta,
+              fotoOferta: this.miFormulario.value.fotoOferta.name,
+              empresa: {
+                id_empresa: idEmpresa, // Usar el valor del backend
+                nombre: empresa.nombre, // Valor obtenido del backend
+                cuit: empresa.cuit, // Valor obtenido del backend
+                emailEmpresa: empresa.emailEmpresa, // Valor obtenido del backend
+                observacionesEmpresa: empresa.observacionesEmpresa, // Valor obtenido del backend
+                direccionEmpresa: empresa.direccion, // Valor obtenido del backend
+                historia_empresa: empresa.historiaEmpresa, // Valor obtenido del backend
+              },
+              idOferta: this.miFormulario.value.idOferta,
+            };
+            // Enviar el objeto oferta al backend
+            console.log('OFERTA: ', oferta);
+            this.http
+              .post('http://localhost:8080/ofertas/crear', oferta, {
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                observe: 'response', // Observa toda la respuesta HTTP
+              })
+              .subscribe({
+                next: (response) => {
+                  if (response.status === 201 || response.status === 200) {
+                    this.snackBar.open(
+                      'Oferta creada satisfactoriamente',
+                      'Cerrar',
+                      { duration: 3000 }
+                    );
+                    // Notificar al componente padre que se deben recargar los datos
+                    this.datosActualizadosOferta.emit();
+                    this.miFormulario.reset();
+                  }
+                },
+                error: () => {
+                  this.snackBar.open('Error al crear la oferta.', 'Cerrar', {
+                    duration: 3000,
+                  });
+                },
+              });
+          },
+          error: () => {
+            this.snackBar.open(
+              'Error al obtener información de la empresa.',
+              'Cerrar',
+              { duration: 3000 }
+            );
+          },
+        });
+    } else {
+      this.cargarUpdate(this.miFormulario);
+      this.dialogRef.close(); // Cierra el modal sin acción
+    }
+  }
+
+  cargarUpdate(oferta: any) {
+    const idOferta1 =
+      this.miFormulario.value.idOferta || this.data.oferta.idOferta;
+    // Usar patchValue para asignar los datos al formulario
+    this.miFormulario.patchValue({
+      descripcionOferta: oferta.value.descripcionOferta,
+      fotoOferta: oferta.value.fotoOferta,
+      empresa: { id_empresa: oferta.value.idEmpresa },
+      idOferta: idOferta1,
+    });
 
     this.http
-      .post('http://localhost:8080/ofertas/crear', oferta, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        observe: 'response', // Observa toda la respuesta HTTP
-      })
+      .put(
+        `http://localhost:8080/ofertas/actualizar/${idOferta1}`,
+        this.miFormulario.value,
+        {
+          headers: { 'Content-Type': 'application/json' },
+          observe: 'response',
+        }
+      )
       .subscribe({
         next: (response) => {
           if (response.status === 201 || response.status === 200) {
-            this.snackBar.open('Oferta creada satisfactoriamente', 'Cerrar', {
-              duration: 3000,
-            });
-            // Notificar al componente padre que se deben recargar los datos
+            this.snackBar.open(
+              'Empresa actualizada satisfactoriamente',
+              'Cerrar',
+              { duration: 3000 }
+            );
             this.datosActualizadosOferta.emit();
-            this.miFormulario.reset();
           }
+          this.miFormulario.reset();
         },
         error: () => {
-          this.snackBar.open('Error al crear la oferta.', 'Cerrar', {
-            duration: 3000,
-          });
+          this.snackBar.open(
+            'Error al actualizar la Oferta. Inténtelo nuevamenteee.',
+            'Cerrar',
+            { duration: 3000 }
+          );
         },
       });
   }
 
+  // Método para manejar el evento de selección del archivo
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const archivo = input.files[0];
+
+      if (archivo.type.startsWith('image/')) {
+        this.miFormulario.patchValue({
+          fotoOferta: archivo,
+        });
+        this.miFormulario.get('fotoOferta')?.updateValueAndValidity();
+      } else {
+        this.snackBar.open('Solo se permiten archivos de imagen.', 'Cerrar', {
+          duration: 3000,
+        });
+      }
+    }
+  }
   cerrar() {
     this.dialogRef.close(); // Cierra el modal sin acción
   }

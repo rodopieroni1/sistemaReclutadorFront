@@ -1,8 +1,6 @@
 <h2>Agregar Oferta</h2>
-
 <form [formGroup]="miFormulario">
     <h3>Oferta</h3>
-
     <!-- Campo: Descripción Oferta -->
     <mat-form-field appearance="fill" class="inputModal">
         <mat-label>Descripción de la Oferta</mat-label>
@@ -14,30 +12,31 @@
         </mat-error>
     </mat-form-field>
 
-    <!-- Campo: Foto Oferta -->
-    <mat-form-field appearance="fill" class="inputModal">
-        <mat-label>Foto de la Oferta</mat-label>
-        <input matInput class="inputModal" placeholder="URL de la foto" formControlName="fotoOferta" name="fotoOferta"
-            required />
-        <mat-error *ngIf="miFormulario.get('fotoOferta')?.invalid && miFormulario.get('fotoOferta')?.touched">
-            La URL de la foto es obligatoria.
-        </mat-error>
-    </mat-form-field>
-
     <!-- Campo: Empresa -->
-    <mat-form-field appearance="fill" class="inputModal">
-        <mat-label>Empresa</mat-label>
-        <mat-select formControlName="idEmpresa" required>
-            <mat-option *ngFor="let empresa of empresas" [value]="empresa">
+    <mat-form-field>
+        <mat-label>Seleccione Empresa</mat-label>
+        <mat-select formControlName="idEmpresa">
+            <mat-option *ngFor="let empresa of empresas" [value]="empresa.id_empresa">
                 {{ empresa.nombre }}
-
             </mat-option>
+            <span *ngIf="miFormulario.value.id_empresa">
+                Empresa: {{ miFormulario.value.id_empresa }}
+            </span>
         </mat-select>
-        <mat-error *ngIf="miFormulario.get('idEmpresa')?.invalid && miFormulario.get('idEmpresa')?.touched">
-            La empresa es obligatoria.
-        </mat-error>
     </mat-form-field>
 
+    <!-- Campo: Foto Oferta -->
+    <div class="file-upload-container">
+        <mat-label for="fotoOferta"></mat-label>
+        <input type="file" placeholder="Foto" (change)="onFileSelected($event)" accept="image/*" class="input-file"
+            required>
+        <span *ngIf="miFormulario.value.fotoOferta">
+            Foto actual: {{ miFormulario.value.fotoOferta }}
+        </span>
+        <mat-error *ngIf="miFormulario.get('fotoOferta')?.invalid && miFormulario.get('fotoOferta')?.touched">
+            La foto es obligatoria.
+        </mat-error>
+    </div>
 
     <!-- Botones -->
     <div class="modal-buttons">

@@ -18,6 +18,7 @@ import { AuthServiceService } from '../auth.service.service';
     MatButtonModule,
     RouterModule,
   ],
+  providers: [AuthServiceService], // Esto asegura que el servicio esté disponible
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })

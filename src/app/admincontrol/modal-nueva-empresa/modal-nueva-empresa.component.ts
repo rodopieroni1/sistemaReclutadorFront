@@ -24,6 +24,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms'; // Importar FormsModule para usar [(ngModel)]
+import { ChangeDetectorRef } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 
@@ -80,6 +81,7 @@ export class ModalNuevaEmpresaComponent implements OnInit {
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<ModalNuevaEmpresaComponent>,
     private route: ActivatedRoute,
+
     @Inject(MAT_DIALOG_DATA) public data: { accion: string; empresa?: any }
   ) {
     this.miFormulario = this.fb.group({
@@ -185,6 +187,8 @@ export class ModalNuevaEmpresaComponent implements OnInit {
           },
         });
     } else {
+      // Actualizar la empresa
+      console.log('this.miFormulario.value', this.miFormulario.value);
       this.cargarUpdate(this.miFormulario.value);
       this.dialogRef.close(); // Cierra el modal sin acción
     }

@@ -8,6 +8,10 @@
     background: #feca8e;
 }
 
+.inputModalID{
+  visibility: hidden;
+  display: none;
+}
 
 button[color="primary"] {
     background-color: #3f51b5;

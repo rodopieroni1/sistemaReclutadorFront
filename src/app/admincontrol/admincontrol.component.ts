@@ -214,13 +214,13 @@ export class AdminControlComponent {
     fotoOferta: string;
     id_empresa: number;
   }) {
+    console.log('Oferta a actualizar:', oferta);
     const dialogRef = this.dialog.open(ModalNuevaOfertaComponent, {
       width: '700px',
       data: { accion: 'actualizar', oferta: oferta }, // Pasando la acción y datos de la empresa
     });
     dialogRef.componentInstance.datosActualizadosOferta.subscribe(() => {
       this.cargarOfertas(); // Recargar las empresas
-      //dialogRef.componentInstance.cargarUpdate(this['empresa']);
     });
   }
 
