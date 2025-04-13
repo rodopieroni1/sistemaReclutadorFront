@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { ModalNuevaOfertaComponent } from './modal-nueva-oferta/modal-nueva-oferta.component';
 import { ModalNuevaEmpresaComponent } from './modal-nueva-empresa/modal-nueva-empresa.component';
+import { Console } from 'node:console';
 
 @Component({
   standalone: true,
@@ -214,7 +215,6 @@ export class AdminControlComponent {
     fotoOferta: string;
     id_empresa: number;
   }) {
-    console.log('Oferta a actualizar:', oferta);
     const dialogRef = this.dialog.open(ModalNuevaOfertaComponent, {
       width: '700px',
       data: { accion: 'actualizar', oferta: oferta }, // Pasando la acción y datos de la empresa

@@ -88,15 +88,14 @@ export class ModalNuevaOfertaComponent implements OnInit {
       idEmpresa: ['', Validators.required], // Este debe coincidir con formControlName en HTML
       idOferta: [''],
     });
-    this.accion = data.accion; // Recibe la acción (crear o actualizar)
+    this.accion = data.accion; // Recibe
+    //  la acción (crear o actualizar)
     this.ofertas = data.oferta || null; // Recibe la empresa si es actualización
   }
 
   ngOnInit(): void {
     this.obtenerEmpresas();
     if (this.data.oferta) {
-      console.log('If ngOnInit:', this.data.oferta);
-
       // Carga la oferta seleccionada para modificación
       this.http
         .get<any>(`http://localhost:8080/ofertas/${this.data.oferta.idOferta}`)
@@ -119,18 +118,12 @@ export class ModalNuevaOfertaComponent implements OnInit {
           },
         });
     } else {
-      console.log('Else ngOnInit:', this.data.oferta);
       this.miFormulario.patchValue({
-        descripcionOferta: this.data.oferta.descripcionOferta || '',
-        fotoOferta: this.data.oferta.fotoOferta || '',
+        descripcionOferta: this.data.oferta?.descripcionOferta || '',
+        fotoOferta: this.data.oferta?.fotoOferta || '',
         idEmpresa: this.data.oferta.empresa?.id_empresa || '', // Asigna la empresa asignada previamente
       });
     }
-  }
-
-  onEmpresaSeleccionada(event: any) {
-    console.log('Empresa seleccionada:', event.value); // Verifica el valor seleccionado
-    console.log('Valor en el formulario:', this.miFormulario.value.idEmpresa); // Verifica el estado del formulario
   }
 
   // Método para obtener empresas desde el backend
@@ -138,6 +131,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
     this.http.get<any[]>('http://localhost:8080/empresas').subscribe({
       next: (data: any[]) => {
         this.empresas = data; // Asegúrate de asignar los datos correctamente
+        console.log('DATA: ', this.empresas);
       },
       error: (err) => {
         this.snackBar.open('Error al cargar las empresas.', 'Cerrar', {
@@ -159,7 +153,6 @@ export class ModalNuevaOfertaComponent implements OnInit {
 
     if (this.accion === 'crear') {
       const idEmpresa = this.miFormulario.value.idEmpresa;
-      console.log('Empresa::::::', idEmpresa);
       // Realiza el GET para obtener la información de la empresa
       this.http
         .get<any>(`http://localhost:8080/empresas/existeId/${idEmpresa}`, {
@@ -177,15 +170,14 @@ export class ModalNuevaOfertaComponent implements OnInit {
                 id_empresa: idEmpresa, // Usar el valor del backend
                 nombre: empresa.nombre, // Valor obtenido del backend
                 cuit: empresa.cuit, // Valor obtenido del backend
-                emailEmpresa: empresa.emailEmpresa, // Valor obtenido del backend
-                observacionesEmpresa: empresa.observacionesEmpresa, // Valor obtenido del backend
+                email: empresa.email || 'correo@correo', // Valor obtenido del backend
+                observaciones: empresa.observacionesEmpresa, // Valor obtenido del backend
                 direccionEmpresa: empresa.direccion, // Valor obtenido del backend
                 historia_empresa: empresa.historiaEmpresa, // Valor obtenido del backend
               },
               idOferta: this.miFormulario.value.idOferta,
             };
             // Enviar el objeto oferta al backend
-            console.log('OFERTA: ', oferta);
             this.http
               .post('http://localhost:8080/ofertas/crear', oferta, {
                 headers: {
@@ -222,31 +214,59 @@ export class ModalNuevaOfertaComponent implements OnInit {
           },
         });
     } else {
-      this.cargarUpdate(this.miFormulario);
-      this.dialogRef.close(); // Cierra el modal sin acción
+      ////AQUI EMPIEZA EL MODIFICAR
+      const idEmpresa = this.miFormulario.value.idEmpresa;
+      // Realiza el GET para obtener la información de la empresa
+      this.http
+        .get<any>(`http://localhost:8080/empresas/existeId/${idEmpresa}`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        .subscribe({
+          next: (empresa) => {
+            // Completa los valores faltantes en el formulario
+            console.log('EMPRESA1: ', empresa);
+
+            this.cargarUpdate(this.miFormulario, empresa);
+            this.dialogRef.close(); // Cierra el modal sin acción
+          },
+          error: () => {
+            this.snackBar.open(
+              'Error al obtener información de la empresa.',
+              'Cerrar',
+              { duration: 3000 }
+            );
+          },
+        });
     }
   }
 
-  cargarUpdate(oferta: any) {
-    const idOferta1 =
+  cargarUpdate(oferta: any, empresa: any) {
+    const idOferta =
       this.miFormulario.value.idOferta || this.data.oferta.idOferta;
-    // Usar patchValue para asignar los datos al formulario
-    this.miFormulario.patchValue({
-      descripcionOferta: oferta.value.descripcionOferta,
-      fotoOferta: oferta.value.fotoOferta,
-      empresa: { id_empresa: oferta.value.idEmpresa },
-      idOferta: idOferta1,
-    });
-
+    const idEmpresa = this.miFormulario.value.idEmpresa;
+    if (!oferta.value.idEmpresa) {
+      console.error('Error: idEmpresa está vacío en la oferta.');
+      this.snackBar.open('Error: idEmpresa está vacío.', 'Cerrar', {
+        duration: 3000,
+      });
+      return;
+    }
+    //ver aqui com
+    oferta = {
+      descripcionOferta: this.miFormulario.value.descripcionOferta,
+      fotoOferta: this.miFormulario.value.fotoOferta.nombre,
+      empresa: {
+        id_empresa: idEmpresa, // Usar el valor del backend
+      },
+      idOferta: idOferta,
+    };
     this.http
-      .put(
-        `http://localhost:8080/ofertas/actualizar/${idOferta1}`,
-        this.miFormulario.value,
-        {
-          headers: { 'Content-Type': 'application/json' },
-          observe: 'response',
-        }
-      )
+      .put(`http://localhost:8080/ofertas/actualizar/${idOferta}`, oferta, {
+        headers: { 'Content-Type': 'application/json' },
+        observe: 'response',
+      })
       .subscribe({
         next: (response) => {
           if (response.status === 201 || response.status === 200) {
