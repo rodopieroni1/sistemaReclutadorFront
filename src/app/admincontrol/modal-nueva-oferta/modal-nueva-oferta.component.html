@@ -28,8 +28,11 @@
     <!-- Campo: Foto Oferta -->
     <div class="file-upload-container">
         <mat-label for="fotoOferta"></mat-label>
-        <input type="file" placeholder="Foto" (change)="onFileSelected($event)" accept="image/*" class="input-file"
-            required>
+        <input type="file" placeholder="Foto" id="fotoOferta" (change)="onFileSelected($event)" accept="image/*"
+            class="input-file" required>
+
+        <img *ngIf="archivoSeleccionado" [src]="fotoOfertaUrl" alt="Foto actual"
+            style="max-width: 200px; margin-top: 10px;" />
         <span *ngIf="miFormulario.value.fotoOferta">
             Foto actual: {{ miFormulario.value.fotoOferta }}
         </span>

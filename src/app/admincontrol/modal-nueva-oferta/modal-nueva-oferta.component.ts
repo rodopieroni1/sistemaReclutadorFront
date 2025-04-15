@@ -71,6 +71,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
     foto: '',
     idEmpresa: 1,
   };
+  fotoOfertaUrl: string = '';
   accion: string | undefined;
   mostrarIdHidden: boolean = true; // Inicialmente oculto
   archivoSeleccionado: File | null = null; // Archivo subido
@@ -98,19 +99,37 @@ export class ModalNuevaOfertaComponent implements OnInit {
     if (this.data.oferta) {
       // Carga la oferta seleccionada para modificación
       this.http
-        .get<any>(`http://localhost:8080/ofertas/${this.data.oferta.idOferta}`)
+        .get<any>(
+          `http://localhost:8080/ofertas/existeId/${this.data.oferta.idOferta}`
+        )
         .subscribe({
-          next: () => {
+          next: (response) => {
+            console.log('Respuesta del servidor:', response);
             this.miFormulario.patchValue({
-              descripcionOferta: this.data.oferta.descripcionOferta || '',
-              fotoOferta: this.data.oferta.fotoOferta || '',
-              idEmpresa: this.data.oferta.empresa?.id_empresa || '', // Asigna la empresa asignada previamente
+              descripcionOferta: response.descripcionOferta || '',
+              idEmpresa: response.empresa?.id_empresa || '', // Asigna la empresa asignada previamente
+            }); // Para mantener la foto existente sin necesidad de subir un nuevo archivo
+            if (response.fotoOferta) {
+              this.archivoSeleccionado = new File(
+                [response.fotoOferta],
+                response.fotoOferta, // Nombre del archivo
+                { type: 'image/jpeg' } // Ajusta el tipo si es diferente
+              );
+            }
+
+            if (response.fotoOferta) {
+              this.fotoOfertaUrl = `URL_SERVIDOR/${response.fotoOferta}`; // Ajusta la URL según el backend
+              console.log('Carpeta de la Foto: ', this.fotoOfertaUrl);
+            }
+            console.log('Busca la oferta: ', this.miFormulario.value);
+            this.miFormulario.patchValue({
+              fotoOferta: response.fotoOferta || '',
             });
           },
-          error: () => {
+          error: (err) => {
             this.snackBar.open(
               'Error al cargar la oferta para modificar.',
-              'Cerrar',
+              err,
               {
                 duration: 3000,
               }
@@ -120,7 +139,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
     } else {
       this.miFormulario.patchValue({
         descripcionOferta: this.data.oferta?.descripcionOferta || '',
-        fotoOferta: this.data.oferta?.fotoOferta || '',
+        fotoOferta: this.data.oferta?.archivoSeleccionado || '',
         idEmpresa: this.data.oferta.empresa?.id_empresa || '', // Asigna la empresa asignada previamente
       });
     }
@@ -131,10 +150,9 @@ export class ModalNuevaOfertaComponent implements OnInit {
     this.http.get<any[]>('http://localhost:8080/empresas').subscribe({
       next: (data: any[]) => {
         this.empresas = data; // Asegúrate de asignar los datos correctamente
-        console.log('DATA: ', this.empresas);
       },
       error: (err) => {
-        this.snackBar.open('Error al cargar las empresas.', 'Cerrar', {
+        this.snackBar.open('Error al cargar las empresas.', err, {
           duration: 3000,
         });
       },
@@ -142,15 +160,6 @@ export class ModalNuevaOfertaComponent implements OnInit {
   }
 
   guardar(): void {
-    if (this.miFormulario.invalid) {
-      this.snackBar.open(
-        'Por favor, completa todos los campos antes de guardar.',
-        'Cerrar',
-        { duration: 3000 }
-      );
-      return;
-    }
-
     if (this.accion === 'crear') {
       const idEmpresa = this.miFormulario.value.idEmpresa;
       // Realiza el GET para obtener la información de la empresa
@@ -162,21 +171,25 @@ export class ModalNuevaOfertaComponent implements OnInit {
         })
         .subscribe({
           next: (empresa) => {
-            // Completa los valores faltantes en el formulario
             const oferta = {
-              descripcionOferta: this.miFormulario.value.descripcionOferta,
-              fotoOferta: this.miFormulario.value.fotoOferta.name,
+              descripcionOferta:
+                this.miFormulario.value.descripcionOferta || '',
               empresa: {
-                id_empresa: idEmpresa, // Usar el valor del backend
-                nombre: empresa.nombre, // Valor obtenido del backend
-                cuit: empresa.cuit, // Valor obtenido del backend
-                email: empresa.email || 'correo@correo', // Valor obtenido del backend
-                observaciones: empresa.observacionesEmpresa, // Valor obtenido del backend
-                direccionEmpresa: empresa.direccion, // Valor obtenido del backend
-                historia_empresa: empresa.historiaEmpresa, // Valor obtenido del backend
-              },
-              idOferta: this.miFormulario.value.idOferta,
+                id_empresa: empresa.id_empresa, // Usar el valor del backend
+              }, // Agregar el objeto completo de empresa
+              fotoOferta: this.archivoSeleccionado?.name || '',
+              idOferta: this.miFormulario.value.idOferta || 0,
             };
+            console.error('oferta: ', oferta);
+
+            // Construir FormData para enviar archivo y datos
+            const formData = new FormData();
+            if (this.archivoSeleccionado) {
+              formData.append('file', this.archivoSeleccionado); // Agregar el archivo solo si no es null
+            } else {
+              console.error('No hay archivo seleccionado.');
+            }
+            formData.append('oferta', JSON.stringify(oferta)); // Datos de la oferta
             // Enviar el objeto oferta al backend
             this.http
               .post('http://localhost:8080/ofertas/crear', oferta, {
@@ -224,11 +237,8 @@ export class ModalNuevaOfertaComponent implements OnInit {
           },
         })
         .subscribe({
-          next: (empresa) => {
-            // Completa los valores faltantes en el formulario
-            console.log('EMPRESA1: ', empresa);
-
-            this.cargarUpdate(this.miFormulario, empresa);
+          next: (response) => {
+            this.cargarUpdate(this.miFormulario, response);
             this.dialogRef.close(); // Cierra el modal sin acción
           },
           error: () => {
@@ -242,9 +252,10 @@ export class ModalNuevaOfertaComponent implements OnInit {
     }
   }
 
-  cargarUpdate(oferta: any, empresa: any) {
+  cargarUpdate(oferta: any, response: any) {
     const idOferta =
       this.miFormulario.value.idOferta || this.data.oferta.idOferta;
+    const fotoOfertaFinal = response.fotoOferta;
     const idEmpresa = this.miFormulario.value.idEmpresa;
     if (!oferta.value.idEmpresa) {
       console.error('Error: idEmpresa está vacío en la oferta.');
@@ -256,12 +267,16 @@ export class ModalNuevaOfertaComponent implements OnInit {
     //ver aqui com
     oferta = {
       descripcionOferta: this.miFormulario.value.descripcionOferta,
-      fotoOferta: this.miFormulario.value.fotoOferta.nombre,
+      fotoOferta: this.archivoSeleccionado?.name || fotoOfertaFinal, // Usa la foto existente si no se sube una nueva
       empresa: {
         id_empresa: idEmpresa, // Usar el valor del backend
       },
       idOferta: idOferta,
     };
+    console.log('Oferta: ', oferta);
+    this.http.post('URL_SERVIDOR', oferta).subscribe((response) => {
+      console.log('Respuesta del backend:', response);
+    });
     this.http
       .put(`http://localhost:8080/ofertas/actualizar/${idOferta}`, oferta, {
         headers: { 'Content-Type': 'application/json' },
@@ -292,21 +307,16 @@ export class ModalNuevaOfertaComponent implements OnInit {
   // Método para manejar el evento de selección del archivo
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const archivo = input.files[0];
-
-      if (archivo.type.startsWith('image/')) {
-        this.miFormulario.patchValue({
-          fotoOferta: archivo,
-        });
-        this.miFormulario.get('fotoOferta')?.updateValueAndValidity();
-      } else {
-        this.snackBar.open('Solo se permiten archivos de imagen.', 'Cerrar', {
-          duration: 3000,
-        });
-      }
+    if (input.files?.length) {
+      this.archivoSeleccionado = input.files[0]; // Archivo seleccionado
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.fotoOfertaUrl = reader.result as string; // Previsualizar la imagen
+      };
+      reader.readAsDataURL(this.archivoSeleccionado);
     }
   }
+
   cerrar() {
     this.dialogRef.close(); // Cierra el modal sin acción
   }
