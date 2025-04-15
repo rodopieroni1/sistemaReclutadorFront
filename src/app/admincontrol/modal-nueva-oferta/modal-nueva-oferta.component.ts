@@ -104,7 +104,6 @@ export class ModalNuevaOfertaComponent implements OnInit {
         )
         .subscribe({
           next: (response) => {
-            console.log('Respuesta del servidor:', response);
             this.miFormulario.patchValue({
               descripcionOferta: response.descripcionOferta || '',
               idEmpresa: response.empresa?.id_empresa || '', // Asigna la empresa asignada previamente
@@ -115,11 +114,6 @@ export class ModalNuevaOfertaComponent implements OnInit {
                 response.fotoOferta, // Nombre del archivo
                 { type: 'image/jpeg' } // Ajusta el tipo si es diferente
               );
-            }
-
-            if (response.fotoOferta) {
-              this.fotoOfertaUrl = `URL_SERVIDOR/${response.fotoOferta}`; // Ajusta la URL según el backend
-              console.log('Carpeta de la Foto: ', this.fotoOfertaUrl);
             }
             console.log('Busca la oferta: ', this.miFormulario.value);
             this.miFormulario.patchValue({
@@ -140,7 +134,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
       this.miFormulario.patchValue({
         descripcionOferta: this.data.oferta?.descripcionOferta || '',
         fotoOferta: this.data.oferta?.archivoSeleccionado || '',
-        idEmpresa: this.data.oferta.empresa?.id_empresa || '', // Asigna la empresa asignada previamente
+        empresa: { id_empresa: this.data.oferta.empresa?.id_empresa || '' }, // Asigna la empresa asignada previamente
       });
     }
   }
@@ -180,8 +174,6 @@ export class ModalNuevaOfertaComponent implements OnInit {
               fotoOferta: this.archivoSeleccionado?.name || '',
               idOferta: this.miFormulario.value.idOferta || 0,
             };
-            console.error('oferta: ', oferta);
-
             // Construir FormData para enviar archivo y datos
             const formData = new FormData();
             if (this.archivoSeleccionado) {
@@ -273,10 +265,6 @@ export class ModalNuevaOfertaComponent implements OnInit {
       },
       idOferta: idOferta,
     };
-    console.log('Oferta: ', oferta);
-    this.http.post('URL_SERVIDOR', oferta).subscribe((response) => {
-      console.log('Respuesta del backend:', response);
-    });
     this.http
       .put(`http://localhost:8080/ofertas/actualizar/${idOferta}`, oferta, {
         headers: { 'Content-Type': 'application/json' },
