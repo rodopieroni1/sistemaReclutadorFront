@@ -19,7 +19,7 @@ button[color="primary"] {
 }
   
   /* Contenedor principal del modal */
-  h2 {
+  .modal-header .h2 {
     margin-bottom: 16px;
     background:  #feca8e;
     color: #000000; /* Tono azul de Angular Material */

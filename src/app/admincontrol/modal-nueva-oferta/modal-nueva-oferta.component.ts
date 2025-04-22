@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Inject,
@@ -27,6 +28,7 @@ import {
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
+import { FileUploadService } from './file-upload-service.service';
 @Component({
   selector: 'app-modal-nueva-oferta',
   standalone: true,
@@ -53,45 +55,41 @@ export class ModalNuevaOfertaComponent implements OnInit {
   idEmpresa: number = 1;
   miFormulario: FormGroup;
   empresas: any[] = [];
-  ofertas: {
-    idOferta: number;
-    descripcion: string;
-    foto: string;
-    idEmpresa: number;
-  }[] = [];
+
   @Output() datosActualizadosOferta = new EventEmitter<void>(); // Evento para notificar cambios
-  @Input() empresa: {
+  @Input() oferta: {
     idOferta: number;
-    descripcion: string;
-    foto: string;
-    idEmpresa: number;
+    descripcionOferta: string;
+    fotoOferta: string;
+    empresa: { id_empresa: number };
   } = {
     idOferta: 1,
-    descripcion: '',
-    foto: '',
-    idEmpresa: 1,
+    descripcionOferta: '',
+    fotoOferta: '',
+    empresa: { id_empresa: 0 },
   };
   fotoOfertaUrl: string = '';
   accion: string | undefined;
   mostrarIdHidden: boolean = true; // Inicialmente oculto
   archivoSeleccionado: File | null = null; // Archivo subido
+  archivoProcesado: boolean = false;
+
   constructor(
     private http: HttpClient,
     public dialogRef: MatDialogRef<ModalNuevaOfertaComponent>,
     private snackBar: MatSnackBar,
     private fb: FormBuilder,
-
+    private fileUploadService: FileUploadService,
+    private cd: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public data: { accion: string; oferta?: any }
   ) {
     this.miFormulario = this.fb.group({
       descripcionOferta: ['', Validators.required],
-      fotoOferta: [null, Validators.required],
+      fotoOferta: ['', Validators.required],
       idEmpresa: ['', Validators.required], // Este debe coincidir con formControlName en HTML
-      idOferta: [''],
+      idOferta: ['', Validators.required],
     });
-    this.accion = data.accion; // Recibe
-    //  la acción (crear o actualizar)
-    this.ofertas = data.oferta || null; // Recibe la empresa si es actualización
+    this.accion = data.accion; // Recibe la acción (crear o actualizar)
   }
 
   ngOnInit(): void {
@@ -115,7 +113,6 @@ export class ModalNuevaOfertaComponent implements OnInit {
                 { type: 'image/jpeg' } // Ajusta el tipo si es diferente
               );
             }
-            console.log('Busca la oferta: ', this.miFormulario.value);
             this.miFormulario.patchValue({
               fotoOferta: response.fotoOferta || '',
             });
@@ -130,13 +127,23 @@ export class ModalNuevaOfertaComponent implements OnInit {
             );
           },
         });
-    } else {
-      this.miFormulario.patchValue({
-        descripcionOferta: this.data.oferta?.descripcionOferta || '',
-        fotoOferta: this.data.oferta?.archivoSeleccionado || '',
-        empresa: { id_empresa: this.data.oferta.empresa?.id_empresa || '' }, // Asigna la empresa asignada previamente
-      });
     }
+
+    // Suscripción para monitorear cambios en el formulario
+    this.miFormulario.valueChanges.subscribe(() => {
+      if (this.miFormulario.valid && !this.archivoProcesado) {
+        this.activarFuncionCuandoFormularioEsValido();
+      }
+    });
+  }
+  activarFuncionCuandoFormularioEsValido(): void {
+    console.log('Todos los campos están completos y válidos.');
+    // Aquí puedes realizar cualquier acción, como habilitar el botón guardar automáticamente
+    this.habilitarBotonGuardar();
+  }
+
+  habilitarBotonGuardar(): void {
+    console.log('Botón habilitado.');
   }
 
   // Método para obtener empresas desde el backend
@@ -154,8 +161,21 @@ export class ModalNuevaOfertaComponent implements OnInit {
   }
 
   guardar(): void {
+    if (this.miFormulario.value.descripcionOferta === '') {
+      this.snackBar.open('Agrege valores a la oferta.', 'Cerrar', {
+        duration: 3000,
+      });
+      return;
+    }
+
+    const idEmpresa = this.miFormulario.value.idEmpresa;
+    if (idEmpresa === '') {
+      this.snackBar.open('Agrege valores a la oferta 2.', 'Cerrar', {
+        duration: 3000,
+      });
+      return;
+    }
     if (this.accion === 'crear') {
-      const idEmpresa = this.miFormulario.value.idEmpresa;
       // Realiza el GET para obtener la información de la empresa
       this.http
         .get<any>(`http://localhost:8080/empresas/existeId/${idEmpresa}`, {
@@ -166,14 +186,19 @@ export class ModalNuevaOfertaComponent implements OnInit {
         .subscribe({
           next: (empresa) => {
             const oferta = {
-              descripcionOferta:
-                this.miFormulario.value.descripcionOferta || '',
+              descripcionOferta: this.miFormulario.value.descripcionOferta,
               empresa: {
                 id_empresa: empresa.id_empresa, // Usar el valor del backend
               }, // Agregar el objeto completo de empresa
-              fotoOferta: this.archivoSeleccionado?.name || '',
+              fotoOferta: this.archivoSeleccionado?.name,
               idOferta: this.miFormulario.value.idOferta || 0,
             };
+            if (oferta.descripcionOferta === '') {
+              this.snackBar.open('Agrege valores a la oferta 1.', 'Cerrar', {
+                duration: 3000,
+              });
+              return;
+            }
             // Construir FormData para enviar archivo y datos
             const formData = new FormData();
             if (this.archivoSeleccionado) {
@@ -221,6 +246,13 @@ export class ModalNuevaOfertaComponent implements OnInit {
     } else {
       ////AQUI EMPIEZA EL MODIFICAR
       const idEmpresa = this.miFormulario.value.idEmpresa;
+      if (idEmpresa === '' || idEmpresa === null) {
+        this.snackBar.open('Agrege valores a la oferta 2.', 'Cerrar', {
+          duration: 3000,
+        });
+        return;
+      }
+      console.log('ID EMPRESA', idEmpresa);
       // Realiza el GET para obtener la información de la empresa
       this.http
         .get<any>(`http://localhost:8080/empresas/existeId/${idEmpresa}`, {
@@ -230,8 +262,36 @@ export class ModalNuevaOfertaComponent implements OnInit {
         })
         .subscribe({
           next: (response) => {
+            const oferta = {
+              descripcionOferta: this.miFormulario.value.descripcionOferta,
+              empresa: {
+                id_empresa: this.miFormulario.value.empresa, // Usar el valor del backend
+              }, // Agregar el objeto completo de empresa
+              fotoOferta: this.archivoSeleccionado?.name,
+            };
+            if (this.miFormulario.value.descripcionOferta === '') {
+              console.error('Agrege valores a la oferta.', this.oferta);
+              this.snackBar.open('Agrege valores a la oferta 1.', 'Cerrar', {
+                duration: 3000,
+              });
+              return;
+            }
+            if (response.empresa === '') {
+              console.error('Agrege valores a la oferta.', this.oferta);
+              this.snackBar.open('Agrege valores a la oferta 2.', 'Cerrar', {
+                duration: 3000,
+              });
+              return;
+            }
+            if (this.miFormulario.value.fotoOferta === '') {
+              console.error('Agrege valores a la oferta.', this.oferta);
+              this.snackBar.open('Agrege valores a la oferta 3.', 'Cerrar', {
+                duration: 3000,
+              });
+              return;
+            }
+
             this.cargarUpdate(this.miFormulario, response);
-            this.dialogRef.close(); // Cierra el modal sin acción
           },
           error: () => {
             this.snackBar.open(
@@ -293,18 +353,48 @@ export class ModalNuevaOfertaComponent implements OnInit {
   }
 
   // Método para manejar el evento de selección del archivo
-  onFileSelected(event: Event): void {
+  onFileSelectedAndUpload(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files?.length) {
-      this.archivoSeleccionado = input.files[0]; // Archivo seleccionado
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.fotoOfertaUrl = reader.result as string; // Previsualizar la imagen
-      };
-      reader.readAsDataURL(this.archivoSeleccionado);
+    if (!input || !input.files || input.files.length === 0) {
+      console.error('No se seleccionó ningún archivo.');
+      return;
     }
+    // Si ya procesamos el archivo, salimos para romper el ciclo
+    if (this.archivoProcesado) {
+      console.log('Archivo ya procesado, evitando loop.');
+      return;
+    }
+    // Obtiene el archivo seleccionado
+    this.archivoSeleccionado = input.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.fotoOfertaUrl = reader.result as string;
+      // Actualiza el formulario sólo una vez
+      if (this.archivoSeleccionado) {
+        this.miFormulario.patchValue({
+          fotoOferta: this.archivoSeleccionado.name,
+        });
+        if (
+          this.miFormulario.value.fotoOferta !== '' &&
+          this.miFormulario.value.descripcionOferta !== '' &&
+          this.empresas[0] !== ''
+        ) {
+          this.archivoProcesado = false;
+        } else {
+          this.archivoProcesado = true;
+        }
+      } else {
+        console.error('No se ha seleccionado ningún archivo.');
+      }
+    };
+
+    reader.readAsDataURL(this.archivoSeleccionado);
   }
 
+  triggerFileInput(): void {
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    fileInput?.click();
+  }
   cerrar() {
     this.dialogRef.close(); // Cierra el modal sin acción
   }

@@ -9,7 +9,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { ModalNuevaOfertaComponent } from './modal-nueva-oferta/modal-nueva-oferta.component';
 import { ModalNuevaEmpresaComponent } from './modal-nueva-empresa/modal-nueva-empresa.component';
-import { Console } from 'node:console';
 
 @Component({
   standalone: true,
@@ -28,6 +27,14 @@ import { Console } from 'node:console';
 })
 export class AdminControlComponent {
   [x: string]: any;
+  aplicaciones: {
+    id_aplicacion: number;
+    fechaAplicacion: Date;
+    oferta: { id: number; descripcion: string; empresa: { nombre: string } };
+    perfil: { id: number; nombre: string; email: string };
+    estadoAplicaciones: boolean;
+  }[] = [];
+
   empresas: {
     nombre: string;
     direccion: string;
@@ -46,6 +53,11 @@ export class AdminControlComponent {
 
   currentPage: number = 1; // Página actual
   itemsPerPage: number = 50; // Número de elementos por página
+  //Aplicaciones
+  id_aplicacion: number = 0;
+  fechaAplicacion: Date = new Date();
+  id_perfil: number = 1;
+  estadoAplicaciones: boolean = true;
   //Empresa
   nombreEmpresa: string = '';
   direccionEmpresa: string = '';
@@ -65,6 +77,33 @@ export class AdminControlComponent {
   ) {}
 
   ngOnInit() {
+    this.http
+      .get<
+        {
+          idaplicacion: number;
+          fecha: Date;
+          oferta: {
+            id: number;
+            descripcion: string;
+            empresa: { nombre: string };
+          };
+          perfil: { id: number; nombre: string; email: string };
+          estadoAplicaciones: boolean;
+        }[]
+      >('http://localhost:8080/aplicaciones')
+      .subscribe((data) => {
+        console.log('DATAAPLICACIONES: ', data);
+        // Mapeamos las claves recibidas para que coincidan con las claves esperadas
+        this.aplicaciones = data.map((aplicacion) => ({
+          id_aplicacion: aplicacion.idaplicacion,
+          fechaAplicacion: aplicacion.fecha,
+          oferta: aplicacion.oferta, // Mantiene el objeto completo
+          perfil: aplicacion.perfil, // Mantiene el objeto completo
+          estadoAplicaciones: aplicacion.estadoAplicaciones,
+        }));
+        console.log('Aplicaciones transformadas:', this.aplicaciones);
+      });
+
     this.http
       .get<
         {
@@ -250,12 +289,19 @@ export class AdminControlComponent {
     const endIndex = startIndex + this.itemsPerPage;
     return this.ofertas.slice(startIndex, endIndex);
   }
-
+  empresasPaginadas: any[] = [];
   getPaginatedDataEmpresas() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
     return this.empresas.slice(startIndex, endIndex);
   }
+
+  getPaginatedDataAplicaciones() {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.aplicaciones.slice(startIndex, endIndex);
+  }
+
   changePage(page: number) {
     if (page >= 1 && page <= this.getTotalPages()) {
       this.currentPage = page;

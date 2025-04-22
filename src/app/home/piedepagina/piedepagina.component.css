@@ -1,0 +1,23 @@
+footer {
+    display: flex;
+    justify-content: space-around; /* Espaciado uniforme */
+    flex-wrap: wrap; /* Permite que las columnas se ajusten si no hay espacio suficiente */
+    padding: 20px;
+    background-color: #f1f1f1;
+  }
+  
+  footer .footer-section, footer section {
+    flex: 1; /* Cada columna ocupa el mismo espacio */
+    margin: 10px; /* Separación entre columnas */
+  }
+  
+  footer p, footer ul {
+    font-size: 14px;
+  }
+  footer {
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    text-align: justify;
+  }
+  

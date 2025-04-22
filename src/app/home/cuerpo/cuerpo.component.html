@@ -8,26 +8,24 @@
     <section class="propuestas">
         <h2>Propuestas</h2>
         <div class="card-list">
-            <mat-card *ngFor="let oferta of ofertas" class="card">
+            <mat-card *ngFor="let oferta of getPaginatedDataOfertas()" class="card">
                 <mat-card-header>
                     <mat-card-title>Oferta ID: {{ oferta.idOferta }}</mat-card-title>
-                    <mat-card-subtitle>Empresa ID: {{ oferta.empresa.nombre}}</mat-card-subtitle>
+                    <mat-card-subtitle>Empresa ID: {{ oferta.id_empresa}}</mat-card-subtitle>
                 </mat-card-header>
+                <!-- <img mat-card-image [src]="'https://mi-servidor.com/uploads/' + oferta.nombreImagen" alt="Imagen de la oferta"> -->
+                <img mat-card-image [src]="'assets/uploads/' + oferta.fotoOferta" alt="Imagen de la oferta">
+
                 <mat-card-content>
                     <p>{{ oferta.descripcionOferta }}</p>
                 </mat-card-content>
+
             </mat-card>
         </div>
     </section>
-
-    <section class="about-us">
-        <h2>About Us</h2>
-        <p>We are a co-working community dedicated to fostering innovation and collaboration in a creative environment.
-        </p>
-    </section>
-
-    <section class="community">
-        <h2>Our Community</h2>
-        <p>Join a network of like-minded professionals and grow together.</p>
-    </section>
+    <div class="pagination">
+        <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
+        <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
+        <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === getTotalPages()">Siguiente</button>
+    </div>
 </body>

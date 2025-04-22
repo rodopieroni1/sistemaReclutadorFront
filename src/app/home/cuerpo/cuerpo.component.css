@@ -1,15 +1,18 @@
 /* General Styles */
-body {
+html, body {
   margin: 0;
+  padding: 0;
   font-family: Arial, sans-serif;
   line-height: 1.6;
   color: #333;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 @font-face {
   font-family: 'MiFuentePersonalizada';
   src: url('/assets/fonts/CreatoDisplay-RegularItalic.otf') format('truetype'); /* Cambia el nombre y formato del archivo si es necesario */
 }
-
 
 header {
   background-color: #333;
