@@ -28,7 +28,7 @@ import {
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
-import { FileUploadService } from './file-upload-service.service';
+import { FileUploadService } from '../modal-nueva-oferta/file-upload-service.service';
 @Component({
   selector: 'app-modal-nueva-oferta',
   standalone: true,
@@ -252,7 +252,6 @@ export class ModalNuevaOfertaComponent implements OnInit {
         });
         return;
       }
-      console.log('ID EMPRESA', idEmpresa);
       // Realiza el GET para obtener la información de la empresa
       this.http
         .get<any>(`http://localhost:8080/empresas/existeId/${idEmpresa}`, {
@@ -359,30 +358,46 @@ export class ModalNuevaOfertaComponent implements OnInit {
       console.error('No se seleccionó ningún archivo.');
       return;
     }
-    // Si ya procesamos el archivo, salimos para romper el ciclo
+
+    // Evitar loops de procesamiento
     if (this.archivoProcesado) {
       console.log('Archivo ya procesado, evitando loop.');
       return;
     }
+
     // Obtiene el archivo seleccionado
     this.archivoSeleccionado = input.files[0];
     const reader = new FileReader();
+    console.log('PASO 1: Archivo seleccionado', this.archivoSeleccionado.name);
+
     reader.onload = () => {
       this.fotoOfertaUrl = reader.result as string;
-      // Actualiza el formulario sólo una vez
+      console.log('PASO 2: Previsualización cargada', this.fotoOfertaUrl);
+
       if (this.archivoSeleccionado) {
+        // Actualizar el formulario
         this.miFormulario.patchValue({
           fotoOferta: this.archivoSeleccionado.name,
         });
-        if (
-          this.miFormulario.value.fotoOferta !== '' &&
-          this.miFormulario.value.descripcionOferta !== '' &&
-          this.empresas[0] !== ''
-        ) {
-          this.archivoProcesado = false;
-        } else {
-          this.archivoProcesado = true;
-        }
+
+        // Llamar al servicio para subir el archivo
+        this.fileUploadService.uploadImage(this.archivoSeleccionado).subscribe({
+          next: (response) => {
+            console.log('Archivo subido exitosamente:', response);
+            this.snackBar.open('Imagen subida correctamente.', 'Cerrar', {
+              duration: 3000,
+            });
+
+            // Marcar como procesado
+            this.archivoProcesado = true;
+          },
+          error: (error) => {
+            console.error('Error al subir la imagen:', error);
+            this.snackBar.open('Error al subir la imagen.', 'Cerrar', {
+              duration: 3000,
+            });
+          },
+        });
       } else {
         console.error('No se ha seleccionado ningún archivo.');
       }
@@ -393,6 +408,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
 
   triggerFileInput(): void {
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    console.log('FI: ' + fileInput);
     fileInput?.click();
   }
   cerrar() {

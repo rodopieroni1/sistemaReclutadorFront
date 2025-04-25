@@ -31,7 +31,7 @@ export class AdminControlComponent {
     id_aplicacion: number;
     fechaAplicacion: Date;
     oferta: { id: number; descripcion: string; empresa: { nombre: string } };
-    perfil: { id: number; nombre: string; email: string };
+    perfil: { id: number; nombre: string; email: string; uploadvc: File };
     estadoAplicaciones: boolean;
   }[] = [];
 
@@ -87,12 +87,11 @@ export class AdminControlComponent {
             descripcion: string;
             empresa: { nombre: string };
           };
-          perfil: { id: number; nombre: string; email: string };
+          perfil: { id: number; nombre: string; email: string; uploadvc: File };
           estadoAplicaciones: boolean;
         }[]
       >('http://localhost:8080/aplicaciones')
       .subscribe((data) => {
-        console.log('DATAAPLICACIONES: ', data);
         // Mapeamos las claves recibidas para que coincidan con las claves esperadas
         this.aplicaciones = data.map((aplicacion) => ({
           id_aplicacion: aplicacion.idaplicacion,
@@ -101,7 +100,6 @@ export class AdminControlComponent {
           perfil: aplicacion.perfil, // Mantiene el objeto completo
           estadoAplicaciones: aplicacion.estadoAplicaciones,
         }));
-        console.log('Aplicaciones transformadas:', this.aplicaciones);
       });
 
     this.http

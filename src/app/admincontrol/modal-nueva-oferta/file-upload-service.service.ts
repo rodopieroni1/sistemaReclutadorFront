@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, Observable, tap, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +12,19 @@ export class FileUploadService {
 
   uploadImage(file: File): Observable<any> {
     const formData = new FormData();
-    formData.append('file', file); // Clave "file" coincide con el backend
-    return this.http.post(this.uploadUrl, formData);
+    formData.append('file', file);
+
+    console.log('Archivo que se envía:', file.name);
+    console.log('URL de carga:', this.uploadUrl);
+
+    return this.http
+      .post(this.uploadUrl, formData, { observe: 'response' })
+      .pipe(
+        tap((response) => console.log('Respuesta del servidor:', response)),
+        catchError((error) => {
+          console.error('Error al subir el archivo:', error);
+          return throwError(error);
+        })
+      );
   }
 }

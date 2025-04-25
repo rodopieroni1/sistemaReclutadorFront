@@ -16,13 +16,18 @@
                     <span style="display: block;"><strong>Empresa:</strong> {{ aplicacion.oferta.empresa.nombre
                         }}</span>
                     <span style="display: block;"><strong>Postulante:</strong> {{ aplicacion.perfil.nombre }}</span>
+                    <span style="display: block;">
+                        <strong>CV:</strong>
+                        <a [href]="aplicacion.perfil.uploadvc" download>Descargar CV</a>
+                    </span>
                     <span style="display: block;"><strong>Fecha de aplicacion:</strong> {{ aplicacion.fechaAplicacion
                         }}</span>
-                    <span style="display: block;"><strong>Activo:</strong> {{ aplicacion.estadoAplicaciones ? 'Si' :
-                        'No' }}</span>
+                    <span style="display: block;">
+                        <strong>Activo:</strong> {{ aplicacion.estadoAplicaciones ? 'Si' : 'No' }}
+                    </span>
                 </li>
-
             </ul>
+
             <div class="pagination">
                 <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
                 <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
