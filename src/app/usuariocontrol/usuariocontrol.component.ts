@@ -2,8 +2,6 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { response } from 'express';
-
 @Component({
   selector: 'app-usuariocontrol',
   standalone: true, // Indica que este componente es independiente

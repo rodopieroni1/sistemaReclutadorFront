@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { ListadoOfertasService } from '../../listado-ofertas.service';
 import { HttpClient } from '@angular/common/http';
-
+import { WebSocketService } from '../../admincontrol/modal-nueva-oferta/web-socket.service';
 @Component({
   selector: 'app-cuerpo',
   standalone: true,
@@ -23,10 +23,26 @@ export class CuerpoComponent implements OnInit {
   itemsPerPage: number = 10; // Número de elementos por página
 
   constructor(
-    private http: HttpClient // public dialogRef: MatDialogRef<ModalNuevaEmpresaComponent>
+    private http: HttpClient, // public dialogRef: MatDialogRef<ModalNuevaEmpresaComponent>
+    private webSocketService: WebSocketService
   ) {}
 
   ngOnInit(): void {
+    this.webSocketService.connect('ws://localhost:8080/ws'); // URL del servidor WebSocket
+    console.log('Nueva imagen recibida:1');
+
+    if (this.webSocketService['socket']) {
+      console.log('Nueva imagen recibida:2');
+
+      this.webSocketService['socket'].onmessage = (event) => {
+        console.log('Nueva imagen recibida:3');
+
+        const newImageUrl = event.data; // Recibir URL de nueva imagen
+        console.log('Nueva imagen recibida:', newImageUrl);
+        // Aquí puedes actualizar tu lista de imágenes o la lógica que necesites
+      };
+    }
+
     this.http
       .get<
         {
@@ -49,6 +65,10 @@ export class CuerpoComponent implements OnInit {
           console.error('Error al cargar las ofertas:', error);
         },
       });
+  }
+
+  ngOnDestroy(): void {
+    this.webSocketService.disconnect(); // Desconectar al destruir el componente
   }
 
   /////////////////////////Paginacion///////////////////////////////////////

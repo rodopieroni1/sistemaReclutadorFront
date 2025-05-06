@@ -28,11 +28,23 @@ import { ModalNuevaEmpresaComponent } from './modal-nueva-empresa/modal-nueva-em
 export class AdminControlComponent {
   [x: string]: any;
   aplicaciones: {
+    [x: string]: any;
     id_aplicacion: number;
     fechaAplicacion: Date;
-    oferta: { id: number; descripcion: string; empresa: { nombre: string } };
-    perfil: { id: number; nombre: string; email: string; uploadvc: File };
+    oferta: {
+      id: number;
+      descripcionOferta: string;
+      empresa: { nombre: string };
+    };
+    perfil: {
+      id: number;
+      nombre: string;
+      email: string;
+      documentoUrl: string;
+      fotoUrl: string;
+    };
     estadoAplicaciones: boolean;
+    documentoUrl: string | null;
   }[] = [];
 
   empresas: {
@@ -68,7 +80,7 @@ export class AdminControlComponent {
   id_empresa: number = 1;
   //Oferta
   idOferta: number = 1;
-  descripcionOferta: string = '';
+  descripcion: string = '';
   fotoOferta: string = '';
 
   constructor(
@@ -84,10 +96,17 @@ export class AdminControlComponent {
           fecha: Date;
           oferta: {
             id: number;
-            descripcion: string;
+            descripcionOferta: string;
             empresa: { nombre: string };
           };
-          perfil: { id: number; nombre: string; email: string; uploadvc: File };
+          perfil: {
+            id: number;
+            nombre: string;
+            email: string;
+            documentoUrl: string;
+            fotoUrl: string;
+          };
+          documentoUrl: string | null;
           estadoAplicaciones: boolean;
         }[]
       >('http://localhost:8080/aplicaciones')
@@ -98,10 +117,13 @@ export class AdminControlComponent {
           fechaAplicacion: aplicacion.fecha,
           oferta: aplicacion.oferta, // Mantiene el objeto completo
           perfil: aplicacion.perfil, // Mantiene el objeto completo
+          documentoUrl: aplicacion.perfil.documentoUrl
+            ? aplicacion.perfil.documentoUrl.replace(/\\/g, '/')
+            : null,
           estadoAplicaciones: aplicacion.estadoAplicaciones,
         }));
+        console.log('Aplicaciones: ', this.aplicaciones); // Verifica aquí
       });
-
     this.http
       .get<
         {
@@ -129,6 +151,7 @@ export class AdminControlComponent {
       >('http://localhost:8080/ofertas/todas')
       .subscribe((data) => {
         this.ofertas = data;
+        console.log('Ofertas cargadas:', this.ofertas); // Verifica aquí
       });
   }
 
@@ -147,7 +170,7 @@ export class AdminControlComponent {
       .get<
         {
           idOferta: number;
-          descripcionOferta: string;
+          descripcion: string;
           fotoOferta: string;
           id_empresa: number;
         }[]
@@ -156,7 +179,7 @@ export class AdminControlComponent {
         next: (data) => {
           this.ofertas = data.map((oferta) => ({
             idOferta: oferta.idOferta,
-            descripcionOferta: oferta.descripcionOferta,
+            descripcionOferta: oferta.descripcion,
             fotoOferta: oferta.fotoOferta,
             id_empresa: oferta.id_empresa,
           }));
@@ -297,7 +320,8 @@ export class AdminControlComponent {
   getPaginatedDataAplicaciones() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
-    return this.aplicaciones.slice(startIndex, endIndex);
+    const paginatedData = this.aplicaciones.slice(startIndex, endIndex);
+    return paginatedData;
   }
 
   changePage(page: number) {

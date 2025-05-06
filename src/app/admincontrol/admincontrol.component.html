@@ -11,21 +11,41 @@
             </mat-expansion-panel-header>
             <ul>
                 <li *ngFor="let aplicacion of getPaginatedDataAplicaciones()" class="aplicacion-item">
-                    <span style="display: block;"><strong>Aplicacion N°:</strong> {{ aplicacion.id_aplicacion }}</span>
-                    <span style="display: block;"><strong>Propuesta:</strong> {{ aplicacion.oferta.descripcion }}</span>
-                    <span style="display: block;"><strong>Empresa:</strong> {{ aplicacion.oferta.empresa.nombre
-                        }}</span>
-                    <span style="display: block;"><strong>Postulante:</strong> {{ aplicacion.perfil.nombre }}</span>
-                    <span style="display: block;">
-                        <strong>CV:</strong>
-                        <a [href]="aplicacion.perfil.uploadvc" download>Descargar CV</a>
-                    </span>
-                    <span style="display: block;"><strong>Fecha de aplicacion:</strong> {{ aplicacion.fechaAplicacion
-                        }}</span>
-                    <span style="display: block;">
-                        <strong>Activo:</strong> {{ aplicacion.estadoAplicaciones ? 'Si' : 'No' }}
-                    </span>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0px; border: 1px solid  rgb(163, 155, 155);">
+                        <div>
+                            <span><strong>Empresa:</strong>
+                                {{ aplicacion.oferta?.empresa?.nombre }} ;</span>
+                        </div>
+                        <br />
+                        <div>
+                            <span><strong>Postulante:</strong> {{ aplicacion.perfil?.nombre }}</span>
+                        </div>
+                        <div>
+                            <span><strong>Fecha de aplicación:</strong> {{ aplicacion.fechaAplicacion }}</span>
+                        </div>
+                        <div>
+                            <span><strong>Propuesta:</strong>
+                                {{ aplicacion.oferta?.descripcionOferta || 'No disponible' }}
+                            </span>
+                        </div>
+                        <div>
+                            <span>
+                                <strong>Activo:</strong> {{ aplicacion.estadoAplicaciones ? 'Si' : 'No' }}
+                            </span>
+                        </div>
+                        <div>
+                            <span>
+                                <strong>
+                                    <a [href]="aplicacion.documentoUrl" download>Descargar CV</a>
+                                </strong>
+                            </span>
+                        </div>
+                    </div>
+                    <!-- Separador para contenido adicional -->
+
+
                 </li>
+
             </ul>
 
             <div class="pagination">

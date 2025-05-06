@@ -6,7 +6,7 @@ import { catchError, Observable, tap, throwError } from 'rxjs';
   providedIn: 'root',
 })
 export class FileUploadService {
-  private uploadUrl = 'http://localhost:8080/api/uploads'; // URL del endpoint del backend
+  private uploadUrl = 'http://localhost:8080/api/uploads/'; // URL del endpoint del backend
 
   constructor(private http: HttpClient) {}
 

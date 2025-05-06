@@ -163,6 +163,4 @@ mat-expansion-panel {
     display: flex;
     gap: 8px; /* Espaciado entre los botones */
 }
-br {
-    display: none;
-}
+
