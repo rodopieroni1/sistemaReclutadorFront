@@ -1,13 +1,13 @@
 <body>
     <section class="banner" style="font-family: 'Shippori Mincho', sans-serif;">
-        <p>"El trabajo ideal</p>
-        <p> no es solo un puesto, </p>
-        <p> es una oportunidad para crecer y marcar la diferencia."</p>
+        <h1>¡Bienvenido a nuestra plataforma de empleo!</h1>
+        <p>Encuentra tus empleos de manera fácil y rápida.</p>
     </section>
     <section class="buscador">
-        <form class="d-flex" role="search">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
+        <form class="d-flex" role="search" onsubmit="searchJobs(event)">
+            <input class="form-control me-2" type="search" id="searchInput" placeholder="Buscar empleo"
+                aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Buscar</button>
         </form>
     </section>
     <section class="propuestas">
@@ -15,16 +15,13 @@
         <div class="card-list">
             <mat-card *ngFor="let oferta of getPaginatedDataOfertas()" class="card">
                 <mat-card-header>
-                    <mat-card-title>Oferta ID: {{ oferta.idOferta }}</mat-card-title>
-                    <mat-card-subtitle>Empresa ID: {{ oferta.id_empresa}}</mat-card-subtitle>
+                    <mat-card-title>Nº de Oferta: {{ oferta.idOferta }}</mat-card-title>
+                    <mat-card-subtitle>Empresa: {{ oferta.id_empresa}}</mat-card-subtitle>
                 </mat-card-header>
-                <!-- <img mat-card-image [src]="'https://mi-servidor.com/uploads/' + oferta.nombreImagen" alt="Imagen de la oferta"> -->
                 <img mat-card-image [src]="'assets/uploads/' + oferta.fotoOferta" alt="Imagen de la oferta">
-
                 <mat-card-content>
                     <p>{{ oferta.descripcionOferta }}</p>
                 </mat-card-content>
-
             </mat-card>
         </div>
     </section>

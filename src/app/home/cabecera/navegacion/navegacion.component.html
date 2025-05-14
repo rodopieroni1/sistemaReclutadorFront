@@ -1,20 +1,28 @@
 <nav class="navbar navbar-expand-lg bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand">Suscribirse</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
-                <li class="nav-item">
+                <li class="nav-item" *ngIf="!userLoginOn">
                     <a class="nav-link active" aria-current="page" [routerLink]="'/login-user'">Iniciar Sesion</a>
                 </li>
-                <li class="nav-item" *ngIf="!userLoginOn">
-                    <a class="nav-link" [routerLink]="'/home'">Cerrar Sesion</a>
-                </li>
                 <li class="nav-item" *ngIf="userLoginOn">
-                    <a class="nav-link" [routerLink]="'/register'">Registrarse</a>
+                    <a class="nav-link active" [routerLink]="'/login-user'">Cerrar Sesion</a>
+                </li>
+                <li class="nav-item" *ngIf="!userLoginOn">
+                    <a class="nav-link active" [routerLink]="'/usuariocontrol'">Registrarse</a>
+                </li>
+                <li class="nav-item dropdown" *ngIf="userLoginOn">
+                    <a class="nav-link dropdown-toggle" href="#" id="perfilDropdown" role="button"
+                        data-bs-toggle="dropdown">
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" [routerLink]="'/perfil'">Mi Perfil</a></li>
+                        <li><a class="dropdown-item" (click)="logout()">Cerrar Sesión</a></li>
+                    </ul>
                 </li>
             </ul>
         </div>

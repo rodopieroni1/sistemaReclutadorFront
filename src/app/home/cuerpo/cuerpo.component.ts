@@ -4,6 +4,9 @@ import { MatCardModule } from '@angular/material/card';
 import { ListadoOfertasService } from '../../listado-ofertas.service';
 import { HttpClient } from '@angular/common/http';
 import { WebSocketService } from '../../admincontrol/modal-nueva-oferta/web-socket.service';
+import { User } from '../../loginuser/auth/user';
+import { environment } from '../../../environments/environment';
+
 @Component({
   selector: 'app-cuerpo',
   standalone: true,
@@ -12,6 +15,9 @@ import { WebSocketService } from '../../admincontrol/modal-nueva-oferta/web-sock
   styleUrl: './cuerpo.component.css',
 })
 export class CuerpoComponent implements OnInit {
+  errorMessage: string = '';
+  user?: User;
+
   [x: string]: any;
   ofertas: {
     idOferta: number;
@@ -29,16 +35,9 @@ export class CuerpoComponent implements OnInit {
 
   ngOnInit(): void {
     this.webSocketService.connect('ws://localhost:8080/ws'); // URL del servidor WebSocket
-    console.log('Nueva imagen recibida:1');
-
     if (this.webSocketService['socket']) {
-      console.log('Nueva imagen recibida:2');
-
       this.webSocketService['socket'].onmessage = (event) => {
-        console.log('Nueva imagen recibida:3');
-
         const newImageUrl = event.data; // Recibir URL de nueva imagen
-        console.log('Nueva imagen recibida:', newImageUrl);
         // Aquí puedes actualizar tu lista de imágenes o la lógica que necesites
       };
     }

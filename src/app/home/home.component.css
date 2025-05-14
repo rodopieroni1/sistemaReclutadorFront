@@ -9,7 +9,8 @@ app-cabecera {
 }
 
 app-cuerpo {
-  flex: 1 1 auto; /* Ocupa todo el espacio disponible */
+ min-height: calc(100vh - 100px); /* Ajusta según la altura de la cabecera y el pie de página */
+  display: block;
 }
 
 app-piedepagina {

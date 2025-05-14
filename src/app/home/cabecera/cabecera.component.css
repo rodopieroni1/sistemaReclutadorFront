@@ -33,6 +33,12 @@ header {
 .logo img {
   max-height: 90px; /* Ajusta el tamaño de la imagen del logo */
 }
+.perfil-img {
+  width: 50px; /* Ajusta el tamaño según lo necesites */
+  height: 50px;
+  object-fit: cover; /* Asegura que la imagen se recorte sin perder proporción */
+  border-radius: 50%; /* Opcional: para hacerla circular */
+}
 nav a {
   text-decoration: none;  /* Opional: Quita el subrayado */
   margin: 0 10px;  /* Espaciado entre los enlaces */

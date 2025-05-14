@@ -14,18 +14,18 @@
                     <div style="display: flex; flex-wrap: wrap; gap: 0px; border: 1px solid  rgb(163, 155, 155);">
                         <div>
                             <span><strong>Empresa:</strong>
-                                {{ aplicacion.oferta?.empresa?.nombre }} ;</span>
+                                {{ aplicacion.oferta.empresa.nombre }} ;</span>
                         </div>
                         <br />
                         <div>
-                            <span><strong>Postulante:</strong> {{ aplicacion.perfil?.nombre }}</span>
+                            <span><strong>Postulante:</strong> {{ aplicacion.perfil.nombre }}</span>
                         </div>
                         <div>
                             <span><strong>Fecha de aplicación:</strong> {{ aplicacion.fechaAplicacion }}</span>
                         </div>
                         <div>
                             <span><strong>Propuesta:</strong>
-                                {{ aplicacion.oferta?.descripcionOferta || 'No disponible' }}
+                                {{ aplicacion.oferta.descripcionOferta || 'No disponible' }}
                             </span>
                         </div>
                         <div>

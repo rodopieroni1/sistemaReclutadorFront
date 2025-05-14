@@ -1,17 +1,41 @@
-<form [formGroup]="loginForm">
-    <div class="mb-3">
-        <label for="exampleInputEmail1" class="form-label">Email address</label>
-        <input formControlName="email" type="email" class="form-control" id="exampleInputEmail1"
-            aria-describedby="emailHelp">
-        <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
-    </div>
-    <div class="mb-3">
-        <label for="exampleInputPassword1" class="form-label">Password</label>
-        <input formControlName="password" type="password" class="form-control" id="exampleInputPassword1">
-    </div>
-    <div class="mb-3 form-check">
-        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-        <label class="form-check-label" for="exampleCheck1">Check me out</label>
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+<div class="auth-container">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>Iniciar Sesión</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <form [formGroup]="loginForm">
+                <div class="mb-3">
+                    <label for="exampleInputEmail1" class="form-label">Email</label>
+                    <input formControlName="clave" type="email" class="form-control" id="exampleInputEmail1"
+                        aria-describedby="emailHelp">
+                    <div *ngIf="email.invalid && (email.dirty || email.touched)" class="text-danger">
+                        <div *ngIf="email.errors?.['required']">Email is required.</div>
+                        <div *ngIf="email.errors?.['minlength']">
+                            email debe tener al menos 4 caracteres.
+                        </div>
+                        <div *ngIf="email.errors?.['forbiddenName']">
+                            email no puede ser "test".
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleInputPassword1" class="form-label">Password</label>
+                    <input formControlName="password" type="password" class="form-control" id="exampleInputPassword1">
+                    <div *ngIf="password.invalid && (password.dirty || password.touched)" class="text-danger">
+                        <div *ngIf="password.errors?.['required']">Password is required.</div>
+                        <div *ngIf="password.errors?.['minlength']">
+                            Password debe tener al menos 4 caracteres.
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" (click)="login()">Ingresar</button>
+            </form>
+
+        </mat-card-content>
+        <mat-card-actions>
+            <p>¿No tienes cuenta? <a routerLink="/usuariocontrol">Regístrate aquí</a></p>
+            <p class="text-danger">{{ errorMessage }}</p>
+        </mat-card-actions>
+    </mat-card>
+</div>

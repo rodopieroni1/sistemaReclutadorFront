@@ -5,23 +5,30 @@
             <!-- Ajusta la altura según sea necesario -->
         </div>
         <div class="opciones" style="font-family: 'fuenteCabecera', sans-serif;">
-            <app-navegacion> </app-navegacion>
-        </div>
-        <div class="social-header">
-            <nav class="social-menu">
-                <a href="https://facebook.com" target="_blank" rel="noopener">
-                    <img src="../../../assets/facebook-icon.png" alt="Facebook">
-                </a>
-                <a href="https://instagram.com" target="_blank" rel="noopener">
-                    <img src="../../../assets/instagram-icon.png" alt="Instagram">
-                </a>
-                <a href="https://linkedin.com" target="_blank" rel="noopener">
-                    <img src="../../../assets/linkedin-icon.png" alt="LinkedIn">
-                </a>
-                <a href="https://linkedin.com" target="_blank" rel="noopener">
-                    <img src="../../../assets/watssap-icon.png" alt="LinkedIn">
-                </a>
-            </nav>
+
+            <div class="social-header">
+                <nav class="social-menu">
+
+                    <a href="https://www.facebook.com/carina.difonzo.3" target="_blank" rel="noopener">
+                        <img src="../../../assets/facebook-icon.png" alt="Facebook">
+                    </a>
+                    <a href="https://www.instagram.com/carina.difonzo/" target="_blank" rel="noopener">
+                        <img src="../../../assets/instagram-icon.png" alt="Instagram">
+                    </a>
+                    <a href="https://www.linkedin.com/company/carina-di-fonzo-organizaci-n-&-empleo/" target="_blank"
+                        rel="noopener">
+                        <img src="../../../assets/linkedin-icon.png" alt="LinkedIn">
+                    </a>
+                    <div *ngIf="!userLoginOn">
+                        <p>Usuario No autenticado</p>
+                    </div>
+                    <div *ngIf="userLoginOn" class="perfil">
+                        <img [src]="userProfileImage" alt="Foto de perfil" class="perfil-img" rel="noopener">
+                        <p>{{ userName }}</p>
+                    </div>
+                    <app-navegacion> </app-navegacion>
+                </nav>
+            </div>
         </div>
     </div>
 </header>
