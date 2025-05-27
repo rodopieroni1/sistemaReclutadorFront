@@ -61,18 +61,6 @@ mat-expansion-panel {
 	margin-bottom: 10px;
   }
   
-  .empresa-list,
-  .oferta-list {
-	list-style: none;
-	padding: 0;
-  }
-  
-  .empresa-list li,
-  .oferta-list li {
-	padding: 10px;
-	border-bottom: 1px solid #ccc;
-  }
-  
   /* Estilo para pantallas más pequeñas */
   @media (max-width: 768px) {
 	.container {

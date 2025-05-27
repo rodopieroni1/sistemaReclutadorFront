@@ -50,14 +50,13 @@ export class LoginuserComponent {
     if (this.loginForm.valid) {
       this.loginService.login(this.loginForm.value as LoginRequest).subscribe({
         next: (userData) => {
-          console.log(userData);
+          //console.log(userData);
         },
         error: (errorData) => {
           console.error(errorData);
           this.errorMessage = errorData;
         },
         complete: () => {
-          console.log('Login exitoso');
           this.router.navigate(['/home']);
           this.loginForm.reset();
         },

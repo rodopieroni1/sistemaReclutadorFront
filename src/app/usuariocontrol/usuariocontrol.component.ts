@@ -37,7 +37,6 @@ export class UsuarioControlComponent {
 
   crearUsuario(event: Event): void {
     event.preventDefault();
-
     // Validar que todos los campos están completos
     if (
       !this.nuevoUsuario.dni ||
@@ -64,7 +63,6 @@ export class UsuarioControlComponent {
       alert('El archivo del CV es demasiado grande. Máximo permitido: 5 MB');
       return;
     }
-
     // Crear un FormData para enviar los datos
     const formData = new FormData();
     formData.append('dni', this.nuevoUsuario.dni);
@@ -75,10 +73,6 @@ export class UsuarioControlComponent {
     formData.append('password', this.nuevoUsuario.password);
     formData.append('foto', this.fotoSeleccionada);
     formData.append('uploadcv', this.archivoSeleccionado);
-
-    console.log('Tamaño de la foto:', this.fotoSeleccionada.size);
-    console.log('Tamaño del CV:', this.archivoSeleccionado.size);
-
     // Mostrar todos los valores en la consola
     formData.forEach((value, key) => {
       if (!value) {

@@ -1,4 +1,4 @@
-<header>
+<header *ngIf="mostrarCabecera">
     <div class="filaItems">
         <div class="logo">
             <img src="../../../assets/logo.png">
@@ -20,7 +20,7 @@
                         <img src="../../../assets/linkedin-icon.png" alt="LinkedIn">
                     </a>
                     <div *ngIf="!userLoginOn">
-                        <p>Usuario No autenticado</p>
+                        <p><a routerLink="/loginuser">Iniciar Sesión </a></p>
                     </div>
                     <div *ngIf="userLoginOn" class="perfil">
                         <img [src]="userProfileImage" alt="Foto de perfil" class="perfil-img" rel="noopener">

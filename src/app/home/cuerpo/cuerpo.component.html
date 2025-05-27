@@ -3,27 +3,65 @@
         <h1>¡Bienvenido a nuestra plataforma de empleo!</h1>
         <p>Encuentra tus empleos de manera fácil y rápida.</p>
     </section>
-    <section class="buscador">
-        <form class="d-flex" role="search" onsubmit="searchJobs(event)">
-            <input class="form-control me-2" type="search" id="searchInput" placeholder="Buscar empleo"
-                aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Buscar</button>
-        </form>
-    </section>
+    <div *ngIf="userLoginOn">
+        <section class="buscador">
+            <form class="d-flex" role="search" (submit)="searchJobs($event)">
+                <mat-form-field class="formulario">
+                    <mat-label>Buscar por nombre de oferta</mat-label>
+                    <input matInput [formControl]="searchNombreOferta" placeholder="Ej: Desarrollador">
+                </mat-form-field>
+                <br />
+                <mat-form-field class="formulario">
+                    <mat-label>Buscar por empresa</mat-label>
+                    <input matInput [formControl]="searchDescripcionEmpresa" placeholder="Ej: Google">
+                </mat-form-field>
+                <button class="btn btn-outline-success" type="submit">Buscar</button>
+            </form>
+        </section>
+    </div>
     <section class="propuestas">
         <h2>Propuestas</h2>
-        <div class="card-list">
-            <mat-card *ngFor="let oferta of getPaginatedDataOfertas()" class="card">
+        <div *ngIf="busquedaRealizada; else mostrarTodo" class="card-list">
+            <mat-card *ngFor="let oferta of resultados" class="card">
                 <mat-card-header>
-                    <mat-card-title>Nº de Oferta: {{ oferta.idOferta }}</mat-card-title>
-                    <mat-card-subtitle>Empresa: {{ oferta.id_empresa}}</mat-card-subtitle>
+                    <mat-card-title>{{ oferta.empresa.nombre}}</mat-card-title>
+                    <mat-card-subtitle>
+                        <p>{{ oferta.nombreOferta }}</p>
+                    </mat-card-subtitle>
                 </mat-card-header>
-                <img mat-card-image [src]="'assets/uploads/' + oferta.fotoOferta" alt="Imagen de la oferta">
                 <mat-card-content>
-                    <p>{{ oferta.descripcionOferta }}</p>
+                    <img mat-card img [src]="'assets/uploads/' + oferta.fotoOferta" alt="Imagen de la oferta">
                 </mat-card-content>
+                <mat-card-footer>
+                    <div *ngIf="userLoginOn" class="btnAplicar">
+                        <button class="btn btn-primary" (click)="aplicar(oferta.idOferta)">Aplicar</button>
+                    </div>
+                </mat-card-footer>
             </mat-card>
         </div>
+
+        <!-- Si no hay búsqueda, se muestra todo -->
+        <ng-template #mostrarTodo>
+            <div class="card-list">
+                <mat-card *ngFor="let oferta of ofertas" class="card">
+                    <mat-card-header>
+                        <mat-card-title>{{ oferta.empresa.nombre }}</mat-card-title>
+                        <mat-card-subtitle>
+                            <p>{{ oferta.nombreOferta }}</p>
+                        </mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <img mat-card img [src]="'assets/uploads/' + oferta.fotoOferta" alt="Imagen de la oferta">
+                    </mat-card-content>
+                    <mat-card-footer>
+                        <div *ngIf="userLoginOn" class="btnAplicar">
+                            <button class="btn btn-primary" (click)="aplicar(oferta.idOferta)">Aplicar</button>
+                        </div>
+                    </mat-card-footer>
+                </mat-card>
+            </div>
+        </ng-template>
+
     </section>
     <div class="pagination">
         <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>

@@ -43,11 +43,9 @@ export class RegisterComponent {
     this.authService
       .register(this.email, this.password)
       .then(() => {
-        console.log('Registro en Firebase exitoso');
         return this.authService.registerBackend(this.email, this.password);
       })
       .then(() => {
-        console.log('Registro en el backend exitoso');
         alert('Usuario registrado exitosamente');
       })
       .catch((error) => {

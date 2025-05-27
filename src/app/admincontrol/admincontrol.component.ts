@@ -46,7 +46,6 @@ export class AdminControlComponent {
     estadoAplicaciones: boolean;
     documentoUrl: string | null;
   }[] = [];
-
   empresas: {
     nombre: string;
     direccion: string;
@@ -57,10 +56,12 @@ export class AdminControlComponent {
     id_empresa: number;
   }[] = [];
   ofertas: {
+    empresa: any;
     idOferta: number;
+    nombreOferta: string;
     descripcionOferta: string;
     fotoOferta: string;
-    id_empresa: number;
+    estadoOferta: boolean;
   }[] = [];
 
   currentPage: number = 1; // Página actual
@@ -80,6 +81,7 @@ export class AdminControlComponent {
   id_empresa: number = 1;
   //Oferta
   idOferta: number = 1;
+  nombreOferta: string = '';
   descripcion: string = '';
   fotoOferta: string = '';
 
@@ -96,6 +98,7 @@ export class AdminControlComponent {
           fecha: Date;
           oferta: {
             id: number;
+            nombreOferta: string;
             descripcionOferta: string;
             empresa: { nombre: string };
           };
@@ -122,7 +125,6 @@ export class AdminControlComponent {
             : null,
           estadoAplicaciones: aplicacion.estadoAplicaciones,
         }));
-        console.log('Aplicaciones: ', this.aplicaciones); // Verifica aquí
       });
     this.http
       .get<
@@ -139,19 +141,19 @@ export class AdminControlComponent {
       .subscribe((data) => {
         this.empresas = data;
       });
-
     this.http
       .get<
         {
           idOferta: number;
+          nombreOferta: string;
           descripcionOferta: string;
           fotoOferta: string;
-          id_empresa: number;
+          empresa: { nombre: string };
+          estadoOferta: boolean;
         }[]
       >('http://localhost:8080/ofertas/todas')
       .subscribe((data) => {
         this.ofertas = data;
-        console.log('Ofertas cargadas:', this.ofertas); // Verifica aquí
       });
   }
 
@@ -170,18 +172,22 @@ export class AdminControlComponent {
       .get<
         {
           idOferta: number;
+          nombreOferta: string;
           descripcion: string;
           fotoOferta: string;
-          id_empresa: number;
+          empresa: { nombre: string };
+          estadoOferta: boolean;
         }[]
       >('http://localhost:8080/ofertas/todas')
       .subscribe({
         next: (data) => {
           this.ofertas = data.map((oferta) => ({
             idOferta: oferta.idOferta,
+            nombreOferta: oferta.nombreOferta,
             descripcionOferta: oferta.descripcion,
             fotoOferta: oferta.fotoOferta,
-            id_empresa: oferta.id_empresa,
+            empresa: oferta.empresa,
+            estadoOferta: oferta.estadoOferta,
           }));
         },
         error: (error) => {
@@ -271,9 +277,11 @@ export class AdminControlComponent {
 
   updateOferta(oferta: {
     idOferta: number;
+    nombreOferta: string;
     descripcionOferta: string;
     fotoOferta: string;
-    id_empresa: number;
+    estadoOferta: boolean;
+    empresa: { nombre: string };
   }) {
     const dialogRef = this.dialog.open(ModalNuevaOfertaComponent, {
       width: '700px',

@@ -1,36 +1,54 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf, NgFor } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { ListadoOfertasService } from '../../listado-ofertas.service';
 import { HttpClient } from '@angular/common/http';
 import { WebSocketService } from '../../admincontrol/modal-nueva-oferta/web-socket.service';
-import { User } from '../../loginuser/auth/user';
-import { environment } from '../../../environments/environment';
+import { AplicacionServiceService } from './aplicacion-service.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-cuerpo',
   standalone: true,
-  imports: [CommonModule, MatCardModule], // Importa Material Card y módulos necesarios
+  imports: [
+    CommonModule,
+    MatCardModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatCardModule,
+    NgIf,
+    NgFor,
+  ], // Importa Material Card y módulos necesarios
   templateUrl: './cuerpo.component.html',
   styleUrl: './cuerpo.component.css',
 })
 export class CuerpoComponent implements OnInit {
   errorMessage: string = '';
-  user?: User;
-
+  userLoginOn: boolean = false;
+  token: string = '';
   [x: string]: any;
   ofertas: {
     idOferta: number;
+    nombreOferta: string;
     descripcionOferta: string;
     fotoOferta: string;
-    id_empresa: number;
+    empresa: { nombre: string };
   }[] = [];
   currentPage: number = 1; // Página actual
   itemsPerPage: number = 10; // Número de elementos por página
-
+  searchNombreOferta = new FormControl('');
+  searchDescripcionEmpresa = new FormControl('');
+  apiUrl = 'http://localhost:8080/ofertas/buscar';
+  busquedaRealizada: boolean = false;
+  resultados: any[] = [];
   constructor(
     private http: HttpClient, // public dialogRef: MatDialogRef<ModalNuevaEmpresaComponent>
-    private webSocketService: WebSocketService
+    private webSocketService: WebSocketService,
+    private aplicacionService: AplicacionServiceService // Inyecta el servicio aquí
   ) {}
 
   ngOnInit(): void {
@@ -38,26 +56,27 @@ export class CuerpoComponent implements OnInit {
     if (this.webSocketService['socket']) {
       this.webSocketService['socket'].onmessage = (event) => {
         const newImageUrl = event.data; // Recibir URL de nueva imagen
-        // Aquí puedes actualizar tu lista de imágenes o la lógica que necesites
       };
     }
-
+    this.userLoginOn = !!sessionStorage.getItem('token'); // Verifica si hay token
     this.http
       .get<
         {
           idOferta: number;
+          nombreOferta: string;
           descripcionOferta: string;
           fotoOferta: string;
-          id_empresa: number;
+          empresa: { nombre: string };
         }[]
       >('http://localhost:8080/ofertas/todas')
       .subscribe({
         next: (data) => {
           this.ofertas = data.map((oferta) => ({
             idOferta: oferta.idOferta,
+            nombreOferta: oferta.nombreOferta,
             descripcionOferta: oferta.descripcionOferta,
             fotoOferta: oferta.fotoOferta,
-            id_empresa: oferta.id_empresa,
+            empresa: oferta.empresa,
           }));
         },
         error: (error) => {
@@ -66,8 +85,50 @@ export class CuerpoComponent implements OnInit {
       });
   }
 
+  searchJobs(event: Event) {
+    event.preventDefault(); // Evita el comportamiento por defecto del formulario
+    const nombreOferta = this.searchNombreOferta.value?.trim() || '';
+    const descripcionEmpresa =
+      this.searchDescripcionEmpresa.value?.trim() || '';
+
+    if (!nombreOferta && !descripcionEmpresa) {
+      this.resultados = []; // Limpia los resultados si la búsqueda está vacía
+      this.busquedaRealizada = false; // Si no hay búsqueda, mantenemos falso
+      return;
+    }
+
+    const queryParams = `?nombreOferta=${nombreOferta}&descripcionEmpresa=${descripcionEmpresa}`;
+    this.http.get(`${this.apiUrl}${queryParams}`).subscribe(
+      (data: any) => {
+        this.resultados = data;
+        this.busquedaRealizada = true; // Activamos la bandera cuando hay resultados
+        console.log('Resultados:', this.resultados);
+      },
+      (error) => console.error('Error al buscar empleos:', error)
+    );
+  }
+
   ngOnDestroy(): void {
     this.webSocketService.disconnect(); // Desconectar al destruir el componente
+  }
+
+  aplicar(idOferta: number): void {
+    const idPerfil = sessionStorage.getItem('id_perfil'); // Recupera el ID del usuario logueado
+    const token = sessionStorage.getItem('token'); // Suponiendo que tienes el idPerfil en la sesión
+    if (token) {
+      this.aplicacionService
+        .aplicar(Number(idOferta), Number(idPerfil))
+        .subscribe({
+          next: (response) => {
+            console.log('Aplicación enviada con éxito', response);
+          },
+          error: (error) => {
+            console.error('Error al aplicar a la oferta:', error);
+          },
+        });
+    } else {
+      console.error('No se encontró perfil de usuario en la sesión.');
+    }
   }
 
   /////////////////////////Paginacion///////////////////////////////////////

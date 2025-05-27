@@ -23,7 +23,7 @@ export class UserServiceService {
       console.error(
         'Backend Retorno codigo de Error',
         error.status,
-        error.error
+        error.message
       );
     }
     return throwError(

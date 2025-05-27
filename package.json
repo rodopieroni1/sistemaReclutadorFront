@@ -10,6 +10,7 @@
     "serve:ssr:proyectoReclutador": "node dist/proyecto-reclutador/server/server.mjs"
   },
   "private": true,
+  "type": "commonjs",
   "dependencies": {
     "@angular/cdk": "^19.2.3",
     "@angular/common": "^19.2.3",
@@ -52,4 +53,5 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "typescript": "~5.7.2"
   }
+  
 }

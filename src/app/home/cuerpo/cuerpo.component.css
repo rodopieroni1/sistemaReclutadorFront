@@ -28,14 +28,24 @@ header .logo {
   font-weight: bold;
 }
 
+.buscador{
+  padding: 15px 10px;
+  border: 1px solid #2b2a2a;
+  border-radius: 5px;
+  font-size: 16px;
+
+}
+
 nav a {
   color: white;
   text-decoration: none;
   margin-right: 15px;
 }
 
+
+
 .cta-button {
-  background-color: #ff6600;
+  background-color: #eea06b;
   color: white;
   padding: 10px 15px;
   border: none;
@@ -114,6 +124,25 @@ nav a {
   justify-content: center;
 }
 
+.btnAplicar{
+  color: white;
+  padding-top: 20px;
+  padding-bottom: 1px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 .card {
   width: 300px;
+  color: #050000;
+  background-color: #ebb490;
+  padding-bottom: 15px;
+}
+
+mat-card-content {
+  flex-grow: 1; /* Hace que el contenido ocupe el espacio disponible */
+}
+
+mat-card-footer {
+  margin-top: auto; /* Empuja el footer al fondo */
 }

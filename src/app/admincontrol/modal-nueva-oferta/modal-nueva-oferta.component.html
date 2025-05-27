@@ -6,9 +6,16 @@
     <h2 *ngIf="accion === 'actualizar'">Modificar Oferta</h2>
 </div>
 
-
 <form [formGroup]="miFormulario">
     <h3>Oferta</h3>
+    <mat-form-field appearance="fill" class="inputModal">
+        <mat-label>Titulo</mat-label>
+        <input matInput class="inputModal" placeholder="Ingrese un titulo a la oferta" formControlName="nombreOferta"
+            name="nombreOferta" required />
+        <mat-error *ngIf="miFormulario.get('nombreOferta')?.invalid && miFormulario.get('nombreOferta')?.touched">
+            el titulo es obligatoria.
+        </mat-error>
+    </mat-form-field>
     <!-- Campo: Descripción Oferta -->
     <mat-form-field appearance="fill" class="inputModal">
         <mat-label>Descripción de la Oferta</mat-label>
@@ -19,7 +26,22 @@
             La descripción es obligatoria.
         </mat-error>
     </mat-form-field>
-
+    <!-- Campo: Estado de la Oferta -->
+    <mat-form-field>
+        <mat-label>Estado de la Oferta</mat-label>
+        <mat-select formControlName="estadoOferta">
+            <!-- Si la oferta está activa, mostrar 'Activa' primero -->
+            <ng-container *ngIf="miFormulario.value.estadoOferta; else inactivaPrimero">
+                <mat-option [value]="true">❌ Inactiva</mat-option>
+                <mat-option [value]="false">✅ Activa</mat-option>
+            </ng-container>
+            <!-- Si la oferta está inactiva, mostrar 'Inactiva' primero -->
+            <ng-template #inactivaPrimero>
+                <mat-option [value]="false">✅ Activa</mat-option>
+                <mat-option [value]="true">❌ Inactiva</mat-option>
+            </ng-template>
+        </mat-select>
+    </mat-form-field>
     <!-- Campo: Empresa -->
     <mat-form-field>
         <mat-label>Seleccione Empresa</mat-label>

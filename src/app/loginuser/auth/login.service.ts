@@ -25,6 +25,8 @@ export class LoginService {
   currentUserNombre: BehaviorSubject<string> = new BehaviorSubject<string>('');
   currentUserProfileImage: BehaviorSubject<string> =
     new BehaviorSubject<string>('');
+  userProfileImage: string | undefined;
+  currentPerfilId!: number | 0;
 
   constructor(private http: HttpClient) {
     this.currentUserLoginOn = new BehaviorSubject<boolean>(
@@ -49,10 +51,6 @@ export class LoginService {
           sessionStorage.setItem('token', userData.token); // Guarda el token en sessionStorage
           sessionStorage.setItem('userName', credential.clave); // Guarda el nombre en sessionStorage
 
-          this.currentUserData.next(userData.token);
-          this.currentUserLoginOn.next(true);
-          this.currentUserNombre.next(userData.nombre); // Actualiza el nombre del usuario
-          // this.currentUserProfileImage.next(userData.imagen);
           let nombreRec = sessionStorage.getItem('userName');
           this.http
             .get(`http://localhost:8080/perfiles/name/${nombreRec}`, {
@@ -60,16 +58,58 @@ export class LoginService {
             })
             .subscribe({
               next: (urlData) => {
-                console.log('Respuesta del servidor:', urlData);
-                sessionStorage.setItem('userProfileImage', urlData);
+                this.currentUserLoginOn.next(true);
+                this.currentUserProfileImage.next(urlData); // Fuerza la actualización del estado
+                this.currentUserData.next(userData.token);
+                this.currentUserNombre.next(userData.nombre); // Actualiza el nombre del usuario
+
+                sessionStorage.setItem(
+                  'userProfileImage',
+                  this.currentUserProfileImage.value
+                );
               },
               error: (err) => console.error('Error en la petición:', err),
+            });
+
+          this.http
+            .get(`http://localhost:8080/perfiles/id/${nombreRec}`)
+            .subscribe({
+              next: (userData: any) => {
+                const idPerfil = userData.id_perfil; // Asegúrate de que la estructura es correcta
+
+                console.log('userData:', userData);
+
+                console.log('IDPERFIL almacenado:', idPerfil);
+
+                if (idPerfil) {
+                  sessionStorage.setItem('id_perfil', idPerfil.toString());
+                  console.log('IDPERFIL almacenado:', idPerfil);
+                } else {
+                  console.error('IDPERFIL no encontrado en la respuesta.');
+                }
+              },
+              error: (err) => console.error('Error en la peticiónID:', err),
             });
         }),
         map((userData) => userData.token),
         catchError(this.handleError)
       );
   }
+
+  refreshComponent() {
+    this.userProfileImage = ''; // Borrar la imagen temporalmente
+    setTimeout(() => {
+      this.userProfileImage =
+        sessionStorage.getItem('userProfileImage') + '?' + new Date().getTime();
+      console.log('FotoImprecionLog2', this.userProfileImage);
+
+      this.userProfileImage =
+        sessionStorage.getItem(this.userProfileImage) +
+        '?' +
+        new Date().getTime();
+    }, 50);
+  }
+
   getUserName(): Observable<string> {
     console.log('Login activado:', true);
     this.currentUserLoginOn.next(true);
@@ -105,9 +145,3 @@ export class LoginService {
     return this.currentUserLoginOn.asObservable();
   }
 }
-
-/*function tap(
-  arg0: (userData: User) => void
-): import('rxjs').OperatorFunction<User, User> {
-  throw new Error('Function not implemented.');
-}*/
