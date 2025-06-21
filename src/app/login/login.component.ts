@@ -35,7 +35,11 @@ export class LoginComponent {
     this.authService
       .login(this.email, this.password)
       .then(() => {
-        this.router.navigate(['/admincontrol']);
+        if (!sessionStorage.getItem('alreadyLogged')) {
+          sessionStorage.setItem('token', 'admin');
+          sessionStorage.setItem('alreadyLogged', 'true');
+          this.router.navigate(['/admincontrol']);
+        }
       })
       .catch(() => alert('Usuario o contraseña incorrectas'));
   }

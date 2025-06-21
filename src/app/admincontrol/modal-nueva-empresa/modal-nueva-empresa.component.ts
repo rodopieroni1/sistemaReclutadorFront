@@ -98,10 +98,7 @@ export class ModalNuevaEmpresaComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Mostrar u ocultar el campo ID según la acción (crear o actualizar)
-    this.mostrarIdHidden = this.empresa?.id_empresa ? false : true;
     if (this.empresa && Object.keys(this.empresa).length > 0) {
-      // Asignar los valores de la empresa al formulario
       this.miFormulario.patchValue({
         nombreEmpresa: this.data.empresa?.nombre || '',
         cuitEmpresa: this.data.empresa?.cuit || 0,
@@ -115,26 +112,20 @@ export class ModalNuevaEmpresaComponent implements OnInit {
   }
 
   guardar() {
-    // Validar que el formulario sea válido
-    if (this.miFormulario.value.invalid) {
-      this.snackBar.open(
-        'Por favor, completa todos los campos antes de guardar.',
-        'Cerrar',
-        { duration: 3000 }
-      );
-      return;
-    }
-
-    // Si el formulario es válido, continuar con la lógica de guardar
     if (this.accion === 'crear') {
-      if (this.miFormulario.value.cuitEmpresa === 1) {
-        this.snackBar.open('El CUIT debe ser distinto a 1.', 'Cerrar', {
+      if (
+        this.miFormulario.value.nombreEmpresa === '' ||
+        this.miFormulario.value.historiaEmpresa === '' ||
+        this.miFormulario.value.direccionEmpresa === '' ||
+        this.miFormulario.value.emailEmpresa === '' ||
+        this.miFormulario.value.cuitEmpresa === ''
+      ) {
+        this.snackBar.open('Debe completar cada uno de los campos', 'Cerrar', {
           duration: 3000,
         });
         return;
       }
 
-      // Validar que el CUIT no exista en la base de datos
       this.http
         .get<boolean>(
           `http://localhost:8080/empresas/existe/${this.miFormulario.value.cuitEmpresa}`
@@ -149,8 +140,6 @@ export class ModalNuevaEmpresaComponent implements OnInit {
               );
               return;
             }
-
-            // Si el CUIT no existe, crea la empresa
             const empresa = this.miFormulario.value;
             this.http
               .post('http://localhost:8080/empresas/crear', empresa, {
@@ -187,12 +176,12 @@ export class ModalNuevaEmpresaComponent implements OnInit {
           },
         });
     } else {
-      // Actualizar la empresa
       console.log('this.miFormulario.value', this.miFormulario.value);
       this.cargarUpdate(this.miFormulario.value);
-      this.dialogRef.close(); // Cierra el modal sin acción
+      this.dialogRef.close();
     }
   }
+
   cerrar() {
     this.dialogRef.close(); // Cierra el modal sin acción
   }

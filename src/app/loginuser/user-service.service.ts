@@ -12,7 +12,7 @@ export class UserServiceService {
 
   getUsers(id: number): Observable<User> {
     return this.http
-      .get<User>(environment.local.urlApi + '/perfiles/' + id)
+      .get<User>(environment.local.urlApi + 'perfiles/' + id)
       .pipe(catchError(this.handleError));
   }
 

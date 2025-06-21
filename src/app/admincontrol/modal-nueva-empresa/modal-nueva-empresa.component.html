@@ -37,10 +37,10 @@
 
     <mat-form-field appearance="fill" class="inputModal">
         <mat-label>CUIT: </mat-label>
-        <input matInput class="inputModal" placeholder="CUIT" formControlName="cuitEmpresa" name="cuitEmpresa"
+        <input matInput class="inputModal" placeholder="Solo Nùmeros" formControlName="cuitEmpresa" name="cuitEmpresa"
             required />
         <mat-error *ngIf="miFormulario.get('cuitEmpresa')?.invalid && miFormulario.get('cuitEmpresa')?.touched">
-            El Cuit es obligatorio.
+            Erroer al ingresar Cuit.
         </mat-error>
     </mat-form-field>
 
@@ -49,7 +49,7 @@
         <input matInput class="inputModal" placeholder="email" formControlName="emailEmpresa" name="emailEmpresa"
             required />
         <mat-error *ngIf="miFormulario.get('emailEmpresa')?.invalid && miFormulario.get('emailEmpresa')?.touched">
-            El Email es obligatorio.
+            Error al ingresar el mail.
         </mat-error>
     </mat-form-field>
 
@@ -61,6 +61,6 @@
 
     <div class="modal-buttons">
         <button mat-button (click)="cerrar()">Cancelar</button>
-        <button mat-raised-button color="primary" (click)="guardar()">Guardar</button>
+        <button mat-raised-button color="primary" id="guardar" (click)="guardar()">Guardar</button>
     </div>
 </form>

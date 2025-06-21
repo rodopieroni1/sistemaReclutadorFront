@@ -6,6 +6,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from '@angular/fire/auth';
+import { browserSessionPersistence, setPersistence } from 'firebase/auth';
 import { lastValueFrom } from 'rxjs';
 @Injectable({
   providedIn: 'root',
@@ -35,7 +36,9 @@ export class AuthServiceService {
   }
 
   login(email: string, password: string) {
-    return signInWithEmailAndPassword(this.auth, email, password);
+    return setPersistence(this.auth, browserSessionPersistence).then(() => {
+      return signInWithEmailAndPassword(this.auth, email, password);
+    });
   }
 
   logout() {

@@ -6,10 +6,11 @@ import { CabeceraComponent } from '../home/cabecera/cabecera.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { ModalNuevaOfertaComponent } from './modal-nueva-oferta/modal-nueva-oferta.component';
 import { ModalNuevaEmpresaComponent } from './modal-nueva-empresa/modal-nueva-empresa.component';
-
+import { Router } from '@angular/router';
 @Component({
   standalone: true,
   selector: 'app-admincontrol',
@@ -19,8 +20,8 @@ import { ModalNuevaEmpresaComponent } from './modal-nueva-empresa/modal-nueva-em
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    CabeceraComponent,
     MatDialogModule,
+    MatIconModule,
   ],
   templateUrl: './admincontrol.component.html',
   styleUrls: ['./admincontrol.component.css'],
@@ -87,7 +88,8 @@ export class AdminControlComponent {
 
   constructor(
     private http: HttpClient, // public dialogRef: MatDialogRef<ModalNuevaEmpresaComponent>
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -287,8 +289,10 @@ export class AdminControlComponent {
       width: '700px',
       data: { accion: 'actualizar', oferta: oferta }, // Pasando la acción y datos de la empresa
     });
+    console.log('Ejecutando cargarOfertas');
+
     dialogRef.componentInstance.datosActualizadosOferta.subscribe(() => {
-      this.cargarOfertas(); // Recargar las empresas
+      this.cargarOfertas(); // Recargar las Ofertas
     });
   }
 

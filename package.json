@@ -28,7 +28,6 @@
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.3",
     "circular-json": "^0.5.9",
-    "express": "^4.18.2",
     "firebase": "^11.4.0",
     "jquery": "^3.7.1",
     "popper.js": "^1.16.1",
@@ -53,5 +52,4 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "typescript": "~5.7.2"
   }
-  
 }

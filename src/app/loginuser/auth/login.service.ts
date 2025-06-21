@@ -29,12 +29,15 @@ export class LoginService {
   currentPerfilId!: number | 0;
 
   constructor(private http: HttpClient) {
-    this.currentUserLoginOn = new BehaviorSubject<boolean>(
-      sessionStorage.getItem('token') != null
-    );
-    this.currentUserData = new BehaviorSubject<string>(
-      sessionStorage.getItem('token') || ''
-    );
+    let token: string | null = null;
+    try {
+      token = sessionStorage.getItem('token');
+    } catch (e) {
+      console.warn('sessionStorage no está disponible en este entorno:', e);
+    }
+
+    this.currentUserLoginOn = new BehaviorSubject<boolean>(!!token);
+    this.currentUserData = new BehaviorSubject<string>(token || '');
   }
 
   login(credential: LoginRequest): Observable<any> {

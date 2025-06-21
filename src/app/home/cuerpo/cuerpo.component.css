@@ -1,4 +1,33 @@
-/* General Styles */
+@media screen and (max-width: 600px) {
+  .titulo {
+    display: none;
+  }
+
+  .contenido-hero {
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; /* centrado horizontal */
+    padding: 2rem 1rem; /* respiración interna */
+    box-sizing: border-box;
+    margin-top: 65%;
+  }
+
+  .form-busqueda {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.8rem;
+  }
+
+  .selector,
+  .input-expandido,
+  button[mat-raised-button] {
+    width: 100%;
+  }
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -14,77 +43,11 @@ html, body {
   src: url('/assets/fonts/CreatoDisplay-RegularItalic.otf') format('truetype'); /* Cambia el nombre y formato del archivo si es necesario */
 }
 
-header {
-  background-color: #333;
-  color: white;
-  padding: 15px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
 
-header .logo {
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.buscador{
-  padding: 15px 10px;
-  border: 1px solid #2b2a2a;
-  border-radius: 5px;
-  font-size: 16px;
-
-}
-
-nav a {
-  color: white;
-  text-decoration: none;
-  margin-right: 15px;
-}
-
-
-
-.cta-button {
-  background-color: #eea06b;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.cta-button:hover {
-  background-color: #e65c00;
-}
-
-/* Banner Section */
 .banner {
-  text-align: center;
-  background: url('trabajadorPortada.avif') no-repeat center center/cover;
   color: white;
-  padding: 200px 0px;
-}
-
-.banner p {
-  font-size: 2em; /* Tamaño grande como un encabezado */
-  font-weight: bold; /* Negrita similar al h1 */
-  text-align: center; /* Alinear el texto al centro (opcional) */
-  color: #ffffff; /* Cambia el color según sea necesario */
-  margin: 20px 0; /* Espaciado alrededor del párrafo */
-}
-
-
-.banner .learn-more {
-  background-color: #ff6600;
-  color: white;
-  padding: 10px 20px;
+  padding: 50px 20px;
   border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.banner .learn-more:hover {
-  background-color: #e65c00;
 }
 
 /* propuestas Section */
@@ -139,10 +102,68 @@ nav a {
   padding-bottom: 15px;
 }
 
+.form-busqueda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin: 2rem auto;
+  max-width: 1000px;
+}
+
+.hero {
+  background: linear-gradient(rgba(110, 11, 11, 0), rgba(0, 0, 0, 0.5)),
+              url('trabajadorPortada.avif') center/cover no-repeat;
+  height: 380px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  color: rgb(255, 255, 255);
+  text-align: center;
+}
+
+.contenido-hero {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 1.2rem;
+  border-radius: 0px;
+  width: 100%;
+  max-width: 800px;
+}
+
+.titulo {
+  font-size: 2.2rem;
+  margin-bottom: 1.5rem;
+  font-family: 'Shippori Mincho', serif;
+  word-wrap: break-word;
+  word-break: break-word;
+  text-align: center;
+}
+
+.selector {
+  min-width: 45px;
+}
+
+
+.input-expandido input {
+  color: #b8b1b1;
+}
+
+.input-expandido input::placeholder {
+  color:#b8b1b1;
+  opacity: 1; /* importante para que se vea en algunos navegadores */
+}
+
 mat-card-content {
   flex-grow: 1; /* Hace que el contenido ocupe el espacio disponible */
 }
 
 mat-card-footer {
   margin-top: auto; /* Empuja el footer al fondo */
+}
+mat-label{
+  color: aliceblue;
+}
+mat-select{
+    color:#b8b1b1;
 }

@@ -1,13 +1,16 @@
 import { CommonModule, NgIf, NgFor } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { WebSocketService } from '../../admincontrol/modal-nueva-oferta/web-socket.service';
 import { AplicacionServiceService } from './aplicacion-service.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-cuerpo',
@@ -20,6 +23,8 @@ import { MatButtonModule } from '@angular/material/button';
     MatInputModule,
     MatButtonModule,
     MatCardModule,
+    MatSelectModule,
+    MatIconModule,
     NgIf,
     NgFor,
   ], // Importa Material Card y módulos necesarios
@@ -30,6 +35,7 @@ export class CuerpoComponent implements OnInit {
   errorMessage: string = '';
   userLoginOn: boolean = false;
   token: string = '';
+  isBtnAplicar: boolean = false;
   [x: string]: any;
   ofertas: {
     idOferta: number;
@@ -45,10 +51,13 @@ export class CuerpoComponent implements OnInit {
   apiUrl = 'http://localhost:8080/ofertas/buscar';
   busquedaRealizada: boolean = false;
   resultados: any[] = [];
+  ofertaEmpresa = new FormControl('');
+  criterio = 'oferta';
   constructor(
     private http: HttpClient, // public dialogRef: MatDialogRef<ModalNuevaEmpresaComponent>
     private webSocketService: WebSocketService,
-    private aplicacionService: AplicacionServiceService // Inyecta el servicio aquí
+    private aplicacionService: AplicacionServiceService, // Inyecta el servicio aquí
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -86,14 +95,40 @@ export class CuerpoComponent implements OnInit {
   }
 
   searchJobs(event: Event) {
-    event.preventDefault(); // Evita el comportamiento por defecto del formulario
+    event.preventDefault();
+    const termino = this.ofertaEmpresa.value?.trim();
+    if (!termino) {
+      this.resultados = [];
+      this.busquedaRealizada = false;
+      return;
+    }
+
+    let params = new HttpParams();
+    if (this.criterio === 'oferta') {
+      params = params.set('nombreOferta', termino);
+    } else if (this.criterio === 'empresa') {
+      params = params.set('descripcionEmpresa', termino);
+    }
+
+    this.http.get(`${this.apiUrl}`, { params }).subscribe(
+      (data: any) => {
+        this.resultados = data;
+        this.busquedaRealizada = true;
+        console.log('Resultados:', this.resultados);
+      },
+      (error) => console.error('Error al buscar empleos:', error)
+    );
+  }
+
+  /*searchJobs(event: Event) {
+    event.preventDefault();
     const nombreOferta = this.searchNombreOferta.value?.trim() || '';
     const descripcionEmpresa =
       this.searchDescripcionEmpresa.value?.trim() || '';
 
     if (!nombreOferta && !descripcionEmpresa) {
-      this.resultados = []; // Limpia los resultados si la búsqueda está vacía
-      this.busquedaRealizada = false; // Si no hay búsqueda, mantenemos falso
+      this.resultados = [];
+      this.busquedaRealizada = false;
       return;
     }
 
@@ -106,13 +141,13 @@ export class CuerpoComponent implements OnInit {
       },
       (error) => console.error('Error al buscar empleos:', error)
     );
-  }
+  }*/
 
   ngOnDestroy(): void {
     this.webSocketService.disconnect(); // Desconectar al destruir el componente
   }
 
-  aplicar(idOferta: number): void {
+  aplicar(idOferta: number, nombreOferta: string): void {
     const idPerfil = sessionStorage.getItem('id_perfil'); // Recupera el ID del usuario logueado
     const token = sessionStorage.getItem('token'); // Suponiendo que tienes el idPerfil en la sesión
     if (token) {
@@ -120,7 +155,24 @@ export class CuerpoComponent implements OnInit {
         .aplicar(Number(idOferta), Number(idPerfil))
         .subscribe({
           next: (response) => {
-            console.log('Aplicación enviada con éxito', response);
+            const data = response as { perfil?: any; oferta?: any };
+            // Verificar si perfil y oferta son nulos o indefinidos en la respuesta
+            if (data.perfil || data.oferta) {
+              this.snackBar.open(
+                `Acabas de aplicar para la oferta: ${nombreOferta}`,
+                'Cerrar',
+                { duration: 6000 }
+              );
+            } else {
+              this.snackBar.open(
+                `Ya aplicaste para Oferta: ${nombreOferta}`,
+                'Cerrar',
+                {
+                  duration: 4000,
+                }
+              );
+            }
+            this.isBtnAplicar = true;
           },
           error: (error) => {
             console.error('Error al aplicar a la oferta:', error);
@@ -137,7 +189,6 @@ export class CuerpoComponent implements OnInit {
     const endIndex = startIndex + this.itemsPerPage;
     return this.ofertas.slice(startIndex, endIndex);
   }
-
   getPaginatedDataEmpresas() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;

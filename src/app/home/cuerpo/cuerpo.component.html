@@ -1,24 +1,32 @@
 <body>
-    <section class="banner" style="font-family: 'Shippori Mincho', sans-serif;">
-        <h1>¡Bienvenido a nuestra plataforma de empleo!</h1>
-        <p>Encuentra tus empleos de manera fácil y rápida.</p>
-    </section>
     <div *ngIf="userLoginOn">
-        <section class="buscador">
-            <form class="d-flex" role="search" (submit)="searchJobs($event)">
-                <mat-form-field class="formulario">
-                    <mat-label>Buscar por nombre de oferta</mat-label>
-                    <input matInput [formControl]="searchNombreOferta" placeholder="Ej: Desarrollador">
-                </mat-form-field>
-                <br />
-                <mat-form-field class="formulario">
-                    <mat-label>Buscar por empresa</mat-label>
-                    <input matInput [formControl]="searchDescripcionEmpresa" placeholder="Ej: Google">
-                </mat-form-field>
-                <button class="btn btn-outline-success" type="submit">Buscar</button>
-            </form>
+        <section class="banner">
+            <header class="hero">
+                <div class="contenido-hero">
+                    <h1 class="titulo">Explorá oportunidades de forma rápida y segura</h1>
+                    <form class="form-busqueda" (submit)="searchJobs($event)">
+                        <mat-form-field appearance="outline" class="selector">
+                            <mat-label>Buscar por</mat-label>
+                            <mat-select [(value)]="criterio">
+                                <mat-option value="oferta">Oferta</mat-option>
+                                <mat-option value="empresa">Empresa</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="input-expandido">
+                            <input matInput [formControl]="ofertaEmpresa" placeholder="Oferta o Empresa">
+                        </mat-form-field>
+
+                        <button mat-raised-button color="primary" type="submit">
+                            <mat-icon>search</mat-icon>
+                        </button>
+                    </form>
+                </div>
+            </header>
         </section>
     </div>
+
+
     <section class="propuestas">
         <h2>Propuestas</h2>
         <div *ngIf="busquedaRealizada; else mostrarTodo" class="card-list">
@@ -30,11 +38,12 @@
                     </mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
-                    <img mat-card img [src]="'assets/uploads/' + oferta.fotoOferta" alt="Imagen de la oferta">
+                    <img mat-card img [src]="'assets/uploads/fotos/' + oferta.fotoOferta" alt="Imagen de la oferta">
                 </mat-card-content>
                 <mat-card-footer>
                     <div *ngIf="userLoginOn" class="btnAplicar">
-                        <button class="btn btn-primary" (click)="aplicar(oferta.idOferta)">Aplicar</button>
+                        <button class="btn btn-primary"
+                            (click)="aplicar(oferta.idOferta, oferta.nombreOferta)">Aplicar</button>
                     </div>
                 </mat-card-footer>
             </mat-card>
@@ -51,11 +60,12 @@
                         </mat-card-subtitle>
                     </mat-card-header>
                     <mat-card-content>
-                        <img mat-card img [src]="'assets/uploads/' + oferta.fotoOferta" alt="Imagen de la oferta">
+                        <img mat-card img [src]="'assets/uploads/fotos/' + oferta.fotoOferta" alt="Imagen de la oferta">
                     </mat-card-content>
                     <mat-card-footer>
                         <div *ngIf="userLoginOn" class="btnAplicar">
-                            <button class="btn btn-primary" (click)="aplicar(oferta.idOferta)">Aplicar</button>
+                            <button class="btn btn-primary"
+                                (click)="aplicar(oferta.idOferta, oferta.nombreOferta)">Aplicar</button>
                         </div>
                     </mat-card-footer>
                 </mat-card>
