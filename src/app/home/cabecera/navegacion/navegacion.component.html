@@ -1,27 +1,21 @@
-<nav class="navbar navbar-expand-lg bg-light">
+<nav class="navbar bg-light">
     <div class="container-fluid">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" (click)="menuAbierto = !menuAbierto" aria-label="Abrir menú de navegación">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item" *ngIf="!userLoginOn">
-                    <a class="nav-link active" aria-current="page" [routerLink]="'/login-user'">Iniciar Sesion</a>
-                </li>
-                <li class="nav-item" *ngIf="userLoginOn">
-                    <a class="nav-link active" [routerLink]="'/login-user'">Cerrar Sesion</a>
-                </li>
-                <li class="nav-item" *ngIf="!userLoginOn">
-                    <a class="nav-link active" [routerLink]="'/usuariocontrol'">Registrarse</a>
-                </li>
-                <li class="nav-item dropdown" *ngIf="userLoginOn">
-                    <a class="nav-link dropdown-toggle" href="#" id="perfilDropdown" role="button"
-                        data-bs-toggle="dropdown">
-                    </a>
-
-                </li>
-            </ul>
-        </div>
+        <ul class="navbar-nav" *ngIf="menuAbierto">
+            <li class="nav-item" *ngIf="!userLoginOn">
+                <a class="nav-link active" [routerLink]="'/login-user'">Iniciar Sesión</a>
+            </li>
+            <li class="nav-item" *ngIf="userLoginOn">
+                <a class="nav-link active" [routerLink]="'/login-user'">Cerrar Sesión</a>
+            </li>
+            <li class="nav-item" *ngIf="!userLoginOn">
+                <a class="nav-link active" [routerLink]="'/usuariocontrol'">Registrarse</a>
+            </li>
+            <li class="nav-item dropdown" *ngIf="userLoginOn">
+                <!-- Opciones de perfil -->
+            </li>
+        </ul>
     </div>
 </nav>

@@ -23,6 +23,7 @@ export class UsuarioControlComponent {
   archivoSeleccionado: File | null = null;
   datosActualizadosOferta: any;
   miFormulario: any;
+  confirmarPassword: string = '';
 
   constructor(private http: HttpClient, private snackBar: MatSnackBar) {}
 
@@ -63,6 +64,20 @@ export class UsuarioControlComponent {
       alert('El archivo del CV es demasiado grande. Máximo permitido: 5 MB');
       return;
     }
+    const password = this.nuevoUsuario.password;
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{6,}$/;
+    if (!passwordRegex.test(password)) {
+      alert(
+        'La contraseña debe tener al menos 6 caracteres e incluir letras y números.'
+      );
+      return;
+    }
+
+    if (this.nuevoUsuario.password !== this.confirmarPassword) {
+      alert('Las contraseñas no coinciden. Por favor, vuelve a ingresarlas.');
+      return;
+    }
+
     // Crear un FormData para enviar los datos
     const formData = new FormData();
     formData.append('dni', this.nuevoUsuario.dni);

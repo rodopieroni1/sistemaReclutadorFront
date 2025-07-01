@@ -1,11 +1,11 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NavegacionComponent } from './navegacion/navegacion.component';
 import { LoginService } from '../../loginuser/auth/login.service';
 import { User } from '../../loginuser/auth/user';
 import { environment } from '../../../environments/environment';
 import { UserServiceService } from '../../loginuser/user-service.service';
 import { NavigationServiceService } from '../../navigation-service.service';
+import { NavegacionComponent } from './navegacion/navegacion.component';
 
 @Component({
   selector: 'app-cabecera',

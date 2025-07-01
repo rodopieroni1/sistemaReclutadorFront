@@ -1,3 +1,8 @@
+@media (max-width: 768px) {
+   main {
+    padding-top: 130px; /* Ajustalo al alto real del header en mobile */
+  }
+}
 .body {
   display: flex;
   flex-direction: column;
@@ -9,7 +14,7 @@ app-cabecera {
 }
 
 app-cuerpo {
- min-height: calc(100vh - 100px); /* Ajusta según la altura de la cabecera y el pie de página */
+ min-height: calc(100vh - 100px);
   display: block;
 }
 

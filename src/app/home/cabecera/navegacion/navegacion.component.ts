@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { LoginService } from '../../../loginuser/auth/login.service';
 
 @Component({
   selector: 'app-navegacion',
+  standalone: true,
   imports: [RouterModule, CommonModule],
   templateUrl: './navegacion.component.html',
   styleUrl: './navegacion.component.css',
@@ -13,6 +14,7 @@ export class NavegacionComponent implements OnInit {
   userLoginOn: boolean = false;
   userProfileImage: string = '';
   userProfileName: string = '';
+  menuAbierto = false;
   constructor(private loginService: LoginService) {}
   /*ngOnDestroy(): void {
     this.loginService.currentUserLoginOn.unsubscribe();

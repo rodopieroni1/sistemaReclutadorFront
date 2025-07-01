@@ -93,6 +93,7 @@ export class AdminControlComponent {
   ) {}
 
   ngOnInit() {
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
     this.http
       .get<
         {
