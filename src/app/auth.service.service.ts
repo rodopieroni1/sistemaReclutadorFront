@@ -7,7 +7,7 @@ import {
   signOut,
 } from '@angular/fire/auth';
 import { browserSessionPersistence, setPersistence } from 'firebase/auth';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
@@ -16,17 +16,28 @@ export class AuthServiceService {
 
   constructor(private auth: Auth, private http: HttpClient) {}
 
+  checkEmailAndDni(
+    email: string,
+    dni: string
+  ): Observable<{ emailExists: boolean; dniExists: boolean }> {
+    return this.http.post<{ emailExists: boolean; dniExists: boolean }>(
+      'http://localhost:8080/perfiles/verificar',
+      { email, dni }
+    );
+  }
+
   register(email: string, password: string) {
     return createUserWithEmailAndPassword(this.auth, email, password);
   }
 
-  registerBackend(email: string, password: string): Promise<void> {
+  registerBackend(email: string, password: string, dni: string): Promise<void> {
     const user = {
       email,
       password,
       nombre: email,
       clave: password,
       tipoUsuario: 'Administrador',
+      dni,
     };
     return lastValueFrom(
       this.http.post<void>(this.backendUrl, user, {

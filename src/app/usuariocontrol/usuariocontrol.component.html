@@ -1,36 +1,38 @@
-<div class="container">
-    <h1>Registro de Usuario</h1>
-    <form (submit)="crearUsuario($event)">
+<div class="auth-container">
+    <div class="container">
+        <h1>Registro de Usuario</h1>
+        <form (submit)="crearUsuario($event)">
 
-        <label for="dni">DNI:</label>
-        <input type="text" id="dni" [(ngModel)]="nuevoUsuario.dni" name="dni" required>
+            <label for="dni">DNI:</label>
+            <input type="text" id="dni" [(ngModel)]="nuevoUsuario.dni" name="dni" required>
 
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" [(ngModel)]="nuevoUsuario.nombre" name="nombre" required>
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" [(ngModel)]="nuevoUsuario.nombre" name="nombre" required>
 
-        <label for="direccion">Dirección:</label>
-        <input type="text" id="direccion" [(ngModel)]="nuevoUsuario.direccion" name="direccion" required>
+            <label for="direccion">Dirección:</label>
+            <input type="text" id="direccion" [(ngModel)]="nuevoUsuario.direccion" name="direccion" required>
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" [(ngModel)]="nuevoUsuario.email" name="email" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" [(ngModel)]="nuevoUsuario.email" name="email" required>
 
-        <label for="clave">Usuario:</label>
-        <input type="text" id="clave" [(ngModel)]="nuevoUsuario.clave" name="clave" required>
+            <label for="clave">Usuario:</label>
+            <input type="text" id="clave" [(ngModel)]="nuevoUsuario.clave" name="clave" required>
 
-        <label for="contraseña">Contraseña:</label>
-        <input type="password" id="contraseña" [(ngModel)]="nuevoUsuario.password" name="contraseña" required>
+            <label for="contraseña">Contraseña:</label>
+            <input type="password" id="contraseña" [(ngModel)]="nuevoUsuario.password" name="contraseña" required>
 
-        <label for="contraseña">Reingrese Contraseña:</label>
-        <input type="password" [(ngModel)]="confirmarPassword" placeholder="Confirmar contraseña"
-            name="confirmarPassword" required />
+            <label for="contraseña">Reingrese Contraseña:</label>
+            <input type="password" [(ngModel)]="confirmarPassword" placeholder="Confirmar contraseña"
+                name="confirmarPassword" required />
 
-        <label for="foto">Foto de perfil:</label>
-        <input type="file" id="foto" (change)="seleccionarArchivo($event, 'foto')" accept="image/*">
+            <label for="foto">Foto de perfil:</label>
+            <input type="file" id="foto" (change)="seleccionarArchivo($event, 'foto')" accept="image/*">
 
-        <label for="cv">Documento (Word o PDF):</label>
-        <input type="file" id="cv" (change)="seleccionarArchivo($event, 'cv')" accept=".pdf,.doc,.docx">
+            <label for="cv">Documento (Word o PDF):</label>
+            <input type="file" id="cv" (change)="seleccionarArchivo($event, 'cv')" accept=".pdf,.doc,.docx">
 
-        <button type="submit">Crear Usuario</button>
-        <a href="/login-user">← Volver al inicio de sesión</a>
-    </form>
+            <button type="submit">Crear Usuario</button>
+            <a href="/login-user">← Volver al inicio de sesión</a>
+        </form>
+    </div>
 </div>

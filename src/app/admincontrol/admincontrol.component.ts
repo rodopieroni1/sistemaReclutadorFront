@@ -47,6 +47,10 @@ export class AdminControlComponent {
     estadoAplicaciones: boolean;
     documentoUrl: string | null;
   }[] = [];
+  rubros: {
+    id_rubro: number;
+    descripcion_rubro: string;
+  }[] = [];
   empresas: {
     nombre: string;
     direccion: string;
@@ -130,6 +134,19 @@ export class AdminControlComponent {
         }));
       });
     this.http
+      .get<{ id_rubro: number; descripcion_rubro: string }[]>(
+        'http://localhost:8080/rubros'
+      )
+      .subscribe({
+        next: (data) => {
+          this.rubros = data;
+        },
+        error: (error) => {
+          console.error('Error al cargar los rubros:', error);
+        },
+      });
+
+    this.http
       .get<
         {
           nombre: string;
@@ -197,6 +214,81 @@ export class AdminControlComponent {
           console.error('Error al cargar las ofertas:', error);
         },
       });
+  }
+
+  crearRubro() {
+    const descripcion = prompt('Ingrese la descripción del nuevo rubro:');
+    if (descripcion) {
+      this.http
+        .post('http://localhost:8080/rubros', {
+          descripcion_rubro: descripcion,
+        })
+        .subscribe({
+          next: () => {
+            alert('Rubro creado exitosamente');
+            this.cargarRubros();
+          },
+          error: () => {
+            alert('Error al crear el rubro');
+          },
+        });
+    }
+  }
+
+  cargarRubros() {
+    this.http
+      .get<{ id_rubro: number; descripcion_rubro: string }[]>(
+        'http://localhost:8080/rubros'
+      )
+      .subscribe({
+        next: (data) => {
+          this.rubros = data;
+        },
+        error: (error) => {
+          console.error('Error al cargar los rubros:', error);
+        },
+      });
+  }
+
+  eliminarRubro(rubro: { id_rubro: number; descripcion_rubro: string }) {
+    if (
+      confirm(
+        `¿Estás seguro que deseas eliminar el rubro "${rubro.descripcion_rubro}"?`
+      )
+    ) {
+      this.http
+        .delete(`http://localhost:8080/rubros/${rubro.id_rubro}`)
+        .subscribe({
+          next: () => {
+            alert('Rubro eliminado');
+            this.cargarRubros();
+          },
+          error: () => {
+            alert('Error al eliminar el rubro');
+          },
+        });
+    }
+  }
+  actualizarRubro(rubro: { id_rubro: number; descripcion_rubro: string }) {
+    const nuevaDescripcion = prompt(
+      'Editar descripción del rubro:',
+      rubro.descripcion_rubro
+    );
+    if (nuevaDescripcion) {
+      this.http
+        .put(`http://localhost:8080/rubros/${rubro.id_rubro}`, {
+          descripcion_rubro: nuevaDescripcion,
+        })
+        .subscribe({
+          next: () => {
+            alert('Rubro actualizado');
+            this.cargarRubros();
+          },
+          error: () => {
+            alert('Error al actualizar el rubro');
+          },
+        });
+    }
   }
 
   NuevaEmpresa() {

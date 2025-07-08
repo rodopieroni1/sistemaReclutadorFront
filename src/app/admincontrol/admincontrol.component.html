@@ -34,6 +34,40 @@
                     [disabled]="currentPage === getTotalPages()">Siguiente</button>
             </div>
         </mat-expansion-panel>
+        <!-- Sección de Rubros -->
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>Rubros</mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="barra-ofertas-superior">
+                <button mat-raised-button color="primary" (click)="NuevaOferta()">Agregar Rubro</button>
+            </div>
+            <ul>
+                <li *ngFor="let rubro of getPaginatedDataOfertas()">
+                    <div class="oferta-empresa-header">
+                        <div class="oferta-empresa-info">
+                            <h4>{{ rubro.nombreOferta }}</h4><br />
+                            <strong>Descripción:</strong> {{ rubro.descripcionOferta }}<br />
+                        </div>
+                        <div class="botones-inferiores">
+                            <button mat-icon-button color="accent" (click)="updateOferta(rubro)">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button mat-icon-button color="warn" (click)="deleteOferta(rubro)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="pagination">
+                <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
+                <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
+                <button (click)="changePage(currentPage + 1)"
+                    [disabled]="currentPage === getTotalPages()">Siguiente</button>
+            </div>
+        </mat-expansion-panel>
         <!-- Sección de Empresas -->
         <mat-expansion-panel>
             <mat-expansion-panel-header>
