@@ -27,6 +27,7 @@ import {
 import { ChangeDetectorRef } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-modal-nueva-empresa',
@@ -40,6 +41,7 @@ import { ActivatedRoute } from '@angular/router';
     MatButtonModule,
     MatDialogModule,
     CommonModule,
+    MatSelectModule,
   ],
   templateUrl: './modal-nueva-empresa.component.html',
   styleUrls: ['./modal-nueva-empresa.component.css'], // Corregido
@@ -59,6 +61,7 @@ export class ModalNuevaEmpresaComponent implements OnInit {
     nombreEmpresa: string;
     cuitEmpresa: number;
     id_empresa: number;
+    idRubro: number;
     emailEmpresa: string;
     observacionesEmpresa: string;
     direccionEmpresa: string;
@@ -67,12 +70,15 @@ export class ModalNuevaEmpresaComponent implements OnInit {
     nombreEmpresa: '',
     cuitEmpresa: 1,
     id_empresa: 1,
+    idRubro: 1,
     emailEmpresa: '',
     observacionesEmpresa: '',
     direccionEmpresa: '',
     historiaEmpresa: '',
   };
-
+  rubroSeleccionado: any = null;
+  rubros: any[] = []; // Lista de rubros
+  // Agregar propiedad para la acción (crear o actualizar)
   accion: string | undefined;
   mostrarIdHidden: boolean = true; // Inicialmente oculto
   constructor(
@@ -92,6 +98,7 @@ export class ModalNuevaEmpresaComponent implements OnInit {
       emailEmpresa: ['', [Validators.required, Validators.email]],
       cuitEmpresa: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
       id_empresa: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
+      idRubro: ['', Validators.required], // ← nuevo campo agregado
     });
     this.accion = data.accion; // Recibe la acción (crear o actualizar)
     this.empresa = data.empresa || null; // Recibe la empresa si es actualización
@@ -107,8 +114,24 @@ export class ModalNuevaEmpresaComponent implements OnInit {
         direccionEmpresa: this.data.empresa?.direccion || '',
         historiaEmpresa: this.data.empresa?.historiaEmpresa || '',
         id_empresa: this.data.empresa?.id_empresa || 0,
+        idRubro: ['', Validators.required], // ← nuevo campo agregado
       });
     }
+
+    // Cargar rubros normalmente
+    this.http.get<any[]>('http://localhost:8080/rubro').subscribe({
+      next: (data) => (this.rubros = data),
+      error: () =>
+        this.snackBar.open('Error al cargar rubros', 'Cerrar', {
+          duration: 3000,
+        }),
+    });
+
+    // Reaccionar al cambio de rubro
+    this.miFormulario.get('idRubro')?.valueChanges.subscribe((id: number) => {
+      this.rubroSeleccionado =
+        this.rubros.find((r) => r.idRubro === id) || null;
+    });
   }
 
   guardar() {
@@ -125,7 +148,6 @@ export class ModalNuevaEmpresaComponent implements OnInit {
         });
         return;
       }
-
       this.http
         .get<boolean>(
           `http://localhost:8080/empresas/existe/${this.miFormulario.value.cuitEmpresa}`
@@ -140,6 +162,7 @@ export class ModalNuevaEmpresaComponent implements OnInit {
               );
               return;
             }
+            console.log('this.miFormulario.value:  ', this.miFormulario.value);
             const empresa = this.miFormulario.value;
             this.http
               .post('http://localhost:8080/empresas/crear', empresa, {

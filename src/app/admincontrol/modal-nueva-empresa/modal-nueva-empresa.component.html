@@ -44,6 +44,25 @@
         </mat-error>
     </mat-form-field>
 
+    <!-- Campo: Rubro -->
+    <mat-form-field>
+        <mat-label>Seleccione Rubro</mat-label>
+        <mat-select formControlName="idRubro">
+            <mat-option *ngFor="let rubro of rubros" [value]="rubro.idRubro">
+                {{ rubro.descripcionRubro }}
+            </mat-option>
+        </mat-select>
+        <mat-error *ngIf="miFormulario.get('idRubro')?.invalid && miFormulario.get('idRubro')?.touched">
+            Error al ingresar Rubro.
+        </mat-error>
+    </mat-form-field>
+
+    <!-- Mostrar descripción afuera del select -->
+    <span *ngIf="rubroSeleccionado">
+        Rubro: {{ rubroSeleccionado.descripcionRubro }}
+    </span>
+
+
     <mat-form-field appearance="fill" class="inputModal">
         <mat-label>Email: </mat-label>
         <input matInput class="inputModal" placeholder="email" formControlName="emailEmpresa" name="emailEmpresa"

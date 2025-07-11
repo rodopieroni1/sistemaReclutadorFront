@@ -1,0 +1,24 @@
+<div class="modal-header">
+    <h2 *ngIf="accion === 'crear'">Agregar Rubro</h2>
+    <h2 *ngIf="accion === 'actualizar'">Modificar Rubro</h2>
+</div>
+
+<form [formGroup]="miFormulario" (ngSubmit)="guardar()">
+    <h3>Rubro</h3>
+    <!-- Campo: Descripción del Rubro -->
+    <mat-form-field appearance="fill" class="inputModal">
+        <mat-label>Descripción del Rubro</mat-label>
+        <input matInput class="inputModal" placeholder="Ingrese la descripción del rubro"
+            formControlName="descripcionRubro" name="descripcionRubro" required />
+        <mat-error
+            *ngIf="miFormulario.get('descripcionRubro')?.invalid && miFormulario.get('descripcionRubro')?.touched">
+            La descripción es obligatoria.
+        </mat-error>
+    </mat-form-field>
+
+    <!-- Botones -->
+    <div class="modal-buttons">
+        <button type="button" mat-button (click)="cerrar()">Cancelar</button>
+        <button type="submit" mat-raised-button color="primary">Guardar</button>
+    </div>
+</form>

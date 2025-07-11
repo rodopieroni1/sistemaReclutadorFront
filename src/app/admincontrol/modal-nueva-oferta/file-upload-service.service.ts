@@ -24,12 +24,6 @@ export class FileUploadService {
         tap((response) => {
           console.log('Status:', response.status);
           console.log('Body:', response.body);
-          /*if (response.status === 200 || response.status === 201) {
-            this.snackBar.open('Imagen subida correctamente.', 'Cerrar', {
-              duration: 3000,
-            });
-            console.log('Dentro del iffffffffff:', response.status);
-          }*/
         }),
         catchError((error) => {
           console.error('Error al subir el archivo:', error);

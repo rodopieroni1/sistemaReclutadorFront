@@ -108,8 +108,10 @@ export class CuerpoComponent implements OnInit {
       params = params.set('nombreOferta', termino);
     } else if (this.criterio === 'empresa') {
       params = params.set('descripcionEmpresa', termino);
+    } else if (this.criterio === 'rubro') {
+      params = params.set('descripcionRubro', termino);
     }
-
+    console.log('PARAMETROS:::::', params);
     this.http.get(`${this.apiUrl}`, { params }).subscribe(
       (data: any) => {
         this.resultados = data;
@@ -119,29 +121,6 @@ export class CuerpoComponent implements OnInit {
       (error) => console.error('Error al buscar empleos:', error)
     );
   }
-
-  /*searchJobs(event: Event) {
-    event.preventDefault();
-    const nombreOferta = this.searchNombreOferta.value?.trim() || '';
-    const descripcionEmpresa =
-      this.searchDescripcionEmpresa.value?.trim() || '';
-
-    if (!nombreOferta && !descripcionEmpresa) {
-      this.resultados = [];
-      this.busquedaRealizada = false;
-      return;
-    }
-
-    const queryParams = `?nombreOferta=${nombreOferta}&descripcionEmpresa=${descripcionEmpresa}`;
-    this.http.get(`${this.apiUrl}${queryParams}`).subscribe(
-      (data: any) => {
-        this.resultados = data;
-        this.busquedaRealizada = true; // Activamos la bandera cuando hay resultados
-        console.log('Resultados:', this.resultados);
-      },
-      (error) => console.error('Error al buscar empleos:', error)
-    );
-  }*/
 
   ngOnDestroy(): void {
     this.webSocketService.disconnect(); // Desconectar al destruir el componente

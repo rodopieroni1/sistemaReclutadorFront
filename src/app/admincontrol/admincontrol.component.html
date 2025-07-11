@@ -40,20 +40,19 @@
                 <mat-panel-title>Rubros</mat-panel-title>
             </mat-expansion-panel-header>
             <div class="barra-ofertas-superior">
-                <button mat-raised-button color="primary" (click)="NuevaOferta()">Agregar Rubro</button>
+                <button mat-raised-button color="primary" (click)="crearRubro()">Agregar Rubro</button>
             </div>
             <ul>
-                <li *ngFor="let rubro of getPaginatedDataOfertas()">
+                <li *ngFor="let rubros of getPaginatedDataRubros()">
                     <div class="oferta-empresa-header">
                         <div class="oferta-empresa-info">
-                            <h4>{{ rubro.nombreOferta }}</h4><br />
-                            <strong>Descripción:</strong> {{ rubro.descripcionOferta }}<br />
+                            <strong>Descripción:</strong> {{ rubros.descripcionRubro }}<br />
                         </div>
                         <div class="botones-inferiores">
-                            <button mat-icon-button color="accent" (click)="updateOferta(rubro)">
+                            <button mat-icon-button color="accent" (click)="actualizarRubro(rubros)">
                                 <mat-icon>edit</mat-icon>
                             </button>
-                            <button mat-icon-button color="warn" (click)="deleteOferta(rubro)">
+                            <button mat-icon-button color="warn" (click)="eliminarRubro(rubros)">
                                 <mat-icon>delete</mat-icon>
                             </button>
                         </div>

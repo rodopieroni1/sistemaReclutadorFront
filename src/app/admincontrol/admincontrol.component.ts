@@ -48,8 +48,8 @@ export class AdminControlComponent {
     documentoUrl: string | null;
   }[] = [];
   rubros: {
-    id_rubro: number;
-    descripcion_rubro: string;
+    idRubro: number;
+    descripcionRubro: string;
   }[] = [];
   empresas: {
     nombre: string;
@@ -133,19 +133,19 @@ export class AdminControlComponent {
           estadoAplicaciones: aplicacion.estadoAplicaciones,
         }));
       });
-    this.http
-      .get<{ id_rubro: number; descripcion_rubro: string }[]>(
-        'http://localhost:8080/rubros'
-      )
-      .subscribe({
-        next: (data) => {
-          this.rubros = data;
-        },
-        error: (error) => {
-          console.error('Error al cargar los rubros:', error);
-        },
-      });
 
+    this.http
+      .get<{ idRubro: number; descripcionRubro: string }[]>(
+        'http://localhost:8080/rubro'
+      )
+      .subscribe((data) => {
+        this.rubros = data;
+        console.log('Rubros cargados:', this.rubros);
+      });
+    console.log(
+      'console.log(this.getPaginatedDataRubros());',
+      this.getPaginatedDataRubros()
+    );
     this.http
       .get<
         {
@@ -161,6 +161,7 @@ export class AdminControlComponent {
       .subscribe((data) => {
         this.empresas = data;
       });
+
     this.http
       .get<
         {
@@ -220,8 +221,8 @@ export class AdminControlComponent {
     const descripcion = prompt('Ingrese la descripción del nuevo rubro:');
     if (descripcion) {
       this.http
-        .post('http://localhost:8080/rubros', {
-          descripcion_rubro: descripcion,
+        .post('http://localhost:8080/rubro/crear', {
+          descripcionRubro: descripcion,
         })
         .subscribe({
           next: () => {
@@ -237,8 +238,8 @@ export class AdminControlComponent {
 
   cargarRubros() {
     this.http
-      .get<{ id_rubro: number; descripcion_rubro: string }[]>(
-        'http://localhost:8080/rubros'
+      .get<{ idRubro: number; descripcionRubro: string }[]>(
+        'http://localhost:8080/rubro'
       )
       .subscribe({
         next: (data) => {
@@ -250,14 +251,14 @@ export class AdminControlComponent {
       });
   }
 
-  eliminarRubro(rubro: { id_rubro: number; descripcion_rubro: string }) {
+  eliminarRubro(rubro: { idRubro: number; descripcionRubro: string }) {
     if (
       confirm(
-        `¿Estás seguro que deseas eliminar el rubro "${rubro.descripcion_rubro}"?`
+        `¿Estás seguro que deseas eliminar el rubro "${rubro.descripcionRubro}"?`
       )
     ) {
       this.http
-        .delete(`http://localhost:8080/rubros/${rubro.id_rubro}`)
+        .delete(`http://localhost:8080/rubro/eliminar/${rubro.idRubro}`)
         .subscribe({
           next: () => {
             alert('Rubro eliminado');
@@ -269,15 +270,15 @@ export class AdminControlComponent {
         });
     }
   }
-  actualizarRubro(rubro: { id_rubro: number; descripcion_rubro: string }) {
+  actualizarRubro(rubro: { idRubro: number; descripcionRubro: string }) {
     const nuevaDescripcion = prompt(
       'Editar descripción del rubro:',
-      rubro.descripcion_rubro
+      rubro.descripcionRubro
     );
     if (nuevaDescripcion) {
       this.http
-        .put(`http://localhost:8080/rubros/${rubro.id_rubro}`, {
-          descripcion_rubro: nuevaDescripcion,
+        .put(`http://localhost:8080/rubro/actualizar/${rubro.idRubro}`, {
+          descripcionRubro: nuevaDescripcion,
         })
         .subscribe({
           next: () => {
@@ -422,6 +423,11 @@ export class AdminControlComponent {
     return this.empresas.slice(startIndex, endIndex);
   }
 
+  getPaginatedDataRubros() {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.rubros.slice(startIndex, endIndex);
+  }
   getPaginatedDataAplicaciones() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
