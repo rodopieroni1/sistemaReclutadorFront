@@ -10,7 +10,7 @@ import {
 } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { LoginService } from './auth/login.service';
 import { LoginRequest } from './auth/loginRequest';
@@ -20,7 +20,7 @@ import { LoginRequest } from './auth/loginRequest';
     MatCardModule,
     MatFormFieldModule,
     FormsModule,
-    ReactiveFormsModule, // ✅ Add this
+    ReactiveFormsModule,
     MatInputModule,
     MatButtonModule,
     RouterModule,
@@ -29,41 +29,66 @@ import { LoginRequest } from './auth/loginRequest';
   templateUrl: './loginuser.component.html',
   styleUrl: './loginuser.component.css',
 })
-export class LoginuserComponent {
+export class LoginuserComponent implements OnInit {
   errorMessage: string = '';
-  constructor(private router: Router, private loginService: LoginService) {}
+  sessionExpired = false;
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private loginService: LoginService
+  ) {}
 
   private formBuilder = inject(FormBuilder);
   loginForm = this.formBuilder.group({
     clave: ['', [Validators.required]],
     password: ['', [Validators.required]],
   });
+  ngOnInit(): void {
+    let expiredParam = false;
 
-  ngOnInit(): void {}
+    this.route.queryParams.subscribe((params) => {
+      expiredParam = params['expired'] === 'true';
+
+      if (expiredParam) {
+        this.sessionExpired = true;
+
+        // Limpiar el parámetro sin perder el estado
+        this.router.navigate([], {
+          queryParams: { expired: null },
+          queryParamsHandling: 'merge',
+          replaceUrl: true,
+        });
+      }
+      console.log('Session expired:', this.sessionExpired);
+    });
+  }
+
   get email() {
     return this.loginForm.controls.clave;
   }
   get password() {
     return this.loginForm.controls.password;
   }
+
   login() {
     if (this.loginForm.valid) {
       this.loginService.login(this.loginForm.value as LoginRequest).subscribe({
         next: (userData) => {
-          console.log(userData);
+          this.router.navigate(['/home']);
+          //  this.loginForm.reset();
         },
         error: (errorData) => {
           console.error(errorData);
           this.errorMessage = errorData;
-        },
-        complete: () => {
-          this.router.navigate(['/home']);
-          this.loginForm.reset();
         },
       });
     } else {
       this.loginForm.markAllAsTouched();
       alert('Por favor, completa todos los campos.');
     }
+  }
+
+  hideMessage(): void {
+    this.sessionExpired = false;
   }
 }

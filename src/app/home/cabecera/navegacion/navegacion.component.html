@@ -8,7 +8,7 @@
                 <a class="nav-link active" [routerLink]="'/login-user'">Iniciar Sesión</a>
             </li>
             <li class="nav-item" *ngIf="userLoginOn">
-                <a class="nav-link active" [routerLink]="'/login-user'">Cerrar Sesión</a>
+                <a class="nav-link active" (click)="logout()">Cerrar Sesión</a>
             </li>
             <li class="nav-item" *ngIf="!userLoginOn">
                 <a class="nav-link active" [routerLink]="'/usuariocontrol'">Registrarse</a>

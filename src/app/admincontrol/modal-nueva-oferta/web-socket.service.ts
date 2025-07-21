@@ -9,9 +9,7 @@ export class WebSocketService {
   connect(url: string): void {
     this.socket = new WebSocket(url);
 
-    this.socket.onopen = () => {
-      console.log('Conexión WebSocket establecida');
-    };
+    this.socket.onopen = () => {};
 
     this.socket.onmessage = (event) => {
       console.log('Mensaje recibido:', event.data);

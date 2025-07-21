@@ -1,7 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { LoginService } from '../../../loginuser/auth/login.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-navegacion',
@@ -15,43 +17,38 @@ export class NavegacionComponent implements OnInit {
   userProfileImage: string = '';
   userProfileName: string = '';
   menuAbierto = false;
-  constructor(private loginService: LoginService) {}
-  /*ngOnDestroy(): void {
-    this.loginService.currentUserLoginOn.unsubscribe();
-    this.loginService.currentUserData.unsubscribe();
-  }*/
+  private subs: Subscription[] = [];
+
+  constructor(private loginService: LoginService, private router: Router) {}
+
+  ngOnDestroy(): void {
+    this.subs.forEach((sub) => sub.unsubscribe());
+  }
 
   ngOnInit(): void {
-    this.loginService.currentUserLoginOn.subscribe({
-      next: (userLoginOn) => {
-        this.userLoginOn = userLoginOn;
+    this.loginService.currentUserLoginOn.subscribe((isLoggedIn) => {
+      this.userLoginOn = isLoggedIn;
+      console.log('Estado de inicio de sesión:', isLoggedIn);
+      if (isLoggedIn) {
+        const profileImage = sessionStorage.getItem('userProfileImage');
+        this.userProfileImage = profileImage
+          ? `${profileImage}?${new Date().getTime()}`
+          : 'assets/logo.png';
         this.userProfileName = localStorage.getItem('userName') || '';
-        this.userProfileImage =
-          sessionStorage.getItem('userProfileImage') +
-          '?' +
-          new Date().getTime();
-      },
+      } else {
+        this.userProfileImage = 'assets/logo.png';
+        this.userProfileName = '';
+      }
     });
   }
 
-  logout() {
-    console.log('Después del logout:');
-    sessionStorage.clear(); // Borra toda la información almacenada en sessionStorage
-
-    this.userLoginOn = false;
+  logout(): void {
+    sessionStorage.clear();
     this.userProfileImage = '';
     this.userProfileName = '';
-
-    this.loginService.currentUserLoginOn.unsubscribe();
-    this.loginService.currentUserData.unsubscribe();
-    this.loginService.currentUserNombre.unsubscribe();
-    this.loginService.currentUserProfileImage.unsubscribe();
+    this.userLoginOn = false;
+    this.subs.forEach((sub) => sub.unsubscribe());
     this.loginService.logout();
-
-    console.log(
-      'Después del logout:',
-      sessionStorage.getItem('userProfileImage')
-    );
-    location.reload(); // 🔄 Forzar recarga para reflejar los cambios
+    this.router.navigate(['/login-user']);
   }
 }

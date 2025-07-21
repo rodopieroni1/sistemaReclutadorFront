@@ -29,18 +29,21 @@ export class LoginService {
   currentPerfilId!: number | 0;
 
   constructor(private http: HttpClient) {
-    let token: string | null = null;
-    try {
-      token = sessionStorage.getItem('token');
-    } catch (e) {
-      console.warn('sessionStorage no está disponible en este entorno:', e);
-    }
+    const token = sessionStorage.getItem('token');
+    const userName = sessionStorage.getItem('userName');
+    const imageUrl = sessionStorage.getItem('userProfileImage');
 
     this.currentUserLoginOn = new BehaviorSubject<boolean>(!!token);
     this.currentUserData = new BehaviorSubject<string>(token || '');
+    this.currentUserNombre = new BehaviorSubject<string>(userName || '');
+    this.currentUserProfileImage = new BehaviorSubject<string>(
+      imageUrl ? `${imageUrl}?${Date.now()}` : ''
+    );
   }
 
   login(credential: LoginRequest): Observable<any> {
+    console.log('CRDENCIALES:', credential.clave, credential.password);
+
     return this.http
       .post<any>(
         environment.local.urlHost + 'perfiles/auth/login',
@@ -53,45 +56,33 @@ export class LoginService {
         tap((userData: any) => {
           sessionStorage.setItem('token', userData.token); // Guarda el token en sessionStorage
           sessionStorage.setItem('userName', credential.clave); // Guarda el nombre en sessionStorage
-
           let nombreRec = sessionStorage.getItem('userName');
+
           this.http
             .get(`http://localhost:8080/perfiles/name/${nombreRec}`, {
               responseType: 'text',
             })
             .subscribe({
-              next: (urlData) => {
-                this.currentUserLoginOn.next(true);
-                this.currentUserProfileImage.next(urlData); // Fuerza la actualización del estado
-                this.currentUserData.next(userData.token);
-                this.currentUserNombre.next(userData.nombre); // Actualiza el nombre del usuario
-
-                sessionStorage.setItem(
-                  'userProfileImage',
-                  this.currentUserProfileImage.value
-                );
-              },
-              error: (err) => console.error('Error en la petición:', err),
-            });
-
-          this.http
-            .get(`http://localhost:8080/perfiles/id/${nombreRec}`)
-            .subscribe({
-              next: (userData: any) => {
-                const idPerfil = userData.id_perfil; // Asegúrate de que la estructura es correcta
-
-                console.log('userData:', userData);
-
-                console.log('IDPERFIL almacenado:', idPerfil);
-
-                if (idPerfil) {
-                  sessionStorage.setItem('id_perfil', idPerfil.toString());
-                  console.log('IDPERFIL almacenado:', idPerfil);
-                } else {
-                  console.error('IDPERFIL no encontrado en la respuesta.');
+              next: (data) => {
+                // If the backend returns a JSON string, parse it:
+                try {
+                  const parsedData = JSON.parse(data);
+                  sessionStorage.setItem('userName', parsedData.clave);
+                  sessionStorage.setItem(
+                    'userProfileImage',
+                    parsedData.fotoUrl
+                  );
+                  sessionStorage.setItem('idPerfil', parsedData.id_perfil); // Guarda el nombre en sessionStorage
+                  this.currentUserNombre.next(parsedData.clave);
+                  this.currentUserProfileImage.next(
+                    parsedData.fotoUrl + '?' + Date.now()
+                  );
+                } catch (e) {
+                  // If the backend returns just a string (e.g., image URL), use it directly
+                  sessionStorage.setItem('userProfileImage', data);
                 }
               },
-              error: (err) => console.error('Error en la peticiónID:', err),
+              error: (err) => console.error('Error en la petición:', err),
             });
         }),
         map((userData) => userData.token),
@@ -99,32 +90,22 @@ export class LoginService {
       );
   }
 
-  refreshComponent() {
-    this.userProfileImage = ''; // Borrar la imagen temporalmente
-    setTimeout(() => {
-      this.userProfileImage =
-        sessionStorage.getItem('userProfileImage') + '?' + new Date().getTime();
-      console.log('FotoImprecionLog2', this.userProfileImage);
-
-      this.userProfileImage =
-        sessionStorage.getItem(this.userProfileImage) +
-        '?' +
-        new Date().getTime();
-    }, 50);
-  }
-
-  getUserName(): Observable<string> {
-    console.log('Login activado:', true);
-    this.currentUserLoginOn.next(true);
-    const userData = sessionStorage.getItem('userName') || 1;
-    return this.currentUserNombre.asObservable();
+  refreshComponent(): void {
+    const rawImage = sessionStorage.getItem('userProfileImage');
+    if (rawImage) {
+      this.userProfileImage = `${rawImage}?${Date.now()}`;
+      this.currentUserProfileImage.next(this.userProfileImage);
+    }
   }
 
   logout() {
     sessionStorage.removeItem('token');
-    this.currentUserLoginOn.next(false);
+    this.currentUserNombre = new BehaviorSubject<string>('');
+    this.currentUserProfileImage = new BehaviorSubject<string>('');
     this.currentUserData.next('');
+    sessionStorage.clear();
   }
+
   private handleError(error: HttpErrorResponse) {
     if (error.status === 0) {
       console.error('Ocurrio un ERROR', error.error);

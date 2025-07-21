@@ -45,7 +45,7 @@ export class CuerpoComponent implements OnInit {
     empresa: { nombre: string };
   }[] = [];
   currentPage: number = 1; // Página actual
-  itemsPerPage: number = 10; // Número de elementos por página
+  itemsPerPage: number = 5; // Número de elementos por página
   searchNombreOferta = new FormControl('');
   searchDescripcionEmpresa = new FormControl('');
   apiUrl = 'http://localhost:8080/ofertas/buscar';
@@ -111,7 +111,6 @@ export class CuerpoComponent implements OnInit {
     } else if (this.criterio === 'rubro') {
       params = params.set('descripcionRubro', termino);
     }
-    console.log('PARAMETROS:::::', params);
     this.http.get(`${this.apiUrl}`, { params }).subscribe(
       (data: any) => {
         this.resultados = data;
@@ -127,7 +126,7 @@ export class CuerpoComponent implements OnInit {
   }
 
   aplicar(idOferta: number, nombreOferta: string): void {
-    const idPerfil = sessionStorage.getItem('id_perfil'); // Recupera el ID del usuario logueado
+    const idPerfil = sessionStorage.getItem('idPerfil'); // Recupera el ID del usuario logueado
     const token = sessionStorage.getItem('token'); // Suponiendo que tienes el idPerfil en la sesión
     if (token) {
       this.aplicacionService
@@ -154,19 +153,33 @@ export class CuerpoComponent implements OnInit {
             this.isBtnAplicar = true;
           },
           error: (error) => {
-            console.error('Error al aplicar a la oferta:', error);
+            this.snackBar.open(
+              'Tu sesión expiró. Volvé a iniciar sesión.',
+              'Cerrar',
+              {
+                duration: 5000,
+              }
+            );
           },
         });
     } else {
-      console.error('No se encontró perfil de usuario en la sesión.');
+      this.snackBar.open(
+        'No se encontró perfil de usuario en la sesión',
+        'Cerrar',
+        {
+          duration: 5000,
+        }
+      );
     }
   }
-
   /////////////////////////Paginacion///////////////////////////////////////
   getPaginatedDataOfertas() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
     return this.ofertas.slice(startIndex, endIndex);
+  }
+  trackById(index: number, oferta: any): number {
+    return oferta.idOferta;
   }
   getPaginatedDataEmpresas() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;

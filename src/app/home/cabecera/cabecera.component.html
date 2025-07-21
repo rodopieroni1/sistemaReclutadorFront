@@ -5,10 +5,8 @@
             <!-- Ajusta la altura según sea necesario -->
         </div>
         <div class="opciones" style="font-family: 'fuenteCabecera', sans-serif;">
-
             <div class="social-header">
                 <nav class="social-menu">
-
                     <a href="https://www.facebook.com/carina.difonzo.3" target="_blank" rel="noopener">
                         <img src="../../../assets/facebook-icon.png" alt="Facebook">
                     </a>
@@ -19,11 +17,10 @@
                         rel="noopener">
                         <img src="../../../assets/linkedin-icon.png" alt="LinkedIn">
                     </a>
-                    <div *ngIf="!userLoginOn">
-                        <p><a routerLink="/loginuser">Iniciar Sesión </a></p>
-                    </div>
                     <div *ngIf="userLoginOn" class="perfil">
-                        <img [src]="userProfileImage" alt="Foto de perfil" class="perfil-img" rel="noopener">
+                        <p>
+                            <img [src]="userProfileImage" alt="Foto de perfil" class="perfil-img" rel="noopener">
+                        </p>
                         <p>{{ userName }}</p>
                     </div>
                     <app-navegacion> </app-navegacion>
