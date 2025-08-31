@@ -19,7 +19,7 @@ import { environment } from '../../../environments/environment';
 })
 export class LoginService {
   currentUserLoginOn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
-    false
+    true
   );
   currentUserData: BehaviorSubject<string> = new BehaviorSubject<string>('');
   currentUserNombre: BehaviorSubject<string> = new BehaviorSubject<string>('');
@@ -42,8 +42,6 @@ export class LoginService {
   }
 
   login(credential: LoginRequest): Observable<any> {
-    console.log('CRDENCIALES:', credential.clave, credential.password);
-
     return this.http
       .post<any>(
         environment.local.urlHost + 'perfiles/auth/login',
@@ -54,8 +52,10 @@ export class LoginService {
       )
       .pipe(
         tap((userData: any) => {
+          sessionStorage.setItem('idUsuario', userData.id);
           sessionStorage.setItem('token', userData.token); // Guarda el token en sessionStorage
           sessionStorage.setItem('userName', credential.clave); // Guarda el nombre en sessionStorage
+          this.currentUserLoginOn.next(true);
           let nombreRec = sessionStorage.getItem('userName');
 
           this.http
@@ -64,7 +64,6 @@ export class LoginService {
             })
             .subscribe({
               next: (data) => {
-                // If the backend returns a JSON string, parse it:
                 try {
                   const parsedData = JSON.parse(data);
                   sessionStorage.setItem('userName', parsedData.clave);
@@ -77,8 +76,8 @@ export class LoginService {
                   this.currentUserProfileImage.next(
                     parsedData.fotoUrl + '?' + Date.now()
                   );
+                  this.currentUserLoginOn.next(true);
                 } catch (e) {
-                  // If the backend returns just a string (e.g., image URL), use it directly
                   sessionStorage.setItem('userProfileImage', data);
                 }
               },
@@ -117,7 +116,7 @@ export class LoginService {
       );
     }
     return throwError(
-      () => new Error('Algo Fallo por favor intente nuevamente', error.error)
+      () => new Error('Algo Fallo por favor intente nuevamente')
     );
   }
 

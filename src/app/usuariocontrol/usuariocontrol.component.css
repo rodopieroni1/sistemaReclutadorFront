@@ -33,6 +33,11 @@
     gap: 15px;
   }
   
+  form.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
   label {
     font-weight: bold;
     color: #555;

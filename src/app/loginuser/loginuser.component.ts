@@ -45,21 +45,16 @@ export class LoginuserComponent implements OnInit {
   });
   ngOnInit(): void {
     let expiredParam = false;
-
     this.route.queryParams.subscribe((params) => {
       expiredParam = params['expired'] === 'true';
-
       if (expiredParam) {
         this.sessionExpired = true;
-
-        // Limpiar el parámetro sin perder el estado
         this.router.navigate([], {
           queryParams: { expired: null },
           queryParamsHandling: 'merge',
           replaceUrl: true,
         });
       }
-      console.log('Session expired:', this.sessionExpired);
     });
   }
 

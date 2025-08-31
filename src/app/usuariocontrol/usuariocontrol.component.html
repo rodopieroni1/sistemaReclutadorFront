@@ -1,8 +1,7 @@
 <div class="auth-container">
     <div class="container">
         <h1>Registro de Usuario</h1>
-        <form (submit)="crearUsuario($event)">
-
+        <form #formUsuario="ngForm" (ngSubmit)="crearUsuario($event)">
             <label for="dni">DNI:</label>
             <input type="text" id="dni" [(ngModel)]="nuevoUsuario.dni" name="dni" required>
 
@@ -28,10 +27,10 @@
             <label for="foto">Foto de perfil:</label>
             <input type="file" id="foto" (change)="seleccionarArchivo($event, 'foto')" accept="image/*">
 
-            <label for="cv">Documento (Word o PDF):</label>
+            <label for="cv">Documento (.pdf,.doc,.docx):</label>
             <input type="file" id="cv" (change)="seleccionarArchivo($event, 'cv')" accept=".pdf,.doc,.docx">
 
-            <button type="submit">Crear Usuario</button>
+            <button type="submit" [disabled]="isSubmitting">Crear Usuario</button>
             <a href="/login-user">← Volver al inicio de sesión</a>
         </form>
     </div>

@@ -7,10 +7,12 @@ import { UsuarioControlComponent } from './usuariocontrol/usuariocontrol.compone
 import { LoginuserComponent } from './loginuser/loginuser.component';
 import { NgModule } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
-import { AuthGuard } from './guards/auth.guard';
 import { PostulanteGuard } from './guards/guardsPost';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { OlvidePasswordComponent } from './olvide-password/olvide-password-component';
+import { UpdateUserComponent } from './perfil/UpdateUser.component';
+import { AuthGuard } from './guards/auth.guard';
+// import { PerfilComponent } from './perfil/perfil.component';
 
 interface JwtPayload {
   exp: number;
@@ -23,17 +25,28 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'olvide-password', component: OlvidePasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
+  { path: 'registro', component: UsuarioControlComponent },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+
   {
     path: 'admincontrol',
     component: AdminControlComponent,
     canActivate: [AuthGuard],
   },
   {
+    path: 'editar-perfil',
+    component: UpdateUserComponent,
+  },
+  // {
+  //   path: 'reset-password',
+  //   component: PerfilComponent,
+  //   canActivate: [AuthGuard],
+  // },
+  {
     path: 'usuariocontrol',
     component: UsuarioControlComponent,
     canActivate: [PostulanteGuard],
   },
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];
 
 @NgModule({

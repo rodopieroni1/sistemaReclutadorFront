@@ -1,10 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { LoginService } from '../../../loginuser/auth/login.service';
 import { Subscription } from 'rxjs';
-
+import { ChangeDetectorRef } from '@angular/core';
 @Component({
   selector: 'app-navegacion',
   standalone: true,
@@ -19,7 +19,11 @@ export class NavegacionComponent implements OnInit {
   menuAbierto = false;
   private subs: Subscription[] = [];
 
-  constructor(private loginService: LoginService, private router: Router) {}
+  constructor(
+    private loginService: LoginService,
+    private router: Router,
+    private cd: ChangeDetectorRef
+  ) {}
 
   ngOnDestroy(): void {
     this.subs.forEach((sub) => sub.unsubscribe());
@@ -28,8 +32,8 @@ export class NavegacionComponent implements OnInit {
   ngOnInit(): void {
     this.loginService.currentUserLoginOn.subscribe((isLoggedIn) => {
       this.userLoginOn = isLoggedIn;
-      console.log('Estado de inicio de sesión:', isLoggedIn);
       if (isLoggedIn) {
+        this.cd.detectChanges(); // 🔄 fuerza el renderizado de la vista
         const profileImage = sessionStorage.getItem('userProfileImage');
         this.userProfileImage = profileImage
           ? `${profileImage}?${new Date().getTime()}`
@@ -40,6 +44,16 @@ export class NavegacionComponent implements OnInit {
         this.userProfileName = '';
       }
     });
+  }
+
+  editarPerfil(): void {
+    if (this.userLoginOn) {
+      console.log('Redirigiendo a editar perfil');
+      this.router.navigate(['/editar-perfil']);
+    } else {
+      console.log('No va la cancion');
+      this.router.navigate(['/login-user']);
+    }
   }
 
   logout(): void {

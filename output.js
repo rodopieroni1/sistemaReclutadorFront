@@ -119036,6 +119036,7 @@ var LoginComponent = class {
   password = "";
   login() {
     this.authService.login(this.email, this.password).then(() => {
+    console.log("NOSE QUE MIERDA ES ESTO");
       this.router.navigate(["/admincontrol"]);
     }).catch(() => alert("Usuario o contrase\xF1a incorrectas"));
   }

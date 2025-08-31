@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterModule } from '@angular/router';
 import { AuthServiceService } from '../auth.service.service';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 @Component({
   selector: 'app-login',
@@ -32,15 +33,19 @@ export class LoginComponent {
   ) {}
 
   login() {
-    this.authService
-      .login(this.email, this.password)
-      .then(() => {
-        if (!sessionStorage.getItem('alreadyLogged')) {
-          sessionStorage.setItem('token', 'admin');
-          sessionStorage.setItem('alreadyLogged', 'true');
-          this.router.navigate(['/admincontrol']);
-        }
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, this.email, this.password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        sessionStorage.setItem(
+          'firebaseUser',
+          JSON.stringify({ email: user.email })
+        );
+        this.router.navigate(['/admincontrol']);
       })
-      .catch(() => alert('Usuario o contraseña incorrectas'));
+      .catch((error) => {
+        console.error('❌ Error de login Firebase:', error);
+        alert('Usuario o contraseña incorrectas');
+      });
   }
 }

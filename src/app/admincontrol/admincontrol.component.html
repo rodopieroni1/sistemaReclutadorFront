@@ -5,7 +5,7 @@
 </div>
 <div class="columna-contenido">
     <mat-accordion class="responsive-accordion">
-        <!-- Sección de Aplicaciones -->
+        <!-- Aplicaciones -->
         <mat-expansion-panel>
             <mat-expansion-panel-header>
                 <mat-panel-title>Aplicaciones</mat-panel-title>
@@ -14,27 +14,30 @@
                 <li *ngFor="let aplicacion of getPaginatedDataAplicaciones()">
                     <div class="oferta-empresa-header">
                         <div class="oferta-empresa-info">
-                            <h4>{{ aplicacion.oferta.empresa.nombre }}, {{ aplicacion.perfil.nombre }}
+                            <h4>
+                                {{ aplicacion.oferta?.empresa?.nombre || 'Empresa desconocida' }},
+                                {{ aplicacion.perfil?.nombre || 'Perfil no disponible' }}
                             </h4><br />
-                            <strong>Fecha de aplicación:</strong> {{ aplicacion.fechaAplicacion}}<br />
-                            <strong>Propuesta:</strong> {{ aplicacion.oferta.descripcionOferta || 'No disponible'
+                            <strong>Fecha de aplicación:</strong> {{ aplicacion.fechaAplicacion || 'Sin fecha'
+                            }}<br />
+                            <strong>Propuesta:</strong> {{ aplicacion.oferta?.descripcionOferta || 'No disponible'
                             }}<br />
                             <strong>Activo:</strong> {{ aplicacion.estadoAplicaciones ? 'Sí' : 'No' }}<br />
                             <a [href]="aplicacion.documentoUrl" download>📄 Descargar CV</a><br /><br />
                         </div>
                     </div>
                 </li>
-
             </ul>
-
             <div class="pagination">
-                <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
+                <button mat-button (click)="changePage(currentPage - 1)"
+                    [disabled]="currentPage === 1">Anterior</button>
                 <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
-                <button (click)="changePage(currentPage + 1)"
+                <button mat-button (click)="changePage(currentPage + 1)"
                     [disabled]="currentPage === getTotalPages()">Siguiente</button>
             </div>
         </mat-expansion-panel>
-        <!-- Sección de Rubros -->
+
+        <!-- Rubros -->
         <mat-expansion-panel>
             <mat-expansion-panel-header>
                 <mat-panel-title>Rubros</mat-panel-title>
@@ -46,7 +49,7 @@
                 <li *ngFor="let rubros of getPaginatedDataRubros()">
                     <div class="oferta-empresa-header">
                         <div class="oferta-empresa-info">
-                            <strong>Descripción:</strong> {{ rubros.descripcionRubro }}<br />
+                            <strong>Descripción:</strong> {{ rubros?.descripcionRubro || 'Sin descripción' }}<br />
                         </div>
                         <div class="botones-inferiores">
                             <button mat-icon-button color="accent" (click)="actualizarRubro(rubros)">
@@ -59,20 +62,20 @@
                     </div>
                 </li>
             </ul>
-
             <div class="pagination">
-                <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
+                <button mat-button (click)="changePage(currentPage - 1)"
+                    [disabled]="currentPage === 1">Anterior</button>
                 <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
-                <button (click)="changePage(currentPage + 1)"
+                <button mat-button (click)="changePage(currentPage + 1)"
                     [disabled]="currentPage === getTotalPages()">Siguiente</button>
             </div>
         </mat-expansion-panel>
-        <!-- Sección de Empresas -->
+
+        <!-- Empresas -->
         <mat-expansion-panel>
             <mat-expansion-panel-header>
                 <mat-panel-title>Empresas</mat-panel-title>
             </mat-expansion-panel-header>
-
             <div class="barra-ofertas-superior">
                 <button mat-raised-button color="primary" (click)="NuevaEmpresa()">Agregar Empresa</button>
             </div>
@@ -80,10 +83,11 @@
                 <li *ngFor="let empresa of getPaginatedDataEmpresas()">
                     <div class="oferta-empresa-header">
                         <div class="oferta-empresa-info">
-                            <h4>{{ empresa.nombre }}</h4><br />
-                            <strong>Observaciones:</strong> {{ empresa.observaciones }}<br />
-                            <strong>Historia:</strong> {{ empresa.historiaEmpresa }}<br />
-                            <strong>Direccion:</strong>{{empresa.direccion}}<br />
+                            <h4>{{ empresa?.nombre || 'Sin nombre' }}</h4><br />
+                            <strong>Observaciones:</strong> {{ empresa?.observaciones || 'Sin observaciones'
+                            }}<br />
+                            <strong>Historia:</strong> {{ empresa?.historiaEmpresa || 'Sin historia' }}<br />
+                            <strong>Dirección:</strong> {{ empresa?.direccion || 'Sin dirección' }}<br />
                         </div>
                         <div class="botones-inferiores">
                             <button mat-icon-button color="accent" (click)="updateEmpresa(empresa)">
@@ -96,16 +100,16 @@
                     </div>
                 </li>
             </ul>
-
             <div class="pagination">
-                <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
+                <button mat-button (click)="changePage(currentPage - 1)"
+                    [disabled]="currentPage === 1">Anterior</button>
                 <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
-                <button (click)="changePage(currentPage + 1)"
+                <button mat-button (click)="changePage(currentPage + 1)"
                     [disabled]="currentPage === getTotalPages()">Siguiente</button>
             </div>
         </mat-expansion-panel>
 
-        <!-- Sección de Ofertas -->
+        <!-- Ofertas -->
         <mat-expansion-panel>
             <mat-expansion-panel-header>
                 <mat-panel-title>Ofertas</mat-panel-title>
@@ -117,12 +121,12 @@
                 <li *ngFor="let oferta of getPaginatedDataOfertas()">
                     <div class="oferta-empresa-header">
                         <div class="oferta-empresa-info">
-                            <h4>{{ oferta.nombreOferta }}</h4><br />
-                            <strong>Descripción:</strong> {{ oferta.descripcionOferta }}<br />
-                            <strong>Empresa:</strong> {{ oferta.empresa.nombre }}<br />
+                            <h4>{{ oferta?.nombreOferta || 'Sin título' }}</h4><br />
+                            <strong>Descripción:</strong> {{ oferta?.descripcionOferta || 'Sin descripción' }}<br />
+                            <strong>Empresa:</strong> {{ oferta?.empresa?.nombre || 'Empresa desconocida' }}<br />
                             <strong>Estado:</strong>
-                            <span *ngIf="!oferta.estadoOferta">✅ Activa</span>
-                            <span *ngIf="oferta.estadoOferta">❌ Inactiva</span>
+                            <span *ngIf="!oferta?.estadoOferta">✅ Activa</span>
+                            <span *ngIf="oferta?.estadoOferta">❌ Inactiva</span>
                         </div>
                         <div class="botones-inferiores">
                             <button mat-icon-button color="accent" (click)="updateOferta(oferta)">
@@ -135,21 +139,14 @@
                     </div>
                 </li>
             </ul>
-
             <div class="pagination">
-                <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
+                <button mat-button (click)="changePage(currentPage - 1)"
+                    [disabled]="currentPage === 1">Anterior</button>
                 <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
-                <button (click)="changePage(currentPage + 1)"
+                <button mat-button (click)="changePage(currentPage + 1)"
                     [disabled]="currentPage === getTotalPages()">Siguiente</button>
             </div>
         </mat-expansion-panel>
-        <div class="columna-titulo-Accordion">
-            <h2 class="panel-title-accordion">
-                <span>Panel</span><span>de</span><span>Administradores</span>
-            </h2>
-        </div>
-        <div class="contenedor-logo">
-            <img src="assets/logo.png">
-        </div>
+
     </mat-accordion>
 </div>

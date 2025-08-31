@@ -9,6 +9,7 @@
             </li>
             <li class="nav-item" *ngIf="userLoginOn">
                 <a class="nav-link active" (click)="logout()">Cerrar Sesión</a>
+                <a class="nav-link active" (click)="editarPerfil()">Editar Perfil</a>
             </li>
             <li class="nav-item" *ngIf="!userLoginOn">
                 <a class="nav-link active" [routerLink]="'/usuariocontrol'">Registrarse</a>

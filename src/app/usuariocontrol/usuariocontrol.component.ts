@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
 @Component({
   selector: 'app-usuariocontrol',
   standalone: true, // Indica que este componente es independiente
@@ -10,6 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./usuariocontrol.component.css'],
 })
 export class UsuarioControlComponent {
+  @ViewChild('formUsuario') formUsuario!: NgForm;
   nuevoUsuario = {
     dni: '',
     nombre: '',
@@ -22,8 +25,8 @@ export class UsuarioControlComponent {
   fotoSeleccionada: File | null = null;
   archivoSeleccionado: File | null = null;
   datosActualizadosOferta: any;
-  miFormulario: any;
   confirmarPassword: string = '';
+  isSubmitting = false;
 
   constructor(private http: HttpClient, private snackBar: MatSnackBar) {}
 
@@ -38,6 +41,8 @@ export class UsuarioControlComponent {
 
   crearUsuario(event: Event): void {
     event.preventDefault();
+    if (this.isSubmitting) return; // Evita doble envío
+    this.isSubmitting = true;
     // Validar que todos los campos están completos
     if (
       !this.nuevoUsuario.dni ||
@@ -50,31 +55,35 @@ export class UsuarioControlComponent {
       !this.archivoSeleccionado
     ) {
       alert('Por favor, completa todos los campos.');
+      this.isSubmitting = false;
       return;
     }
     if (this.fotoSeleccionada.size > 5 * 1024 * 1024) {
-      // 5 MB
       alert(
         'El archivo de la foto es demasiado grande. Máximo permitido: 5 MB'
       );
+      this.isSubmitting = false;
       return;
     }
     if (this.archivoSeleccionado.size > 5 * 1024 * 1024) {
-      // 5 MB
       alert('El archivo del CV es demasiado grande. Máximo permitido: 5 MB');
+      this.isSubmitting = false;
       return;
     }
+
     const password = this.nuevoUsuario.password;
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{6,}$/;
     if (!passwordRegex.test(password)) {
       alert(
         'La contraseña debe tener al menos 6 caracteres e incluir letras y números.'
       );
+      this.isSubmitting = false;
       return;
     }
 
     if (this.nuevoUsuario.password !== this.confirmarPassword) {
       alert('Las contraseñas no coinciden. Por favor, vuelve a ingresarlas.');
+      this.isSubmitting = false;
       return;
     }
 
@@ -104,17 +113,42 @@ export class UsuarioControlComponent {
         next: (response) => {
           if (response.status === 201 || response.status === 200) {
             this.snackBar.open('Usuario creado satisfactoriamente', 'Cerrar', {
-              duration: 3000,
+              duration: 6000,
             });
             // Notificar al componente padre que se deben recargar los datos
+            this.limpiarFormulario();
+            this.isSubmitting = false; // Restablecer el estado de envío
+            this.formUsuario.reset(); // Resetea valores y estado de validación
           }
         },
         error: (response) => {
-          console.error('Error al crear el Usuario', response);
-          this.snackBar.open('Error al crear el Usuario', 'Cerrar', {
+          const errorMsg = response.error?.error || 'Error al crear el Usuario';
+          this.snackBar.open(errorMsg, 'Cerrar', {
             duration: 3000,
           });
+          this.isSubmitting = false; // 🔓 desbloquear el botón
         },
       });
+  }
+
+  limpiarFormulario(): void {
+    this.formUsuario.resetForm(); // 🔄 limpia valores y estado visual
+    this.nuevoUsuario = {
+      dni: '',
+      nombre: '',
+      direccion: '',
+      email: '',
+      clave: '',
+      password: '',
+    };
+    this.confirmarPassword = '';
+    this.fotoSeleccionada = null;
+    this.archivoSeleccionado = null;
+
+    // Resetear los inputs de archivo manualmente
+    const fotoInput = document.getElementById('fotoInput') as HTMLInputElement;
+    const cvInput = document.getElementById('cvInput') as HTMLInputElement;
+    if (fotoInput) fotoInput.value = '';
+    if (cvInput) cvInput.value = '';
   }
 }

@@ -18,12 +18,21 @@ export class FileUploadService {
     return this.http
       .post(this.uploadUrl, formData, {
         observe: 'response', // Con esto obtenés un HttpResponse completo
-        responseType: 'text',
+        responseType: 'json',
       }) // Cambio aquí
       .pipe(
         tap((response) => {
-          console.log('Status:', response.status);
-          console.log('Body:', response.body);
+          if (response.status === 200) {
+            this.snackBar.open('Archivo subido exitosamente', 'Cerrar', {
+              duration: 3000,
+              panelClass: ['success-snackbar'],
+            });
+          } else {
+            this.snackBar.open('Error al subir el archivo', 'Cerrar', {
+              duration: 3000,
+              panelClass: ['error-snackbar'],
+            });
+          }
         }),
         catchError((error) => {
           console.error('Error al subir el archivo:', error);

@@ -16,17 +16,12 @@
             "outputPath": "dist/proyecto-reclutador",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"               
-              },
-               "src/assets",
-               "src/favicon.ico"
+              { "glob": "**/*", "input": "public" },
+              "src/assets",
+              "src/favicon.ico"
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
@@ -37,12 +32,7 @@
               "node_modules/jquery/dist/jquery.min.js",
               "node_modules/@popperjs/core/dist/umd/popper.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js"
-            ],
-            "server": "src/main.server.ts",
-            "outputMode": "server",
-            "ssr": {
-              "entry": "src/server.ts"
-            }
+            ]
           },
           "configurations": {
             "production": {
@@ -76,10 +66,10 @@
             },
             "development": {
               "buildTarget": "proyectoReclutador:build:development"
-            },
-            "options": {
-              "proxyConfig": "src/app/proxi.conf.json"
             }
+          },
+          "options": {
+            "proxyConfig": "src/app/proxi.conf.json"
           },
           "defaultConfiguration": "development"
         },
@@ -89,21 +79,15 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              },
-               "src/assets",
-               "src/favicon.ico"
+              { "glob": "**/*", "input": "public" },
+              "src/assets",
+              "src/favicon.ico"
             ],
             "styles": [
-                "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.css"
             ],
@@ -120,7 +104,7 @@
   "cli": {
     "analytics": "ad4c9f3e-5233-4f10-92b5-b7f2abedc803",
     "cache": {
-    "enabled": false
-  }
+      "enabled": false
+    }
   }
 }

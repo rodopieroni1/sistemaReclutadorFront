@@ -1,21 +1,20 @@
-import { CanActivateFn } from '@angular/router';
+// auth-admin.guard.ts
 import { inject } from '@angular/core';
+import { CanActivateFn } from '@angular/router';
 import { Router } from '@angular/router';
-import { Auth } from '@angular/fire/auth';
-import { onAuthStateChanged } from 'firebase/auth';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 
 export const AuthGuard: CanActivateFn = async () => {
   const router = inject(Router);
   const auth = inject(Auth);
 
-  return new Promise<boolean>((resolve) => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        resolve(true);
-      } else {
-        router.navigate(['/login']);
-        resolve(false);
-      }
-    });
+  const user = await new Promise((resolve) => {
+    onAuthStateChanged(auth, resolve);
   });
+
+  if (!user) {
+    router.navigate(['/login']);
+    return false;
+  }
+  return true;
 };

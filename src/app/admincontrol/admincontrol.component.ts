@@ -92,12 +92,11 @@ export class AdminControlComponent {
 
   constructor(
     private http: HttpClient, // public dialogRef: MatDialogRef<ModalNuevaEmpresaComponent>
-    private dialog: MatDialog,
-    private router: Router
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 1000000);
     this.http
       .get<
         {
@@ -140,12 +139,8 @@ export class AdminControlComponent {
       )
       .subscribe((data) => {
         this.rubros = data;
-        console.log('Rubros cargados:', this.rubros);
       });
-    console.log(
-      'console.log(this.getPaginatedDataRubros());',
-      this.getPaginatedDataRubros()
-    );
+
     this.http
       .get<
         {
@@ -175,45 +170,6 @@ export class AdminControlComponent {
       >('http://localhost:8080/ofertas/todas')
       .subscribe((data) => {
         this.ofertas = data;
-      });
-  }
-
-  NuevaOferta() {
-    const dialogRef = this.dialog.open(ModalNuevaOfertaComponent, {
-      width: '700px',
-      data: { accion: 'crear' }, // Pasando la acción al modal
-    });
-    // Verifica que la instancia tenga acceso al evento y suscríbete
-    dialogRef.componentInstance.datosActualizadosOferta.subscribe(() => {
-      this.cargarOfertas(); // Recargar las ofertas
-    });
-  }
-  cargarOfertas() {
-    this.http
-      .get<
-        {
-          idOferta: number;
-          nombreOferta: string;
-          descripcion: string;
-          fotoOferta: string;
-          empresa: { nombre: string };
-          estadoOferta: boolean;
-        }[]
-      >('http://localhost:8080/ofertas/todas')
-      .subscribe({
-        next: (data) => {
-          this.ofertas = data.map((oferta) => ({
-            idOferta: oferta.idOferta,
-            nombreOferta: oferta.nombreOferta,
-            descripcionOferta: oferta.descripcion,
-            fotoOferta: oferta.fotoOferta,
-            empresa: oferta.empresa,
-            estadoOferta: oferta.estadoOferta,
-          }));
-        },
-        error: (error) => {
-          console.error('Error al cargar las ofertas:', error);
-        },
       });
   }
 
@@ -329,7 +285,8 @@ export class AdminControlComponent {
           }));
         },
         error: (error) => {
-          console.error('Error al cargar las empresas:', error);
+          alert('Ocurrió un error al cargar las empresas');
+          this.empresas = []; // Limpia la lista de empresas en caso de error
         },
       });
   }
@@ -371,6 +328,47 @@ export class AdminControlComponent {
     }
   }
 
+  NuevaOferta() {
+    const dialogRef = this.dialog.open(ModalNuevaOfertaComponent, {
+      width: '700px',
+      data: { accion: 'crear' }, // Pasando la acción al modal
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.cargarOfertas(); // Recargar las ofertas si se creó una nueva oferta
+      }
+    });
+  }
+
+  cargarOfertas() {
+    this.http
+      .get<
+        {
+          idOferta: number;
+          nombreOferta: string;
+          descripcionOferta: string;
+          fotoOferta: string;
+          empresa: { nombre: string };
+          estadoOferta: boolean;
+        }[]
+      >('http://localhost:8080/ofertas/todas')
+      .subscribe({
+        next: (data) => {
+          this.ofertas = data.map((oferta) => ({
+            idOferta: oferta.idOferta,
+            nombreOferta: oferta.nombreOferta,
+            descripcionOferta: oferta.descripcionOferta,
+            fotoOferta: oferta.fotoOferta,
+            empresa: oferta.empresa,
+            estadoOferta: oferta.estadoOferta,
+          }));
+        },
+        error: (error) => {
+          console.error('Error al cargar las ofertas:', error);
+        },
+      });
+  }
   updateOferta(oferta: {
     idOferta: number;
     nombreOferta: string;
@@ -385,7 +383,7 @@ export class AdminControlComponent {
     });
     console.log('Ejecutando cargarOfertas');
 
-    dialogRef.componentInstance.datosActualizadosOferta.subscribe(() => {
+    dialogRef.componentInstance['datosActualizadosOferta'].subscribe(() => {
       this.cargarOfertas(); // Recargar las Ofertas
     });
   }

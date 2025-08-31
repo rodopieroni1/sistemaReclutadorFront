@@ -15,6 +15,7 @@ import {
   MatCardModule,
 } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -31,6 +32,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatCardTitle,
     MatCard,
     MatCardModule,
+    RouterModule,
   ],
   templateUrl: './reset-password.component.html',
   styleUrl: './reset-password.component.css',
