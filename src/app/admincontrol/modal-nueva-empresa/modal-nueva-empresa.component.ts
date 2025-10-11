@@ -24,8 +24,10 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms'; // Importar FormsModule para usar [(ngModel)]
+import { ChangeDetectorRef } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-modal-nueva-empresa',
@@ -39,6 +41,7 @@ import { ActivatedRoute } from '@angular/router';
     MatButtonModule,
     MatDialogModule,
     CommonModule,
+    MatSelectModule,
   ],
   templateUrl: './modal-nueva-empresa.component.html',
   styleUrls: ['./modal-nueva-empresa.component.css'], // Corregido
@@ -58,6 +61,7 @@ export class ModalNuevaEmpresaComponent implements OnInit {
     nombreEmpresa: string;
     cuitEmpresa: number;
     id_empresa: number;
+    idRubro: number;
     emailEmpresa: string;
     observacionesEmpresa: string;
     direccionEmpresa: string;
@@ -66,12 +70,15 @@ export class ModalNuevaEmpresaComponent implements OnInit {
     nombreEmpresa: '',
     cuitEmpresa: 1,
     id_empresa: 1,
+    idRubro: 1,
     emailEmpresa: '',
     observacionesEmpresa: '',
     direccionEmpresa: '',
     historiaEmpresa: '',
   };
-
+  rubroSeleccionado: any = null;
+  rubros: any[] = []; // Lista de rubros
+  // Agregar propiedad para la acción (crear o actualizar)
   accion: string | undefined;
   mostrarIdHidden: boolean = true; // Inicialmente oculto
   constructor(
@@ -80,6 +87,7 @@ export class ModalNuevaEmpresaComponent implements OnInit {
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<ModalNuevaEmpresaComponent>,
     private route: ActivatedRoute,
+
     @Inject(MAT_DIALOG_DATA) public data: { accion: string; empresa?: any }
   ) {
     this.miFormulario = this.fb.group({
@@ -90,16 +98,14 @@ export class ModalNuevaEmpresaComponent implements OnInit {
       emailEmpresa: ['', [Validators.required, Validators.email]],
       cuitEmpresa: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
       id_empresa: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
+      idRubro: ['', Validators.required], // ← nuevo campo agregado
     });
     this.accion = data.accion; // Recibe la acción (crear o actualizar)
     this.empresa = data.empresa || null; // Recibe la empresa si es actualización
   }
 
   ngOnInit() {
-    // Mostrar u ocultar el campo ID según la acción (crear o actualizar)
-    this.mostrarIdHidden = this.empresa?.id_empresa ? false : true;
     if (this.empresa && Object.keys(this.empresa).length > 0) {
-      // Asignar los valores de la empresa al formulario
       this.miFormulario.patchValue({
         nombreEmpresa: this.data.empresa?.nombre || '',
         cuitEmpresa: this.data.empresa?.cuit || 0,
@@ -108,31 +114,40 @@ export class ModalNuevaEmpresaComponent implements OnInit {
         direccionEmpresa: this.data.empresa?.direccion || '',
         historiaEmpresa: this.data.empresa?.historiaEmpresa || '',
         id_empresa: this.data.empresa?.id_empresa || 0,
+        idRubro: ['', Validators.required], // ← nuevo campo agregado
       });
     }
+
+    // Cargar rubros normalmente
+    this.http.get<any[]>('http://localhost:8080/rubro').subscribe({
+      next: (data) => (this.rubros = data),
+      error: () =>
+        this.snackBar.open('Error al cargar rubros', 'Cerrar', {
+          duration: 3000,
+        }),
+    });
+
+    // Reaccionar al cambio de rubro
+    this.miFormulario.get('idRubro')?.valueChanges.subscribe((id: number) => {
+      this.rubroSeleccionado =
+        this.rubros.find((r) => r.idRubro === id) || null;
+    });
   }
 
   guardar() {
-    // Validar que el formulario sea válido
-    if (this.miFormulario.value.invalid) {
-      this.snackBar.open(
-        'Por favor, completa todos los campos antes de guardar.',
-        'Cerrar',
-        { duration: 3000 }
-      );
-      return;
-    }
-
-    // Si el formulario es válido, continuar con la lógica de guardar
     if (this.accion === 'crear') {
-      if (this.miFormulario.value.cuitEmpresa === 1) {
-        this.snackBar.open('El CUIT debe ser distinto a 1.', 'Cerrar', {
+      if (
+        this.miFormulario.value.nombreEmpresa === '' ||
+        this.miFormulario.value.historiaEmpresa === '' ||
+        this.miFormulario.value.direccionEmpresa === '' ||
+        this.miFormulario.value.emailEmpresa === '' ||
+        this.miFormulario.value.cuitEmpresa === ''
+      ) {
+        this.snackBar.open('Debe completar cada uno de los campos', 'Cerrar', {
           duration: 3000,
         });
         return;
       }
-
-      // Validar que el CUIT no exista en la base de datos
       this.http
         .get<boolean>(
           `http://localhost:8080/empresas/existe/${this.miFormulario.value.cuitEmpresa}`
@@ -147,8 +162,7 @@ export class ModalNuevaEmpresaComponent implements OnInit {
               );
               return;
             }
-
-            // Si el CUIT no existe, crea la empresa
+            console.log('this.miFormulario.value:  ', this.miFormulario.value);
             const empresa = this.miFormulario.value;
             this.http
               .post('http://localhost:8080/empresas/crear', empresa, {
@@ -185,10 +199,12 @@ export class ModalNuevaEmpresaComponent implements OnInit {
           },
         });
     } else {
+      console.log('this.miFormulario.value', this.miFormulario.value);
       this.cargarUpdate(this.miFormulario.value);
-      this.dialogRef.close(); // Cierra el modal sin acción
+      this.dialogRef.close();
     }
   }
+
   cerrar() {
     this.dialogRef.close(); // Cierra el modal sin acción
   }

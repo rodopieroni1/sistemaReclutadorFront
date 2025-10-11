@@ -1,0 +1,92 @@
+  html, body {
+  height: 100%;
+  margin: 0;
+}
+.auth-container {
+  min-height: 100vh;
+  background: 
+    linear-gradient(rgba(240, 163, 118, 0.85), rgba(255, 255, 255, 0.85)),
+    url('/assets/postulante2.jpg') no-repeat center center;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+  .container {
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  form.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  label {
+    font-weight: bold;
+    color: #555;
+  }
+  
+  input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+  }
+  
+  input[type="file"] {
+    border: none;
+  }
+  
+  button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  button:hover {
+    background-color: #218838;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  th {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  td img {
+    width: 50px;
+    border-radius: 5px;
+  }
+  

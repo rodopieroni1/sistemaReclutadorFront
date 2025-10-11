@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Inject,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -8,7 +15,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button'; // Si usas botones de Angular Material
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
@@ -20,10 +27,14 @@ import {
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
+import { switchMap, catchError, tap } from 'rxjs/operators';
+import { of } from 'rxjs';
+
 @Component({
   selector: 'app-modal-nueva-oferta',
   standalone: true,
   imports: [
+    CommonModule,
     ReactiveFormsModule,
     FormsModule,
     MatExpansionModule,
@@ -39,33 +50,38 @@ import { MatOptionModule } from '@angular/material/core';
   templateUrl: './modal-nueva-oferta.component.html',
   styleUrl: './modal-nueva-oferta.component.css',
 })
-export class ModalNuevaOfertaComponent {
-  [x: string]: any;
+export class ModalNuevaOfertaComponent implements OnInit {
   descripcionOferta: string = '';
+  nombreOferta: string = '';
   fotoOferta: string = '';
   idEmpresa: number = 1;
   miFormulario: FormGroup;
   empresas: any[] = [];
-  ofertas: {
-    idOferta: number;
-    descripcion: string;
-    foto: string;
-    idEmpresa: number;
-  }[] = [];
+  imagenDesdeBD: string | null = null;
   @Output() datosActualizadosOferta = new EventEmitter<void>(); // Evento para notificar cambios
-  @Input() empresa: {
+  @Input() oferta: {
     idOferta: number;
-    descripcion: string;
-    foto: string;
-    idEmpresa: number;
+    nombreOferta: string;
+    descripcionOferta: string;
+    fotoOferta: string;
+    estadoOferta: boolean;
+    empresa: { id_empresa: number };
   } = {
     idOferta: 1,
-    descripcion: '',
-    foto: '',
-    idEmpresa: 1,
+    nombreOferta: '',
+    descripcionOferta: '',
+    fotoOferta: '',
+    estadoOferta: false,
+    empresa: { id_empresa: 0 },
   };
+  fotoOfertaUrl: string = '';
   accion: string | undefined;
   mostrarIdHidden: boolean = true; // Inicialmente oculto
+  archivoSeleccionado: File | null = null; // Archivo subido
+  imagenPreview: string | null = null;
+  isSubmitting = false;
+  uploadUrl = 'http://localhost:8080/api/uploads/';
+
   constructor(
     private http: HttpClient,
     public dialogRef: MatDialogRef<ModalNuevaOfertaComponent>,
@@ -74,58 +90,262 @@ export class ModalNuevaOfertaComponent {
     @Inject(MAT_DIALOG_DATA) public data: { accion: string; oferta?: any }
   ) {
     this.miFormulario = this.fb.group({
-      idOferta: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
       descripcionOferta: ['', Validators.required],
+      nombreOferta: ['', Validators.required],
       fotoOferta: ['', Validators.required],
-      idEmpresa: ['', [Validators.required]],
+      idEmpresa: ['', Validators.required], // Este debe coincidir con formControlName en HTML
+      idOferta: ['', Validators.required],
+      estadoOferta: [false, Validators.required],
     });
     this.accion = data.accion; // Recibe la acción (crear o actualizar)
-    this.ofertas = data.oferta || null; // Recibe la empresa si es actualización
   }
 
   ngOnInit(): void {
-    if (this.ofertas && Object.keys(this.ofertas).length > 0) {
-      // Asignar los valores de la empresa al formulario
-      this.miFormulario.patchValue({
-        idOferta: this.data.oferta?.idOferta || 0,
-        descripcionOferta: this.data.oferta?.descripcionOferta || '',
-        fotoOferta: this.data.oferta?.fotoOferta || '',
-        id_empresa: this.data.oferta?.id_empresa || 0,
-      });
+    this.obtenerEmpresas();
+    if (this.data.oferta) {
+      this.http
+        .get<any>(
+          `http://localhost:8080/ofertas/existeId/${this.data.oferta.idOferta}`
+        )
+        .subscribe({
+          next: (response) => {
+            this.miFormulario.patchValue({
+              descripcionOferta:
+                response.descripcionOferta ??
+                this.miFormulario.value.descripcionOferta,
+              nombreOferta: response.nombreOferta || '',
+              idEmpresa: response.empresa?.id_empresa || '',
+              estadoOferta: response.estadoOferta,
+            });
+            console.log(
+              '📝 Descripción cargada en el formulario:',
+              this.miFormulario.get('descripcionOferta')?.value
+            );
+
+            if (response.fotoOferta) {
+              this.archivoSeleccionado = new File(
+                [response.fotoOferta],
+                response.fotoOferta, // Nombre del archivo
+                { type: 'image/jpeg' } // Ajusta el tipo si es diferente
+              );
+            }
+            this.imagenDesdeBD = response.fotoOferta;
+            console.log('this.imagenDesdeBD ', this.imagenDesdeBD);
+            this.miFormulario.patchValue({
+              fotoOferta: response.fotoOferta,
+            });
+            const fotoActual = this.miFormulario.get('fotoOferta')?.value;
+            if (fotoActual) {
+              this.imagenPreview = fotoActual
+                ? 'assets/uploads/fotos/' + fotoActual
+                : '';
+            }
+          },
+          error: (err) => {
+            this.snackBar.open(
+              'Error al cargar la oferta para modificar.',
+              err,
+              {
+                duration: 3000,
+              }
+            );
+          },
+        });
     }
   }
+  obtenerEmpresas(): void {
+    this.http.get<any[]>('http://localhost:8080/empresas').subscribe({
+      next: (data: any[]) => {
+        this.empresas = data; // Asegúrate de asignar los datos correctamente
+      },
+      error: (err) => {
+        this.snackBar.open('Error al cargar las empresas.', err, {
+          duration: 3000,
+        });
+      },
+    });
+  }
+  guardar(): void {
+    if (
+      this.miFormulario.value.nombreOferta === '' ||
+      this.miFormulario.value.idEmpresa === '' ||
+      this.miFormulario.value.estadoOferta === ''
+    ) {
+      this.snackBar.open('Debe completar este campos.', 'Cerrar', {
+        duration: 3000,
+      });
+      return;
+    }
+    //const datosOferta = this.miFormulario.value;
+    const datosOferta = this.miFormulario.getRawValue();
+    if (this.accion === 'crear') {
+      this.http
+        .get<any>(
+          `http://localhost:8080/empresas/existeId/${datosOferta.idEmpresa}`,
+          {
+            headers: { 'Content-Type': 'application/json' },
+          }
+        )
+        .pipe(
+          switchMap((empresa) => {
+            const oferta = {
+              descripcionOferta: datosOferta.descripcionOferta,
+              nombreOferta: datosOferta.nombreOferta,
+              estadoOferta: datosOferta.estadoOferta,
+              empresa: { id_empresa: empresa.id_empresa },
+              fotoOferta: this.archivoSeleccionado?.name,
+              idOferta: datosOferta.idOferta || 0,
+            };
 
-  guardar() {
-    const oferta = {
-      descripcionOferta: this.miFormulario.value.descripcionOferta,
-      fotoOferta: this.miFormulario.value.fotoOferta,
-      idEmpresa: this.miFormulario.value.idEmpresa,
+            if (!oferta.descripcionOferta) {
+              this.snackBar.open('Agregue valores a la oferta.', 'Cerrar', {
+                duration: 3000,
+              });
+              return of(null); // corta el flujo
+            }
+
+            return this.http.post<HttpResponse<any>>(
+              'http://localhost:8080/ofertas/crear',
+              oferta,
+              { observe: 'response' }
+            );
+          }),
+          tap((response) => {
+            if (
+              response &&
+              (response.status === 201 || response.status === 200)
+            ) {
+              this.snackBar.open('Oferta creada satisfactoriamente', 'Cerrar', {
+                duration: 3000,
+              });
+              this.dialogRef.close({ ofertaCreada: true });
+            }
+          }),
+          catchError((error) => {
+            this.snackBar.open(
+              'Error al crear la oferta o al obtener empresa.',
+              'Cerrar',
+              { duration: 3000 }
+            );
+            return of(null);
+          })
+        )
+        .subscribe();
+    } else {
+      ////AQUI EMPIEZA EL MODIFICAR
+      const idEmpresa = this.miFormulario.value.idEmpresa;
+      this.http
+        .get<any>(`http://localhost:8080/empresas/existeId/${idEmpresa}`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        .subscribe({
+          next: (response) => {
+            const oferta = {
+              descripcionOferta: this.miFormulario.value.descripcionOferta,
+              nombreOferta: this.miFormulario.value.nombreOferta,
+              estadoOferta: this.miFormulario.value.estadoOferta,
+              empresa: {
+                id_empresa: this.miFormulario.value.idEmpresa,
+              },
+              fotoOferta: this.archivoSeleccionado?.name,
+            };
+            if (this.miFormulario.value.descripcionOferta === '') {
+              this.snackBar.open('Agrege valores a la oferta 1.', 'Cerrar', {
+                duration: 3000,
+              });
+              return;
+            }
+            if (!response || !response.id_empresa) {
+              this.snackBar.open('Agrege valores a la oferta 2.', 'Cerrar', {
+                duration: 3000,
+              });
+              return;
+            }
+
+            this.cargarUpdate(oferta, response);
+          },
+          error: () => {
+            this.snackBar.open(
+              'Error al obtener información de la empresa.',
+              'Cerrar',
+              { duration: 3000 }
+            );
+          },
+        });
+    }
+  }
+  cargarUpdate(oferta: any, response: any) {
+    const idOferta =
+      this.miFormulario.value.idOferta || this.data.oferta.idOferta;
+    const fotoOfertaFinal = response.fotoOferta;
+    const idEmpresa = oferta.empresa.id_empresa;
+    if (!idEmpresa) {
+      this.snackBar.open('Error: idEmpresa está vacío.', 'Cerrar', {
+        duration: 3000,
+      });
+      return;
+    }
+    oferta = {
+      descripcionOferta: oferta.descripcionOferta,
+      estadoOferta: oferta.estadoOferta,
+      fotoOferta: oferta.fotoOferta || fotoOfertaFinal, // Usa la foto existente si no se sube una nueva
+      empresa: {
+        id_empresa: idEmpresa, // Usar el valor del backend
+      },
+      idOferta: idOferta,
+      nombreOferta: oferta.nombreOferta,
     };
-
     this.http
-      .post('http://localhost:8080/ofertas/crear', oferta, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        observe: 'response', // Observa toda la respuesta HTTP
+      .put(`http://localhost:8080/ofertas/actualizar/${idOferta}`, oferta, {
+        headers: { 'Content-Type': 'application/json' },
+        observe: 'response',
       })
       .subscribe({
         next: (response) => {
           if (response.status === 201 || response.status === 200) {
-            this.snackBar.open('Oferta creada satisfactoriamente', 'Cerrar', {
-              duration: 3000,
-            });
-            // Notificar al componente padre que se deben recargar los datos
+            this.snackBar.open(
+              'Oferta actualizada satisfactoriamente',
+              'Cerrar',
+              { duration: 3000 }
+            );
             this.datosActualizadosOferta.emit();
-            this.miFormulario.reset();
+            this.dialogRef.close();
           }
         },
         error: () => {
-          this.snackBar.open('Error al crear la oferta.', 'Cerrar', {
-            duration: 3000,
-          });
+          this.snackBar.open(
+            'Error al actualizar la Oferta. Inténtelo nuevamenteee.',
+            'Cerrar',
+            { duration: 3000 }
+          );
         },
       });
+  }
+
+  getImagenUrl(): string {
+    if (this.imagenPreview) {
+      return this.imagenPreview;
+    } else if (this.imagenDesdeBD) {
+      return 'http://localhost:8080/uploads/fotos/' + this.imagenDesdeBD;
+    }
+    return '';
+  }
+
+  onArchivoSeleccionado(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+
+    this.archivoSeleccionado = input.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagenPreview = reader.result as string;
+    };
+    reader.readAsDataURL(this.archivoSeleccionado);
+    console.log('📸 Imagen seleccionada:', this.archivoSeleccionado.name);
   }
 
   cerrar() {

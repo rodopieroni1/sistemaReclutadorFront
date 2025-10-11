@@ -1,0 +1,31 @@
+<div class="auth-container">
+    <div class="container">
+        <h1>Actualizar Datos del Usuario</h1>
+        <form (submit)="actualizarUsuario($event)">
+
+            <label for="dni">DNI:</label>
+            <input type="text" id="dni" [(ngModel)]="usuario.dni" name="dni" required>
+
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" [(ngModel)]="usuario.nombre" name="nombre" required>
+
+            <label for="direccion">Dirección:</label>
+            <input type="text" id="direccion" [(ngModel)]="usuario.direccion" name="direccion" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" [(ngModel)]="usuario.email" name="email" required>
+
+            <label for="clave">Usuario:</label>
+            <input type="text" id="clave" [(ngModel)]="usuario.clave" name="clave" required>
+
+            <label for="foto">Nueva Foto (opcional):</label>
+            <input type="file" id="foto" (change)="seleccionarArchivo($event, 'foto')" accept="image/*">
+
+            <label for="cv">Nuevo CV (opcional):</label>
+            <input type="file" id="cv" (change)="seleccionarArchivo($event, 'cv')" accept=".pdf,.doc,.docx">
+
+            <button type="submit">Guardar Cambios</button>
+            <a routerLink="/home">← Volver al inicio</a>
+        </form>
+    </div>
+</div>

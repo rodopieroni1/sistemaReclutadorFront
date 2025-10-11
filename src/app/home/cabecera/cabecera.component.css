@@ -1,3 +1,57 @@
+@media (max-width: 768px) {
+
+  .social-menu {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    background: none !important;
+  }
+
+  .social-header {
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  .perfil {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .perfil-img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  .perfil p {
+    margin: 0;
+    font-size: 14px;
+  }
+
+
+  app-navegacion {
+    flex: 1 1 100%;
+    margin-top: 10px;
+  }
+
+  .oferta-input,
+  .empresa-input {
+    margin-top: 25px;
+  }
+
+  .frase-descriptiva {
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+    text-align: center;
+  }
+}
+
 /* General */
 body {
   margin: 0;
@@ -33,6 +87,12 @@ header {
 .logo img {
   max-height: 90px; /* Ajusta el tamaño de la imagen del logo */
 }
+.perfil-img {
+  width: 50px; /* Ajusta el tamaño según lo necesites */
+  height: 50px;
+  object-fit: cover; /* Asegura que la imagen se recorte sin perder proporción */
+  border-radius: 50%; /* Opcional: para hacerla circular */
+}
 nav a {
   text-decoration: none;  /* Opional: Quita el subrayado */
   margin: 0 10px;  /* Espaciado entre los enlaces */
@@ -54,34 +114,6 @@ nav a {
   /* Color en hover */
 }
 
-@media (max-width: 768px) {
-  .filaItems {
-    flex-direction: column; /* Cambia el diseño a vertical */
-    align-items: left;
-  }
-  nav a {
-    font-size: 14px; /* Ajusta el tamaño de fuente de los enlaces */
-    margin-bottom: 5px; /* Espaciado entre los enlaces */
-  }
-  .opciones nav {
-    display: flex;  /* Mantiene los enlaces alineados horizontalmente */
-    gap: 10px;  /* Espaciado entre enlaces */
-    background-color: #feca8e;
-    border-radius: 10px;  /* Bordes redondeados */
-    padding-left: 0; /* Elimina el padding excesivo en pantallas pequeñas */
-  }
-
-  .cta-button {
-    margin-top: 10px; /* Espaciado superior */
-  }
-  
-  .filaItems {
-    display: flex;
-    justify-content: space-between; /* Coloca espacio entre los elementos */
-    align-items: left; /* Alinea los elementos verticalmente */
-    flex-wrap: wrap; /* Permite que los elementos se ajusten cuando sea necesario */
-  }
-}
 
 /* Estilo general para la navegación */
 .opciones nav {

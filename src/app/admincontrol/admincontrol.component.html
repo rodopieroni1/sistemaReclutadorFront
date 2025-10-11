@@ -1,59 +1,152 @@
-<app-cabecera></app-cabecera>
-<div class="container">
+<div class="columna-imagen">
     <h2 class="panel-title">
-        <mat-panel-title>Panel de Control para Administradores</mat-panel-title>
+        <span>Panel</span><span>de</span><span>Administradores</span>
     </h2>
+</div>
+<div class="columna-contenido">
     <mat-accordion class="responsive-accordion">
-        <!-- Sección de Empresas -->
+        <!-- Aplicaciones -->
         <mat-expansion-panel>
             <mat-expansion-panel-header>
-                <mat-panel-title>Empresas: </mat-panel-title>
+                <mat-panel-title>Aplicaciones</mat-panel-title>
             </mat-expansion-panel-header>
-            <div class="button-container">
-                <button mat-raised-button color="primary" (click)="NuevaEmpresa()">Agregar Empresa</button>
-            </div>
-            <ul class="empresa-list">
-                <li *ngFor="let empresa of getPaginatedDataEmpresas()" class="empresa-item">
-                    <div class="descripcion">
-                        <strong>{{ empresa.nombre }}</strong>: {{ empresa.nombre }}
-                    </div>
-                    <div class="botones">
-                        <button mat-button color="accent" (click)="updateEmpresa(empresa)">Actualizar</button>
-                        <button mat-button color="warn" (click)="deleteEmpresa(empresa)">Eliminar</button>
+            <ul>
+                <li *ngFor="let aplicacion of getPaginatedDataAplicaciones()">
+                    <div class="oferta-empresa-header">
+                        <div class="oferta-empresa-info">
+                            <h4>
+                                {{ aplicacion.oferta?.empresa?.nombre || 'Empresa desconocida' }},
+                                {{ aplicacion.perfil?.nombre || 'Perfil no disponible' }}
+                            </h4><br />
+                            <strong>Fecha de aplicación:</strong> {{ aplicacion.fechaAplicacion || 'Sin fecha'
+                            }}<br />
+                            <strong>Propuesta:</strong> {{ aplicacion.oferta?.descripcionOferta || 'No disponible'
+                            }}<br />
+                            <strong>Activo:</strong> {{ aplicacion.estadoAplicaciones ? 'Sí' : 'No' }}<br />
+                            <a [href]="aplicacion.documentoUrl" download>📄 Descargar CV</a><br /><br />
+                        </div>
                     </div>
                 </li>
             </ul>
             <div class="pagination">
-                <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
+                <button mat-button (click)="changePage(currentPage - 1)"
+                    [disabled]="currentPage === 1">Anterior</button>
                 <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
-                <button (click)="changePage(currentPage + 1)"
+                <button mat-button (click)="changePage(currentPage + 1)"
                     [disabled]="currentPage === getTotalPages()">Siguiente</button>
             </div>
         </mat-expansion-panel>
-        <!-- Sección de Ofertas -->
+
+        <!-- Rubros -->
         <mat-expansion-panel>
             <mat-expansion-panel-header>
-                <mat-panel-title>Ofertas: </mat-panel-title>
+                <mat-panel-title>Rubros</mat-panel-title>
             </mat-expansion-panel-header>
-            <div class="button-container">
-                <button mat-raised-button color="primary" (click)="NuevaOferta()">Agregar Oferta</button>
+            <div class="barra-ofertas-superior">
+                <button mat-raised-button color="primary" (click)="crearRubro()">Agregar Rubro</button>
+            </div>
+            <ul>
+                <li *ngFor="let rubros of getPaginatedDataRubros()">
+                    <div class="oferta-empresa-header">
+                        <div class="oferta-empresa-info">
+                            <strong>Descripción:</strong> {{ rubros?.descripcionRubro || 'Sin descripción' }}<br />
+                        </div>
+                        <div class="botones-inferiores">
+                            <button mat-icon-button color="accent" (click)="actualizarRubro(rubros)">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button mat-icon-button color="warn" (click)="eliminarRubro(rubros)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div class="pagination">
+                <button mat-button (click)="changePage(currentPage - 1)"
+                    [disabled]="currentPage === 1">Anterior</button>
+                <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
+                <button mat-button (click)="changePage(currentPage + 1)"
+                    [disabled]="currentPage === getTotalPages()">Siguiente</button>
+            </div>
+        </mat-expansion-panel>
 
+        <!-- Empresas -->
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>Empresas</mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="barra-ofertas-superior">
+                <button mat-raised-button color="primary" (click)="NuevaEmpresa()">Agregar Empresa</button>
+            </div>
+            <ul>
+                <li *ngFor="let empresa of getPaginatedDataEmpresas()">
+                    <div class="oferta-empresa-header">
+                        <div class="oferta-empresa-info">
+                            <h4>{{ empresa?.nombre || 'Sin nombre' }}</h4><br />
+                            <strong>Observaciones:</strong> {{ empresa?.observaciones || 'Sin observaciones'
+                            }}<br />
+                            <strong>Historia:</strong> {{ empresa?.historiaEmpresa || 'Sin historia' }}<br />
+                            <strong>Dirección:</strong> {{ empresa?.direccion || 'Sin dirección' }}<br />
+                        </div>
+                        <div class="botones-inferiores">
+                            <button mat-icon-button color="accent" (click)="updateEmpresa(empresa)">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button mat-icon-button color="warn" (click)="deleteEmpresa(empresa)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div class="pagination">
+                <button mat-button (click)="changePage(currentPage - 1)"
+                    [disabled]="currentPage === 1">Anterior</button>
+                <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
+                <button mat-button (click)="changePage(currentPage + 1)"
+                    [disabled]="currentPage === getTotalPages()">Siguiente</button>
+            </div>
+        </mat-expansion-panel>
+
+        <!-- Ofertas -->
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>Ofertas</mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="barra-ofertas-superior">
+                <button mat-raised-button color="primary" (click)="NuevaOferta()">Agregar Oferta</button>
             </div>
             <ul>
                 <li *ngFor="let oferta of getPaginatedDataOfertas()">
-                    <strong>Descripción Oferta N° {{ oferta.idOferta }}</strong>: {{ oferta.descripcionOferta }}
-                    <div class="botones">
-                        <button mat-button color="accent" (click)="updateOferta(oferta)">Actualizar</button>
-                        <button mat-button color="warn" (click)="deleteOferta(oferta)">Eliminar</button>
+                    <div class="oferta-empresa-header">
+                        <div class="oferta-empresa-info">
+                            <h4>{{ oferta?.nombreOferta || 'Sin título' }}</h4><br />
+                            <strong>Descripción:</strong> {{ oferta?.descripcionOferta || 'Sin descripción' }}<br />
+                            <strong>Empresa:</strong> {{ oferta?.empresa?.nombre || 'Empresa desconocida' }}<br />
+                            <strong>Estado:</strong>
+                            <span *ngIf="!oferta?.estadoOferta">✅ Activa</span>
+                            <span *ngIf="oferta?.estadoOferta">❌ Inactiva</span>
+                        </div>
+                        <div class="botones-inferiores">
+                            <button mat-icon-button color="accent" (click)="updateOferta(oferta)">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button mat-icon-button color="warn" (click)="deleteOferta(oferta)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
                     </div>
                 </li>
             </ul>
             <div class="pagination">
-                <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
+                <button mat-button (click)="changePage(currentPage - 1)"
+                    [disabled]="currentPage === 1">Anterior</button>
                 <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
-                <button (click)="changePage(currentPage + 1)"
+                <button mat-button (click)="changePage(currentPage + 1)"
                     [disabled]="currentPage === getTotalPages()">Siguiente</button>
             </div>
         </mat-expansion-panel>
+
     </mat-accordion>
 </div>

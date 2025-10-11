@@ -1,33 +1,77 @@
 <body>
-    <section class="banner" style="font-family: 'Shippori Mincho', sans-serif;">
-        <p>"El trabajo ideal</p>
-        <p> no es solo un puesto, </p>
-        <p> es una oportunidad para crecer y marcar la diferencia."</p>
+    <section class="banner">
+        <header class="hero">
+            <div class="contenido-hero">
+                <h1 class="titulo">Explorá oportunidades de forma rápida y segura</h1>
+                <form class="form-busqueda" (submit)="searchJobs($event)">
+                    <mat-form-field appearance="outline" class="selector">
+                        <mat-label>Buscar por</mat-label>
+                        <mat-select [(value)]="criterio">
+                            <mat-option value="oferta">Oferta</mat-option>
+                            <mat-option value="empresa">Empresa</mat-option>
+                            <mat-option value="rubro">Rubro</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="input-expandido">
+                        <input matInput [formControl]="ofertaEmpresa" placeholder="Oferta, Empresa o Rubro">
+                    </mat-form-field>
+                    <button mat-raised-button color="primary" type="submit">
+                        <mat-icon>search</mat-icon>
+                    </button>
+                </form>
+            </div>
+            <div *ngIf="!userLoginOn">
+                <h2 class="titulo"><br>Para aplicar en alguna oferta, debes registarte</h2>
+            </div>
+        </header>
     </section>
-
     <section class="propuestas">
         <h2>Propuestas</h2>
-        <div class="card-list">
-            <mat-card *ngFor="let oferta of ofertas" class="card">
+        <div *ngIf="busquedaRealizada; else mostrarTodo" class="card-list">
+            <mat-card *ngFor="let oferta of resultados" class="card">
                 <mat-card-header>
-                    <mat-card-title>Oferta ID: {{ oferta.idOferta }}</mat-card-title>
-                    <mat-card-subtitle>Empresa ID: {{ oferta.empresa.nombre}}</mat-card-subtitle>
+                    <mat-card-title>{{ oferta.empresa.nombre}}</mat-card-title>
+                    <mat-card-subtitle>
+                        <p>{{ oferta.nombreOferta }}</p>
+                    </mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
-                    <p>{{ oferta.descripcionOferta }}</p>
+                    <img mat-card img [src]="'assets/uploads/fotos/' + oferta.fotoOferta" alt="Imagen de la oferta">
                 </mat-card-content>
+                <mat-card-footer>
+                    <div *ngIf="userLoginOn" class="btnAplicar">
+                        <button class="btn btn-primary"
+                            (click)="aplicar(oferta.idOferta, oferta.nombreOferta)">Aplicar</button>
+                    </div>
+                </mat-card-footer>
             </mat-card>
         </div>
+        <!-- Si no hay búsqueda, se muestra todo -->
+        <ng-template #mostrarTodo>
+            <div class="card-list">
+                <mat-card *ngFor="let oferta of getPaginatedDataOfertas() trackBy: trackById" class="card">
+                    <mat-card-header>
+                        <mat-card-title>{{ oferta.empresa.nombre }}</mat-card-title>
+                        <mat-card-subtitle>
+                            <p>{{ oferta.nombreOferta }}</p>
+                        </mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <img mat-card img [src]="'assets/uploads/fotos/' + oferta.fotoOferta" alt="Imagen de la oferta">
+                    </mat-card-content>
+                    <mat-card-footer>
+                        <div *ngIf="userLoginOn" class="btnAplicar">
+                            <button class="btn btn-primary"
+                                (click)="aplicar(oferta.idOferta, oferta.nombreOferta)">Aplicar</button>
+                        </div>
+                    </mat-card-footer>
+                </mat-card>
+            </div>
+        </ng-template>
     </section>
-
-    <section class="about-us">
-        <h2>About Us</h2>
-        <p>We are a co-working community dedicated to fostering innovation and collaboration in a creative environment.
-        </p>
-    </section>
-
-    <section class="community">
-        <h2>Our Community</h2>
-        <p>Join a network of like-minded professionals and grow together.</p>
-    </section>
+    <div class="pagination">
+        <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
+        <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
+        <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === getTotalPages()">Siguiente</button>
+    </div>
 </body>

@@ -9,4 +9,9 @@ export const environment = {
     appId: '1:365573390664:web:f7c5e2408a86702225337d',
     measurementId: 'G-D343425N81',
   },
+  local: {
+    urlHost: 'http://localhost:8080/',
+    urlApi: 'http://localhost:8080/',
+    userId: 1,
+  },
 };

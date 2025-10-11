@@ -8,6 +8,10 @@
     background: #feca8e;
 }
 
+.inputModalID{
+  visibility: hidden;
+  display: none;
+}
 
 button[color="primary"] {
     background-color: #3f51b5;
@@ -15,7 +19,7 @@ button[color="primary"] {
 }
   
   /* Contenedor principal del modal */
-  h2 {
+  .modal-header .h2 {
     margin-bottom: 16px;
     background:  #feca8e;
     color: #000000; /* Tono azul de Angular Material */

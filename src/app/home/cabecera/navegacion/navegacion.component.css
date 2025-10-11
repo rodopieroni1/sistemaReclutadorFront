@@ -1,0 +1,8 @@
+@media (max-width: px) {
+.collapse,
+  .mat-expansion-panel-body,  /* si usás Angular Material */
+  .contenido-colapsable {
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+}

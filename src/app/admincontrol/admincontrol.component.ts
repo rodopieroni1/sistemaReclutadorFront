@@ -6,10 +6,11 @@ import { CabeceraComponent } from '../home/cabecera/cabecera.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { ModalNuevaOfertaComponent } from './modal-nueva-oferta/modal-nueva-oferta.component';
 import { ModalNuevaEmpresaComponent } from './modal-nueva-empresa/modal-nueva-empresa.component';
-
+import { Router } from '@angular/router';
 @Component({
   standalone: true,
   selector: 'app-admincontrol',
@@ -19,14 +20,37 @@ import { ModalNuevaEmpresaComponent } from './modal-nueva-empresa/modal-nueva-em
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    CabeceraComponent,
     MatDialogModule,
+    MatIconModule,
   ],
   templateUrl: './admincontrol.component.html',
   styleUrls: ['./admincontrol.component.css'],
 })
 export class AdminControlComponent {
   [x: string]: any;
+  aplicaciones: {
+    [x: string]: any;
+    id_aplicacion: number;
+    fechaAplicacion: Date;
+    oferta: {
+      id: number;
+      descripcionOferta: string;
+      empresa: { nombre: string };
+    };
+    perfil: {
+      id: number;
+      nombre: string;
+      email: string;
+      documentoUrl: string;
+      fotoUrl: string;
+    };
+    estadoAplicaciones: boolean;
+    documentoUrl: string | null;
+  }[] = [];
+  rubros: {
+    idRubro: number;
+    descripcionRubro: string;
+  }[] = [];
   empresas: {
     nombre: string;
     direccion: string;
@@ -37,14 +61,21 @@ export class AdminControlComponent {
     id_empresa: number;
   }[] = [];
   ofertas: {
+    empresa: any;
     idOferta: number;
+    nombreOferta: string;
     descripcionOferta: string;
     fotoOferta: string;
-    id_empresa: number;
+    estadoOferta: boolean;
   }[] = [];
 
   currentPage: number = 1; // Página actual
   itemsPerPage: number = 50; // Número de elementos por página
+  //Aplicaciones
+  id_aplicacion: number = 0;
+  fechaAplicacion: Date = new Date();
+  id_perfil: number = 1;
+  estadoAplicaciones: boolean = true;
   //Empresa
   nombreEmpresa: string = '';
   direccionEmpresa: string = '';
@@ -55,7 +86,8 @@ export class AdminControlComponent {
   id_empresa: number = 1;
   //Oferta
   idOferta: number = 1;
-  descripcionOferta: string = '';
+  nombreOferta: string = '';
+  descripcion: string = '';
   fotoOferta: string = '';
 
   constructor(
@@ -64,6 +96,51 @@ export class AdminControlComponent {
   ) {}
 
   ngOnInit() {
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 1000000);
+    this.http
+      .get<
+        {
+          idaplicacion: number;
+          fecha: Date;
+          oferta: {
+            id: number;
+            nombreOferta: string;
+            descripcionOferta: string;
+            empresa: { nombre: string };
+          };
+          perfil: {
+            id: number;
+            nombre: string;
+            email: string;
+            documentoUrl: string;
+            fotoUrl: string;
+          };
+          documentoUrl: string | null;
+          estadoAplicaciones: boolean;
+        }[]
+      >('http://localhost:8080/aplicaciones')
+      .subscribe((data) => {
+        // Mapeamos las claves recibidas para que coincidan con las claves esperadas
+        this.aplicaciones = data.map((aplicacion) => ({
+          id_aplicacion: aplicacion.idaplicacion,
+          fechaAplicacion: aplicacion.fecha,
+          oferta: aplicacion.oferta, // Mantiene el objeto completo
+          perfil: aplicacion.perfil, // Mantiene el objeto completo
+          documentoUrl: aplicacion.perfil.documentoUrl
+            ? aplicacion.perfil.documentoUrl.replace(/\\/g, '/')
+            : null,
+          estadoAplicaciones: aplicacion.estadoAplicaciones,
+        }));
+      });
+
+    this.http
+      .get<{ idRubro: number; descripcionRubro: string }[]>(
+        'http://localhost:8080/rubro'
+      )
+      .subscribe((data) => {
+        this.rubros = data;
+      });
+
     this.http
       .get<
         {
@@ -84,9 +161,11 @@ export class AdminControlComponent {
       .get<
         {
           idOferta: number;
+          nombreOferta: string;
           descripcionOferta: string;
           fotoOferta: string;
-          id_empresa: number;
+          empresa: { nombre: string };
+          estadoOferta: boolean;
         }[]
       >('http://localhost:8080/ofertas/todas')
       .subscribe((data) => {
@@ -94,39 +173,79 @@ export class AdminControlComponent {
       });
   }
 
-  NuevaOferta() {
-    const dialogRef = this.dialog.open(ModalNuevaOfertaComponent, {
-      width: '700px',
-      data: { accion: 'crear' }, // Pasando la acción al modal
-    });
-    // Verifica que la instancia tenga acceso al evento y suscríbete
-    dialogRef.componentInstance.datosActualizadosOferta.subscribe(() => {
-      this.cargarOfertas(); // Recargar las ofertas
-    });
+  crearRubro() {
+    const descripcion = prompt('Ingrese la descripción del nuevo rubro:');
+    if (descripcion) {
+      this.http
+        .post('http://localhost:8080/rubro/crear', {
+          descripcionRubro: descripcion,
+        })
+        .subscribe({
+          next: () => {
+            alert('Rubro creado exitosamente');
+            this.cargarRubros();
+          },
+          error: () => {
+            alert('Error al crear el rubro');
+          },
+        });
+    }
   }
-  cargarOfertas() {
+
+  cargarRubros() {
     this.http
-      .get<
-        {
-          idOferta: number;
-          descripcionOferta: string;
-          fotoOferta: string;
-          id_empresa: number;
-        }[]
-      >('http://localhost:8080/ofertas/todas')
+      .get<{ idRubro: number; descripcionRubro: string }[]>(
+        'http://localhost:8080/rubro'
+      )
       .subscribe({
         next: (data) => {
-          this.ofertas = data.map((oferta) => ({
-            idOferta: oferta.idOferta,
-            descripcionOferta: oferta.descripcionOferta,
-            fotoOferta: oferta.fotoOferta,
-            id_empresa: oferta.id_empresa,
-          }));
+          this.rubros = data;
         },
         error: (error) => {
-          console.error('Error al cargar las ofertas:', error);
+          console.error('Error al cargar los rubros:', error);
         },
       });
+  }
+
+  eliminarRubro(rubro: { idRubro: number; descripcionRubro: string }) {
+    if (
+      confirm(
+        `¿Estás seguro que deseas eliminar el rubro "${rubro.descripcionRubro}"?`
+      )
+    ) {
+      this.http
+        .delete(`http://localhost:8080/rubro/eliminar/${rubro.idRubro}`)
+        .subscribe({
+          next: () => {
+            alert('Rubro eliminado');
+            this.cargarRubros();
+          },
+          error: () => {
+            alert('Error al eliminar el rubro');
+          },
+        });
+    }
+  }
+  actualizarRubro(rubro: { idRubro: number; descripcionRubro: string }) {
+    const nuevaDescripcion = prompt(
+      'Editar descripción del rubro:',
+      rubro.descripcionRubro
+    );
+    if (nuevaDescripcion) {
+      this.http
+        .put(`http://localhost:8080/rubro/actualizar/${rubro.idRubro}`, {
+          descripcionRubro: nuevaDescripcion,
+        })
+        .subscribe({
+          next: () => {
+            alert('Rubro actualizado');
+            this.cargarRubros();
+          },
+          error: () => {
+            alert('Error al actualizar el rubro');
+          },
+        });
+    }
   }
 
   NuevaEmpresa() {
@@ -166,7 +285,8 @@ export class AdminControlComponent {
           }));
         },
         error: (error) => {
-          console.error('Error al cargar las empresas:', error);
+          alert('Ocurrió un error al cargar las empresas');
+          this.empresas = []; // Limpia la lista de empresas en caso de error
         },
       });
   }
@@ -208,19 +328,63 @@ export class AdminControlComponent {
     }
   }
 
+  NuevaOferta() {
+    const dialogRef = this.dialog.open(ModalNuevaOfertaComponent, {
+      width: '700px',
+      data: { accion: 'crear' }, // Pasando la acción al modal
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.cargarOfertas(); // Recargar las ofertas si se creó una nueva oferta
+      }
+    });
+  }
+
+  cargarOfertas() {
+    this.http
+      .get<
+        {
+          idOferta: number;
+          nombreOferta: string;
+          descripcionOferta: string;
+          fotoOferta: string;
+          empresa: { nombre: string };
+          estadoOferta: boolean;
+        }[]
+      >('http://localhost:8080/ofertas/todas')
+      .subscribe({
+        next: (data) => {
+          this.ofertas = data.map((oferta) => ({
+            idOferta: oferta.idOferta,
+            nombreOferta: oferta.nombreOferta,
+            descripcionOferta: oferta.descripcionOferta,
+            fotoOferta: oferta.fotoOferta,
+            empresa: oferta.empresa,
+            estadoOferta: oferta.estadoOferta,
+          }));
+        },
+        error: (error) => {
+          console.error('Error al cargar las ofertas:', error);
+        },
+      });
+  }
   updateOferta(oferta: {
     idOferta: number;
+    nombreOferta: string;
     descripcionOferta: string;
     fotoOferta: string;
-    id_empresa: number;
+    estadoOferta: boolean;
+    empresa: { nombre: string };
   }) {
     const dialogRef = this.dialog.open(ModalNuevaOfertaComponent, {
       width: '700px',
       data: { accion: 'actualizar', oferta: oferta }, // Pasando la acción y datos de la empresa
     });
-    dialogRef.componentInstance.datosActualizadosOferta.subscribe(() => {
-      this.cargarOfertas(); // Recargar las empresas
-      //dialogRef.componentInstance.cargarUpdate(this['empresa']);
+    console.log('Ejecutando cargarOfertas');
+
+    dialogRef.componentInstance['datosActualizadosOferta'].subscribe(() => {
+      this.cargarOfertas(); // Recargar las Ofertas
     });
   }
 
@@ -250,12 +414,25 @@ export class AdminControlComponent {
     const endIndex = startIndex + this.itemsPerPage;
     return this.ofertas.slice(startIndex, endIndex);
   }
-
+  empresasPaginadas: any[] = [];
   getPaginatedDataEmpresas() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
     return this.empresas.slice(startIndex, endIndex);
   }
+
+  getPaginatedDataRubros() {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.rubros.slice(startIndex, endIndex);
+  }
+  getPaginatedDataAplicaciones() {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    const paginatedData = this.aplicaciones.slice(startIndex, endIndex);
+    return paginatedData;
+  }
+
   changePage(page: number) {
     if (page >= 1 && page <= this.getTotalPages()) {
       this.currentPage = page;
