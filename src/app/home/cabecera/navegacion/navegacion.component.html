@@ -1,22 +1,50 @@
-<nav class="navbar bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
     <div class="container-fluid">
-        <button class="navbar-toggler" (click)="menuAbierto = !menuAbierto" aria-label="Abrir menú de navegación">
+
+        <!-- Botón hamburguesa -->
+        <button class="navbar-toggler" type="button" (click)="menuAbierto = !menuAbierto"
+            title="Abrir menú de navegación" aria-label="Abrir menú de navegación">
             <span class="navbar-toggler-icon"></span>
+            <span class="visually-hidden">Abrir menú de navegación</span>
         </button>
-        <ul class="navbar-nav" *ngIf="menuAbierto">
-            <li class="nav-item" *ngIf="!userLoginOn">
-                <a class="nav-link active" [routerLink]="'/login-user'">Iniciar Sesión</a>
-            </li>
-            <li class="nav-item" *ngIf="userLoginOn">
-                <a class="nav-link active" (click)="logout()">Cerrar Sesión</a>
-                <a class="nav-link active" (click)="editarPerfil()">Editar Perfil</a>
-            </li>
-            <li class="nav-item" *ngIf="!userLoginOn">
-                <a class="nav-link active" [routerLink]="'/usuariocontrol'">Registrarse</a>
-            </li>
-            <li class="nav-item dropdown" *ngIf="userLoginOn">
-                <!-- Opciones de perfil -->
-            </li>
-        </ul>
+
+        <div class="collapse navbar-collapse" [ngClass]="{'show': menuAbierto}">
+            <ul class="navbar-nav ms-auto">
+
+                <!-- Si NO está logueado -->
+                <ng-container *ngIf="!userLoginOn">
+                    <li class="nav-item">
+                        <a class="nav-link" [routerLink]="'/login-user'">Iniciar Sesión</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" [routerLink]="'/usuariocontrol'">Registrarse</a>
+                    </li>
+                </ng-container>
+
+                <!-- Si está logueado -->
+                <ng-container *ngIf="userLoginOn">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
+                            id="perfilDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img [src]="userProfileImage || 'assets/avatar.png'" alt="Avatar"
+                                class="avatar-img rounded-circle me-2" />
+                            <span>{{ userProfileName }}</span>
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="perfilDropdown">
+                            <li class="dropdown-header text-center">
+                                <strong>{{ userProfileName || 'Menu' }}</strong>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" (click)="editarPerfil()">Editar Perfil</a></li>
+                            <li><a class="dropdown-item text-danger" (click)="logout()">Cerrar Sesión</a></li>
+                        </ul>
+                    </li>
+                </ng-container>
+
+            </ul>
+        </div>
     </div>
 </nav>
