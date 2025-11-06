@@ -2,45 +2,41 @@
     Tu sesión ha expirado. Por favor, inicia sesión nuevamente.
 </div>
 
-<div class="auth-container">
-    <mat-card>
-        <mat-card-header>
-            <mat-card-title>Iniciar Sesión</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-            <form [formGroup]="loginForm">
-                <div class="mb-3">
-                    <label for="exampleInputEmail1" class="form-label">Clave</label>
-                    <input formControlName="clave" type="email" (focus)="hideMessage()" class="form-control"
-                        id="exampleInputEmail1" aria-describedby="emailHelp">
-                    <div *ngIf="email.invalid && (email.dirty || email.touched)" class="text-danger">
-                        <div *ngIf="email.errors?.['required']">Email is required.</div>
-                        <div *ngIf="email.errors?.['minlength']">
-                            email debe tener al menos 4 caracteres.
-                        </div>
-                        <div *ngIf="email.errors?.['forbiddenName']">
-                            email no puede ser "test".
-                        </div>
-                    </div>
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="avatar">
+            <img src="/assets/logo.jpg" alt="Usuario" />
+        </div>
+        <h2>Inicio de Sesión</h2>
+
+        <form [formGroup]="loginForm">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input formControlName="clave" type="email" id="email" (focus)="hideMessage()" />
+                <div *ngIf="email.invalid && (email.dirty || email.touched)" class="error">
+                    <div *ngIf="email.errors?.['required']">Email es obligatorio.</div>
+                    <div *ngIf="email.errors?.['minlength']">Debe tener al menos 4 caracteres.</div>
+                    <div *ngIf="email.errors?.['forbiddenName']">No puede ser "test".</div>
                 </div>
-                <div class="mb-3">
-                    <label for="exampleInputPassword1" class="form-label">Password</label>
-                    <input formControlName="password" (focus)="hideMessage()" type="password" class="form-control"
-                        id="exampleInputPassword1">
-                    <div *ngIf="password.invalid && (password.dirty || password.touched)" class="text-danger">
-                        <div *ngIf="password.errors?.['required']">Password is required.</div>
-                        <div *ngIf="password.errors?.['minlength']">
-                            Password debe tener al menos 4 caracteres.
-                        </div>
-                    </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input formControlName="password" type="password" id="password" (focus)="hideMessage()" />
+                <div *ngIf="password.invalid && (password.dirty || password.touched)" class="error">
+                    <div *ngIf="password.errors?.['required']">Password es obligatorio.</div>
+                    <div *ngIf="password.errors?.['minlength']">Debe tener al menos 4 caracteres.</div>
                 </div>
-                <button type="submit" class="btn btn-primary" (click)="login()">Ingresar</button>
-            </form>
-        </mat-card-content>
-        <mat-card-actions>
-            <p>¿No tienes cuenta? <a routerLink="/registro">Regístrate aquí</a></p>
-            <p><a routerLink="/olvide-password">¿Olvidaste tu contraseña?</a></p>
-            <p class="text-danger">{{ errorMessage }}</p>
-        </mat-card-actions>
-    </mat-card>
+            </div>
+
+            <button type="submit" (click)="login()">Ingresar</button>
+        </form>
+
+        <div class="links">
+            <a routerLink="/registro">¿No tienes cuenta?</a>
+            <a routerLink="/olvide-password">Recuperar Contraseña</a>
+        </div>
+
+        <p class="error-message">{{ errorMessage }}</p>
+    </div>
 </div>

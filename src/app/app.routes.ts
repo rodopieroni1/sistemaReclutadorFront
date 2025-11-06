@@ -12,6 +12,8 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { OlvidePasswordComponent } from './olvide-password/olvide-password-component';
 import { UpdateUserComponent } from './perfil/UpdateUser.component';
 import { AuthGuard } from './guards/auth.guard';
+import { LoginPortadaComponent } from './login-portada/login-portada.component';
+
 // import { PerfilComponent } from './perfil/perfil.component';
 
 interface JwtPayload {
@@ -21,12 +23,24 @@ interface JwtPayload {
 export const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'login-user', component: LoginuserComponent },
+  {
+    path: '',
+    loadComponent: () =>
+      import('./login-portada/login-portada.component').then(
+        (m) => m.LoginPortadaComponent
+      ),
+  },
+  {
+    path: 'login-user',
+    loadComponent: () =>
+      import('./loginuser/loginuser.component').then(
+        (m) => m.LoginuserComponent
+      ),
+  },
   { path: 'register', component: RegisterComponent },
   { path: 'olvide-password', component: OlvidePasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'registro', component: UsuarioControlComponent },
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
 
   {
     path: 'admincontrol',
@@ -37,11 +51,6 @@ export const routes: Routes = [
     path: 'editar-perfil',
     component: UpdateUserComponent,
   },
-  // {
-  //   path: 'reset-password',
-  //   component: PerfilComponent,
-  //   canActivate: [AuthGuard],
-  // },
   {
     path: 'usuariocontrol',
     component: UsuarioControlComponent,
