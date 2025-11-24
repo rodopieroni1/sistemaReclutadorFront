@@ -7,11 +7,12 @@
         <div class="avatar">
             <img src="/assets/logo.jpg" alt="Usuario" />
         </div>
+
         <h2>Inicio de Sesión</h2>
 
-        <form [formGroup]="loginForm">
+        <form [formGroup]="loginForm" (ngSubmit)="login()">
             <div class="form-group">
-                <label for="email">Email</label>
+                <label for="email">Nombre de Usuario</label>
                 <input formControlName="clave" type="email" id="email" (focus)="hideMessage()" />
                 <div *ngIf="email.invalid && (email.dirty || email.touched)" class="error">
                     <div *ngIf="email.errors?.['required']">Email es obligatorio.</div>
@@ -29,7 +30,7 @@
                 </div>
             </div>
 
-            <button type="submit" (click)="login()">Ingresar</button>
+            <button type="submit" [disabled]="loginForm.invalid">Ingresar</button>
         </form>
 
         <div class="links">
@@ -37,6 +38,6 @@
             <a routerLink="/olvide-password">Recuperar Contraseña</a>
         </div>
 
-        <p class="error-message">{{ errorMessage }}</p>
+        <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
     </div>
 </div>

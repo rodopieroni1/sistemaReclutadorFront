@@ -15,6 +15,6 @@ export class LoginPortadaComponent implements OnInit {
   ngOnInit(): void {
     setTimeout(() => {
       this.router.navigate(['/login-user']);
-    }, 4000);
+    }, 7000);
   }
 }
