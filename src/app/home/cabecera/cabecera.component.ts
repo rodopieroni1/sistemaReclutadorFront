@@ -6,15 +6,19 @@ import { environment } from '../../../environments/environment';
 import { UserServiceService } from '../../loginuser/user-service.service';
 import { NavigationServiceService } from '../../navigation-service.service';
 import { NavegacionComponent } from './navegacion/navegacion.component';
+import { RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-cabecera',
   standalone: true,
-  imports: [NavegacionComponent, CommonModule],
+  imports: [NavegacionComponent, CommonModule, RouterModule, CommonModule],
   templateUrl: './cabecera.component.html',
   styleUrl: './cabecera.component.css',
 })
 export class CabeceraComponent implements OnInit {
+  [x: string]: any;
   isMenuOpen: boolean = false;
   userLoginOn: boolean = false;
   userProfileImage: string = '';
@@ -22,11 +26,15 @@ export class CabeceraComponent implements OnInit {
   user?: User;
   userName: string = '';
   mostrarCabecera: boolean = true;
+  menuAbierto = false;
+  private subs: Subscription[] = [];
+
   constructor(
     private userServiceService: UserServiceService,
     private loginService: LoginService,
     private cdRef: ChangeDetectorRef,
-    private navigationService: NavigationServiceService
+    private navigationService: NavigationServiceService,
+    private router: Router
   ) {
     this.userServiceService.getUsers(environment.local.userId).subscribe({
       next: (userData) => {
@@ -57,5 +65,29 @@ export class CabeceraComponent implements OnInit {
     this.navigationService.previousUrl$.subscribe((url) => {
       this.mostrarCabecera = url !== '/admincontrol';
     });
+  }
+
+  editarPerfil(): void {
+    if (this.userLoginOn) {
+      console.log('Redirigiendo a editar perfil');
+      this.router.navigate(['/editar-perfil']);
+    } else {
+      console.log('No va la cancion');
+      this.router.navigate(['/login-user']);
+    }
+  }
+
+  logout(): void {
+    sessionStorage.clear();
+    this.userProfileImage = '';
+    this.userName = '';
+    this.userLoginOn = false;
+    this.subs.forEach((sub) => sub.unsubscribe());
+    this.loginService.logout();
+    this.router.navigate(['/login-user']);
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach((sub) => sub.unsubscribe());
   }
 }
