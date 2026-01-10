@@ -86,7 +86,7 @@ export class UpdateUserComponent implements OnInit {
       formData.append(key, (this.usuario as any)[key]);
     }
     if (this.foto) formData.append('foto', this.foto);
-    if (this.cv) formData.append('cv', this.cv);
+    if (this.cv) formData.append('uploadcv', this.cv);
     const id = Number(sessionStorage.getItem('idPerfil'));
     console.log('ID del usuario:', id);
     this.usuarioService.updateUsuario(id, formData).subscribe({

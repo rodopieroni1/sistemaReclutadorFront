@@ -1,35 +1,40 @@
-<form class="form-registro" #formUsuario="ngForm" (ngSubmit)="crearUsuario($event)">
-    <!-- Columna 1 y 2: Datos personales -->
-    <label for="dni">DNI:</label>
-    <input type="text" id="dni" name="dni" [(ngModel)]="nuevoUsuario.dni" required>
+<div class="auth-container">
+    <div class="container">
+        <h1>Registrar Usuario</h1>
+        <form #formUsuario="ngForm" (ngSubmit)="crearUsuario($event)">
 
-    <label for="nombre">Nombre:</label>
-    <input type="text" id="nombre" name="nombre" [(ngModel)]="nuevoUsuario.nombre" required>
+            <label for="dni">DNI:</label>
+            <input type="text" id="dni" name="dni" [(ngModel)]="nuevoUsuario.dni" required>
 
-    <label for="direccion">Dirección:</label>
-    <input type="text" id="direccion" name="direccion" [(ngModel)]="nuevoUsuario.direccion" required>
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" [(ngModel)]="nuevoUsuario.nombre" required>
 
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" [(ngModel)]="nuevoUsuario.email" required>
+            <label for="direccion">Dirección:</label>
+            <input type="text" id="direccion" name="direccion" [(ngModel)]="nuevoUsuario.direccion" required>
 
-    <!-- Columna 3 y 4: Acceso -->
-    <label for="clave">Usuario:</label>
-    <input type="text" id="clave" name="clave" [(ngModel)]="nuevoUsuario.clave" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" [(ngModel)]="nuevoUsuario.email" required>
 
-    <label for="contraseña">Contraseña:</label>
-    <input type="password" id="contraseña" name="contraseña" [(ngModel)]="nuevoUsuario.password" required>
+            <!-- Columna 3 y 4: Acceso -->
+            <label for="clave">Usuario:</label>
+            <input type="text" id="clave" name="clave" [(ngModel)]="nuevoUsuario.clave" required>
 
-    <label for="confirmarPassword">Reingrese Contraseña:</label>
-    <input type="password" name="confirmarPassword" [(ngModel)]="confirmarPassword" placeholder="Confirmar contraseña"
-        required>
+            <label for="contraseña">Contraseña:</label>
+            <input type="password" id="contraseña" name="contraseña" [(ngModel)]="nuevoUsuario.password" required>
 
-    <!-- Columna 5: Archivos y acciones -->
-    <label for="foto">Foto de perfil:</label>
-    <input type="file" id="foto" (change)="seleccionarArchivo($event, 'foto')" accept="image/*">
+            <label for="confirmarPassword">Reingrese Contraseña:</label>
+            <input type="password" name="confirmarPassword" [(ngModel)]="confirmarPassword"
+                placeholder="Confirmar contraseña" required>
 
-    <label for="cv">Documento (.pdf,.doc,.docx):</label>
-    <input type="file" id="cv" (change)="seleccionarArchivo($event, 'cv')" accept=".pdf,.doc,.docx">
+            <!-- Columna 5: Archivos y acciones -->
+            <label for="foto">Foto de perfil:</label>
+            <input type="file" id="foto" (change)="seleccionarArchivo($event, 'foto')" accept="image/*">
 
-    <button type="submit" [disabled]="isSubmitting">Crear Usuario</button>
-    <a href="/login-user">← Volver al inicio de sesión</a>
-</form>
+            <label for="cv">Documento (.pdf,.doc,.docx):</label>
+            <input type="file" id="cv" (change)="seleccionarArchivo($event, 'cv')" accept=".pdf,.doc,.docx">
+
+            <button type="submit" [disabled]="isSubmitting">Crear Usuario</button>
+            <a href="/login-user">← Volver al inicio de sesión</a>
+        </form>
+    </div>
+</div>

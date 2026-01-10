@@ -54,19 +54,33 @@ export class UsuarioControlComponent {
       !this.fotoSeleccionada ||
       !this.archivoSeleccionado
     ) {
-      alert('Por favor, completa todos los campos.');
+      this.snackBar.open('Por favor, completa todos los campos.', 'Cerrar', {
+        duration: 4000,
+      });
+
       this.isSubmitting = false;
       return;
     }
     if (this.fotoSeleccionada.size > 5 * 1024 * 1024) {
-      alert(
-        'El archivo de la foto es demasiado grande. Máximo permitido: 5 MB'
+      this.snackBar.open(
+        'El archivo de la foto es demasiado grande. Máximo permitido: 5 MB',
+        'Cerrar',
+        {
+          duration: 4000,
+        }
       );
+
       this.isSubmitting = false;
       return;
     }
     if (this.archivoSeleccionado.size > 5 * 1024 * 1024) {
-      alert('El archivo del CV es demasiado grande. Máximo permitido: 5 MB');
+      this.snackBar.open(
+        'El archivo del CV es demasiado grande. Máximo permitido: 5 MB',
+        'Cerrar',
+        {
+          duration: 4000,
+        }
+      );
       this.isSubmitting = false;
       return;
     }
@@ -74,15 +88,26 @@ export class UsuarioControlComponent {
     const password = this.nuevoUsuario.password;
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{6,}$/;
     if (!passwordRegex.test(password)) {
-      alert(
-        'La contraseña debe tener al menos 6 caracteres e incluir letras y números.'
+      this.snackBar.open(
+        'La contraseña debe tener al menos 6 caracteres e incluir letras y números.',
+        'Cerrar',
+        {
+          duration: 4000,
+        }
       );
+
       this.isSubmitting = false;
       return;
     }
 
     if (this.nuevoUsuario.password !== this.confirmarPassword) {
-      alert('Las contraseñas no coinciden. Por favor, vuelve a ingresarlas.');
+      this.snackBar.open(
+        'Las contraseñas no coinciden. Por favor, vuelve a ingresarlas.',
+        'Cerrar',
+        {
+          duration: 4000,
+        }
+      );
       this.isSubmitting = false;
       return;
     }
