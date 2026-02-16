@@ -1,0 +1,54 @@
+<div class="detalle-container" *ngIf="oferta">
+    <!-- Header -->
+    <div class="detalle-header">
+
+        <div class="empresa-info">
+            <img class="logo" [src]="'assets/uploads/fotos/' + oferta.fotoOferta" alt="Imagen de la oferta">
+
+            <div class="textos">
+                <h1 class="titulo-oferta">{{ oferta.nombreOferta }}</h1>
+                <h2 class="empresa">{{ oferta.empresa.nombre }}</h2>
+                <h2 class="empresa">{{ oferta.empresa.cargo }}</h2>
+                <h2 class="empresa">{{ oferta.empresa.email }}</h2>
+                <!-- <p class="ubicacion">📍 {{ oferta.ubicacion }}</p>
+                <p class="fecha">Publicado el {{ oferta.fechaPublicacion | date }}</p> -->
+            </div>
+        </div>
+
+        <div class="btnAplicar">
+            <button mat-raised-button color="primary" (click)="aplicar(oferta.idOferta, oferta.nombreOferta)">
+                Aplicar ahora
+            </button>
+
+            <button mat-stroked-button color="accent" routerLink="/home">
+                Volver
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Información principal -->
+    <mat-card class="detalle-card">
+
+        <mat-card-content>
+
+            <section class="info-seccion">
+                <h3>💰 Salario</h3>
+                <p>{{ oferta.salario }}</p>
+            </section>
+
+            <section class="info-seccion">
+                <h3>📝 Descripción del puesto</h3>
+                <div [innerHTML]="getDescripcionFormateada(oferta.descripcionOferta)"></div>
+            </section>
+
+            <section class="info-seccion">
+                <h3>✅ Requisitos</h3>
+                <p>{{ oferta.requisitos }}</p>
+            </section>
+
+        </mat-card-content>
+
+    </mat-card>
+
+</div>

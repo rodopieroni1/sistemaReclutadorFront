@@ -63,6 +63,11 @@
                         <div *ngIf="userLoginOn" class="btnAplicar">
                             <button class="btn btn-primary"
                                 (click)="aplicar(oferta.idOferta, oferta.nombreOferta)">Aplicar</button>
+                            &nbsp;
+                            <button mat-raised-button color="accent" (click)="verDetalle(oferta)">
+                                Ver más
+                            </button>
+
                         </div>
                     </mat-card-footer>
                 </mat-card>

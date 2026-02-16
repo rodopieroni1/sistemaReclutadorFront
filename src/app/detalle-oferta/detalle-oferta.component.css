@@ -1,0 +1,52 @@
+.detalle-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.detalle-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.empresa-info {
+    display: flex;
+    gap: 20px;
+}
+
+.logo {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.titulo-oferta {
+    margin: 0;
+    font-size: 28px;
+}
+
+.empresa {
+    margin: 5px 0;
+    font-weight: 500;
+    color: #555;
+}
+
+.info-seccion {
+    margin-bottom: 25px;
+}
+
+.acciones {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.texto-formateado {
+    white-space: pre-line;
+    /* Respeta saltos de línea */
+    line-height: 1.6;
+}

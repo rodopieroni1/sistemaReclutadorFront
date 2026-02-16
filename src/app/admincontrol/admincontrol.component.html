@@ -122,11 +122,11 @@
                     <div class="oferta-empresa-header">
                         <div class="oferta-empresa-info">
                             <h4>{{ oferta?.nombreOferta || 'Sin título' }}</h4><br />
-                            <strong>Descripción:</strong> {{ oferta?.descripcionOferta || 'Sin descripción' }}<br />
                             <strong>Empresa:</strong> {{ oferta?.empresa?.nombre || 'Empresa desconocida' }}<br />
                             <strong>Estado:</strong>
-                            <span *ngIf="!oferta?.estadoOferta">✅ Activa</span>
-                            <span *ngIf="oferta?.estadoOferta">❌ Inactiva</span>
+                            <span *ngIf="oferta?.estadoOferta">✅ Activa</span>
+                            <span *ngIf="!oferta?.estadoOferta">❌Inactiva</span><br />
+                            <strong>Descripción:</strong> {{ oferta?.descripcionOferta || 'Sin descripción' }}<br />
                         </div>
                         <div class="botones-inferiores">
                             <button mat-icon-button color="accent" (click)="updateOferta(oferta)">

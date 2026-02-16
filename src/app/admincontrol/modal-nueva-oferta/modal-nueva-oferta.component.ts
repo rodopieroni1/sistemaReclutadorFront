@@ -29,6 +29,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { switchMap, catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'app-modal-nueva-oferta',
@@ -46,6 +47,7 @@ import { of } from 'rxjs';
     MatExpansionModule,
     MatSelectModule,
     MatOptionModule,
+    MatDividerModule,
   ],
   templateUrl: './modal-nueva-oferta.component.html',
   styleUrl: './modal-nueva-oferta.component.css',
@@ -87,7 +89,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
     public dialogRef: MatDialogRef<ModalNuevaOfertaComponent>,
     private snackBar: MatSnackBar,
     private fb: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: { accion: string; oferta?: any }
+    @Inject(MAT_DIALOG_DATA) public data: { accion: string; oferta?: any },
   ) {
     this.miFormulario = this.fb.group({
       descripcionOferta: ['', Validators.required],
@@ -105,7 +107,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
     if (this.data.oferta) {
       this.http
         .get<any>(
-          `http://localhost:8080/ofertas/existeId/${this.data.oferta.idOferta}`
+          `http://localhost:8080/ofertas/existeId/${this.data.oferta.idOferta}`,
         )
         .subscribe({
           next: (response) => {
@@ -119,14 +121,14 @@ export class ModalNuevaOfertaComponent implements OnInit {
             });
             console.log(
               '📝 Descripción cargada en el formulario:',
-              this.miFormulario.get('descripcionOferta')?.value
+              this.miFormulario.get('descripcionOferta')?.value,
             );
 
             if (response.fotoOferta) {
               this.archivoSeleccionado = new File(
                 [response.fotoOferta],
                 response.fotoOferta, // Nombre del archivo
-                { type: 'image/jpeg' } // Ajusta el tipo si es diferente
+                { type: 'image/jpeg' }, // Ajusta el tipo si es diferente
               );
             }
             this.imagenDesdeBD = response.fotoOferta;
@@ -147,7 +149,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
               err,
               {
                 duration: 3000,
-              }
+              },
             );
           },
         });
@@ -184,7 +186,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
           `http://localhost:8080/empresas/existeId/${datosOferta.idEmpresa}`,
           {
             headers: { 'Content-Type': 'application/json' },
-          }
+          },
         )
         .pipe(
           switchMap((empresa) => {
@@ -207,7 +209,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
             return this.http.post<HttpResponse<any>>(
               'http://localhost:8080/ofertas/crear',
               oferta,
-              { observe: 'response' }
+              { observe: 'response' },
             );
           }),
           tap((response) => {
@@ -225,10 +227,10 @@ export class ModalNuevaOfertaComponent implements OnInit {
             this.snackBar.open(
               'Error al crear la oferta o al obtener empresa.',
               'Cerrar',
-              { duration: 3000 }
+              { duration: 3000 },
             );
             return of(null);
-          })
+          }),
         )
         .subscribe();
     } else {
@@ -270,7 +272,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
             this.snackBar.open(
               'Error al obtener información de la empresa.',
               'Cerrar',
-              { duration: 3000 }
+              { duration: 3000 },
             );
           },
         });
@@ -308,7 +310,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
             this.snackBar.open(
               'Oferta actualizada satisfactoriamente',
               'Cerrar',
-              { duration: 3000 }
+              { duration: 3000 },
             );
             this.datosActualizadosOferta.emit();
             this.dialogRef.close();
@@ -318,7 +320,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
           this.snackBar.open(
             'Error al actualizar la Oferta. Inténtelo nuevamenteee.',
             'Cerrar',
-            { duration: 3000 }
+            { duration: 3000 },
           );
         },
       });

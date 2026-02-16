@@ -1,89 +1,17 @@
 @media (max-width: 768px) {
-  .columna-titulo,
+
+  .responsive-accordion,
+  .mat-expansion-panel {
+    width: 100%;
+  }
+
   .columna-imagen {
     display: none !important;
   }
-  .panel-title{
-    visibility: hidden;
-  }
-  .columna-contenido {
-    width: 100% !important;
-    min-height: 100vh;
-    height: auto;
-    background-color: #f09b56;
-  }
-  .grid-principal,
-  .layout-fijo {
-    width: 100%;
-    overflow-x: hidden;
-  }
- .contenedor-logo {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  box-sizing: border-box;
-  padding-top: 30px; /* ⬆ Subís la imagen ajustando este valor */
-}
-
-.contenedor-logo img {
-  max-width: 100%;
-  height: auto;
-  max-height: 80vh;         /* Opcional: para evitar que la imagen sea muy grande */
-  object-fit: contain;
-}
-
-.panel-title-accordion span {
-    display: block;
-    text-align: center;
-    font-size: 1.6em;
-    color: rgb(68, 63, 63);
-  }
-
-  .columna-titulo-Accordion,
-  .panel-title-accordion {
-    display: flex !important;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: 25px;
-    margin-bottom: 0;
-    padding-bottom: 0;
-    color: rgb(29, 27, 27);
-   }
-  .responsive-accordion, .mat-expansion-panel{
-    width: 100%;
-  }
-}
-
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-}
-
-.grid-principal {
-  display: grid;
-  grid-template-columns: 15% 70% 15%;
-  min-height: 100vh;
-  position: relative;
-  background-color: #fff;
-}
-
-.grid-titulo {
-  padding: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-.grid-acordeon {
-  padding: 24px 16px;
-  overflow-y: auto;
 }
 
 .grid-imagen {
-  background-image: url('../../assets/trabajadorPortada.avif'); /* ruta a tu imagen */
+  background-image: url('../../assets/trabajadorPortada.avif');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -97,6 +25,7 @@ html, body {
   height: 100vh;
   overflow: hidden;
   position: relative;
+  background-color: #f09b56;
 }
 
 /* Título a la izquierda fijo */
@@ -106,7 +35,6 @@ html, body {
   top: 0;
   width: 15%;
   height: 100vh;
-  background-color: #ffffff;
   padding: 10px;
   display: flex;
   justify-content: center;
@@ -118,11 +46,12 @@ html, body {
 
 
 .panel-title span {
-    display: block;
-    text-align: center;
-    font-size: 30px;
-    color: rgb(29, 28, 28);
-  }
+  display: block;
+  text-align: center;
+  font-size: 30px;
+  color: rgb(29, 28, 28);
+}
+
 /* Imagen fija a la derecha */
 .columna-imagen {
   position: fixed;
@@ -150,7 +79,7 @@ html, body {
   z-index: -1;
 }
 
-.panel-title{
+.panel-title {
   margin-left: 10px;
   margin-top: 200px;
   opacity: 0.9;
@@ -158,7 +87,6 @@ html, body {
   z-index: 2;
 }
 
-/* Acordeón scrollable */
 .columna-contenido {
   grid-column: 2 / 3;
   height: 100vh;
@@ -167,25 +95,27 @@ html, body {
   z-index: 1;
   background-color: #f09b56;
 }
+
 .barra-ofertas-superior {
   display: flex;
   justify-content: flex-end;
   padding: 8px 16px;
   position: sticky;
   top: 0;
-  background-color: #fff;
   z-index: 2;
 }
-.botones-inferiores{
+
+.botones-inferiores {
   display: flex;
   justify-content: flex-end;
   padding: 8px 16px;
   position: sticky;
   top: 0;
-  background-color: #fff;
   z-index: 2;
 }
-.columna-titulo-Accordion, .panel-title-accordion{
+
+.columna-titulo-Accordion,
+.panel-title-accordion {
   align-items: center;
   display: none;
 }
@@ -196,12 +126,12 @@ html, body {
   align-items: center;
   width: 100%;
   box-sizing: border-box;
-  padding-top: 50px; /* ⬆ Subís la imagen ajustando este valor */
+  padding-top: 50px;
 }
 
 .contenedor-logo img {
   max-width: 100%;
   height: auto;
-  max-height: 80vh;         /* Opcional: para evitar que la imagen sea muy grande */
+  max-height: 80vh;
   object-fit: contain;
 }

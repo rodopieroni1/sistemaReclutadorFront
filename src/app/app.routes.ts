@@ -22,19 +22,27 @@ interface JwtPayload {
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent },
+  {
+    path: 'detalle-oferta',
+    loadComponent: () =>
+      import('./detalle-oferta/detalle-oferta.component').then(
+        (m) => m.DetalleOfertaComponent,
+      ),
+  },
+
   { path: 'login', component: LoginComponent },
   {
     path: '',
     loadComponent: () =>
       import('./login-portada/login-portada.component').then(
-        (m) => m.LoginPortadaComponent
+        (m) => m.LoginPortadaComponent,
       ),
   },
   {
     path: 'login-user',
     loadComponent: () =>
       import('./loginuser/loginuser.component').then(
-        (m) => m.LoginuserComponent
+        (m) => m.LoginuserComponent,
       ),
   },
   { path: 'register', component: RegisterComponent },

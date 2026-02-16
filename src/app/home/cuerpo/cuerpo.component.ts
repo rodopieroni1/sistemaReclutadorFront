@@ -11,6 +11,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
+import { RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-cuerpo',
@@ -27,6 +29,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatIconModule,
     NgIf,
     NgFor,
+    RouterModule,
   ], // Importa Material Card y módulos necesarios
   templateUrl: './cuerpo.component.html',
   styleUrl: './cuerpo.component.css',
@@ -57,7 +60,8 @@ export class CuerpoComponent implements OnInit {
     private http: HttpClient, // public dialogRef: MatDialogRef<ModalNuevaEmpresaComponent>
     private webSocketService: WebSocketService,
     private aplicacionService: AplicacionServiceService, // Inyecta el servicio aquí
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -117,7 +121,7 @@ export class CuerpoComponent implements OnInit {
         this.busquedaRealizada = true;
         console.log('Resultados:', this.resultados);
       },
-      (error) => console.error('Error al buscar empleos:', error)
+      (error) => console.error('Error al buscar empleos:', error),
     );
   }
 
@@ -139,7 +143,7 @@ export class CuerpoComponent implements OnInit {
               this.snackBar.open(
                 `Acabas de aplicar para la oferta: ${nombreOferta}`,
                 'Cerrar',
-                { duration: 6000 }
+                { duration: 6000 },
               );
             } else {
               this.snackBar.open(
@@ -147,7 +151,7 @@ export class CuerpoComponent implements OnInit {
                 'Cerrar',
                 {
                   duration: 4000,
-                }
+                },
               );
             }
             this.isBtnAplicar = true;
@@ -158,7 +162,7 @@ export class CuerpoComponent implements OnInit {
               'Cerrar',
               {
                 duration: 5000,
-              }
+              },
             );
           },
         });
@@ -168,10 +172,17 @@ export class CuerpoComponent implements OnInit {
         'Cerrar',
         {
           duration: 5000,
-        }
+        },
       );
     }
   }
+
+  verDetalle(oferta: any): void {
+    this.router.navigate(['/detalle-oferta'], {
+      state: { oferta: oferta },
+    });
+  }
+
   /////////////////////////Paginacion///////////////////////////////////////
   getPaginatedDataOfertas() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
