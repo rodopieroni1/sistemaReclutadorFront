@@ -26,13 +26,22 @@
 
 .titulo-oferta {
     margin: 0;
-    font-size: 28px;
+    font-size: 35px;
+}
+
+.titulo-oferta::first-letter {
+    text-transform: uppercase;
 }
 
 .empresa {
     margin: 5px 0;
     font-weight: 500;
     color: #555;
+}
+
+.contacto {
+    margin: 0;
+    font-size: 15px;
 }
 
 .info-seccion {

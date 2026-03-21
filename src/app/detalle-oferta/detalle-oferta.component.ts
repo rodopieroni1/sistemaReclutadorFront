@@ -29,19 +29,17 @@ export class DetalleOfertaComponent {
 
   getDescripcionFormateada(texto: string): string {
     if (!texto) return '';
-
     const lineas = texto.split('\n');
-    let html = '<ul>';
-
+    let html = '';
     lineas.forEach((linea) => {
       if (linea.trim().startsWith('-')) {
+        if (!html.includes('<ul>')) html += '<ul>';
         html += `<li>${linea.replace('-', '').trim()}</li>`;
       } else if (linea.trim() !== '') {
-        html += `<p>${linea}</p>`;
+        html += `<p>${linea.trim()}</p>`;
       }
     });
-
-    html += '</ul>';
+    if (html.includes('<ul>')) html += '</ul>';
     return html;
   }
 

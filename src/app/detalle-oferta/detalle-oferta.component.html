@@ -6,12 +6,11 @@
             <img class="logo" [src]="'assets/uploads/fotos/' + oferta.fotoOferta" alt="Imagen de la oferta">
 
             <div class="textos">
-                <h1 class="titulo-oferta">{{ oferta.nombreOferta }}</h1>
-                <h2 class="empresa">{{ oferta.empresa.nombre }}</h2>
-                <h2 class="empresa">{{ oferta.empresa.cargo }}</h2>
-                <h2 class="empresa">{{ oferta.empresa.email }}</h2>
-                <!-- <p class="ubicacion">📍 {{ oferta.ubicacion }}</p>
-                <p class="fecha">Publicado el {{ oferta.fechaPublicacion | date }}</p> -->
+                <h2 class="titulo-oferta">{{ oferta.nombreOferta }}</h2>
+                <h3 class="empresa">{{ oferta.empresa.nombre }}</h3>
+                <h3 class="contacto">{{ oferta.empresa.email }}</h3>
+                <h3 class="contacto">{{ oferta.empresa.telefono }}</h3>
+                <h3 class="contacto">{{ oferta.empresa.direccion }}</h3>
             </div>
         </div>
 
@@ -40,11 +39,6 @@
             <section class="info-seccion">
                 <h3>📝 Descripción del puesto</h3>
                 <div [innerHTML]="getDescripcionFormateada(oferta.descripcionOferta)"></div>
-            </section>
-
-            <section class="info-seccion">
-                <h3>✅ Requisitos</h3>
-                <p>{{ oferta.requisitos }}</p>
             </section>
 
         </mat-card-content>
