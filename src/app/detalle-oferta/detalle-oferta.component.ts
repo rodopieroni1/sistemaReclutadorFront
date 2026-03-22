@@ -5,11 +5,18 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AplicacionServiceService } from '../home/cuerpo/aplicacion-service.service';
-
+import { MatIcon } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-detalle-oferta',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIcon,
+    MatIconModule,
+  ],
   templateUrl: './detalle-oferta.component.html',
   styleUrl: './detalle-oferta.component.css',
 })
