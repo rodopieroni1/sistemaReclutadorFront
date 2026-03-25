@@ -7,6 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { AplicacionServiceService } from '../home/cuerpo/aplicacion-service.service';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconModule } from '@angular/material/icon';
+import { RouterModule } from '@angular/router'; // 👈 IMPORTANTE
 @Component({
   selector: 'app-detalle-oferta',
   standalone: true,
@@ -16,6 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatButtonModule,
     MatIcon,
     MatIconModule,
+    RouterModule,
   ],
   templateUrl: './detalle-oferta.component.html',
   styleUrl: './detalle-oferta.component.css',

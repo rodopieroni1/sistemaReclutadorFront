@@ -4,7 +4,6 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { AdminControlComponent } from './admincontrol/admincontrol.component';
 import { UsuarioControlComponent } from './usuariocontrol/usuariocontrol.component';
-import { LoginuserComponent } from './loginuser/loginuser.component';
 import { NgModule } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
 import { PostulanteGuard } from './guards/guardsPost';
@@ -12,9 +11,6 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { OlvidePasswordComponent } from './olvide-password/olvide-password-component';
 import { UpdateUserComponent } from './perfil/UpdateUser.component';
 import { AuthGuard } from './guards/auth.guard';
-import { LoginPortadaComponent } from './login-portada/login-portada.component';
-
-// import { PerfilComponent } from './perfil/perfil.component';
 
 interface JwtPayload {
   exp: number;
