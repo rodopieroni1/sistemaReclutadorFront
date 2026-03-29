@@ -11,6 +11,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { OlvidePasswordComponent } from './olvide-password/olvide-password-component';
 import { UpdateUserComponent } from './perfil/UpdateUser.component';
 import { AuthGuard } from './guards/auth.guard';
+import { MisAplicacionesComponent } from './mis-aplicaciones/mis-aplicaciones.component';
 
 interface JwtPayload {
   exp: number;
@@ -54,6 +55,10 @@ export const routes: Routes = [
   {
     path: 'editar-perfil',
     component: UpdateUserComponent,
+  },
+  {
+    path: 'mis-aplicaciones',
+    component: MisAplicacionesComponent,
   },
   {
     path: 'usuariocontrol',

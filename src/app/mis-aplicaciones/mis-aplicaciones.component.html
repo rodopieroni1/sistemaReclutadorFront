@@ -1,0 +1,45 @@
+<header>
+    <div class="filaItems">
+        <div class="logo">
+            <img src="assets/logo.png" alt="Logo">
+        </div>
+    </div>
+</header>
+<div class="contenido">
+    <h1>Mis Postulaciones</h1>
+    <table class="tabla-postulaciones">
+        <thead>
+            <tr>
+                <th>Puesto</th>
+                <th>Empresa</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let post of postulaciones">
+                <td>{{ post.puesto }}</td>
+                <td>{{ post.empresa }}</td>
+                <td>{{ post.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>
+                    <span class="estado" [ngClass]="post.estado ? 'activo' : 'inactivo'">
+                        {{ post.estado ? 'Activo' : 'Inactivo' }}
+                    </span>
+                </td>
+                <!-- BOTONES -->
+                <td>
+                    <!-- Eliminar -->
+                    <button *ngIf="post.estado" class="btn-accion eliminar" (click)="eliminar(post)" title="Eliminar">
+                        🗑️
+                    </button>
+
+                    <!-- Reactivar -->
+                    <button *ngIf="!post.estado" class="btn-accion reactivar" (click)="reactivar(post)"
+                        title="Reactivar">
+                        🔄
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

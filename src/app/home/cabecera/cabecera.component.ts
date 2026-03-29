@@ -34,7 +34,7 @@ export class CabeceraComponent implements OnInit {
     private loginService: LoginService,
     private cdRef: ChangeDetectorRef,
     private navigationService: NavigationServiceService,
-    private router: Router
+    private router: Router,
   ) {
     this.userServiceService.getUsers(environment.local.userId).subscribe({
       next: (userData) => {
@@ -69,10 +69,16 @@ export class CabeceraComponent implements OnInit {
 
   editarPerfil(): void {
     if (this.userLoginOn) {
-      console.log('Redirigiendo a editar perfil');
       this.router.navigate(['/editar-perfil']);
     } else {
-      console.log('No va la cancion');
+      this.router.navigate(['/login-user']);
+    }
+  }
+
+  misAplicaciones(): void {
+    if (this.userLoginOn) {
+      this.router.navigate(['/mis-aplicaciones']);
+    } else {
       this.router.navigate(['/login-user']);
     }
   }

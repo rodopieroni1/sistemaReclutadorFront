@@ -14,7 +14,6 @@ export class AplicacionServiceService {
       id_oferta: { idOferta: idOferta }, // Estructura compatible con OfertaRequest
       id_perfil: { id_perfil: idPerfil }, // Estructura compatible con PerfilSignupRequest
     };
-    console.log('Aplicación enviada:', aplicacion);
     return this.http.post(this.apiUrl, aplicacion);
   }
 }
