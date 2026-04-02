@@ -13,6 +13,6 @@ export class MisAplicacionesServiceService {
   }
 
   actualizarPostulacionesEstado(idPost: number, actualizado: any) {
-    return this.http.put<any[]>(this.apiUrl + `/${idPost}`, actualizado);
+    return this.http.patch<any[]>(this.apiUrl + `/${idPost}`, actualizado);
   }
 }

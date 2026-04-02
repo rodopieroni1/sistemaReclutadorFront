@@ -29,11 +29,17 @@ export class MisAplicacionesComponent implements OnInit {
   }
 
   EliminarPostulaciones(post: any) {
-    const actualizado = { ...post, estado: false };
+    const actualizado = {
+      ...post,
+      estado: false,
+      idPerfil: post.idPerfil,
+      idOferta: post.idOferta,
+    };
     this.aplicacionService
       .actualizarPostulacionesEstado(post.idaplicacion, actualizado)
       .subscribe({
         next: () => {
+          post.estado = false;
           console.log('Postulaciones Eliminada');
         },
         error: (error) => {
@@ -43,11 +49,17 @@ export class MisAplicacionesComponent implements OnInit {
   }
 
   ReactivarPostulaciones(post: any) {
-    const actualizado = { ...post, estado: true };
+    const actualizado = {
+      ...post,
+      estado: false,
+      idPerfil: post.idPerfil,
+      idOferta: post.idOferta,
+    };
     this.aplicacionService
       .actualizarPostulacionesEstado(post.idaplicacion, actualizado)
       .subscribe({
         next: () => {
+          post.estado = true;
           console.log('Postulaciones reactivadas');
         },
         error: (error) => {
