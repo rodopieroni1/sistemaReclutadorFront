@@ -97,11 +97,6 @@ h1 {
     text-align: center;
 }
 
-.tabla-postulaciones th,
-.tabla-postulaciones td {
-    text-align: center;
-}
-
 .eliminar {
     font-size: 18px;
     opacity: 0.7;

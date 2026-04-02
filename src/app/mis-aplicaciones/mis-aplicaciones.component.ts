@@ -17,7 +17,6 @@ export class MisAplicacionesComponent implements OnInit {
     if (idPerfil) {
       this.aplicacionService.obtenerPostulaciones(Number(idPerfil)).subscribe({
         next: (data) => {
-          console.log('Postulaciones:', data);
           this.postulaciones = data;
         },
         error: (error) => {
@@ -29,10 +28,31 @@ export class MisAplicacionesComponent implements OnInit {
     }
   }
 
-  reactivar(_t17: any) {
-    throw new Error('Method not implemented.');
+  EliminarPostulaciones(post: any) {
+    const actualizado = { ...post, estado: false };
+    this.aplicacionService
+      .actualizarPostulacionesEstado(post.idaplicacion, actualizado)
+      .subscribe({
+        next: () => {
+          console.log('Postulaciones Eliminada');
+        },
+        error: (error) => {
+          console.error('Error al eliminar postulacion', error);
+        },
+      });
   }
-  eliminar(_t17: any) {
-    throw new Error('Method not implemented.');
+
+  ReactivarPostulaciones(post: any) {
+    const actualizado = { ...post, estado: true };
+    this.aplicacionService
+      .actualizarPostulacionesEstado(post.idaplicacion, actualizado)
+      .subscribe({
+        next: () => {
+          console.log('Postulaciones reactivadas');
+        },
+        error: (error) => {
+          console.error('Error al reactivar postulaciones', error);
+        },
+      });
   }
 }

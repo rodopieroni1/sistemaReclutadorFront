@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root',
@@ -11,5 +10,9 @@ export class MisAplicacionesServiceService {
 
   obtenerPostulaciones(idPerfil: number) {
     return this.http.get<any[]>(this.apiUrl + `/perfil/${idPerfil}`);
+  }
+
+  actualizarPostulacionesEstado(idPost: number, actualizado: any) {
+    return this.http.put<any[]>(this.apiUrl + `/${idPost}`, actualizado);
   }
 }

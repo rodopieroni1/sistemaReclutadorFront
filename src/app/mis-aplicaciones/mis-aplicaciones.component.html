@@ -26,15 +26,13 @@
                         {{ post.estado ? 'Activo' : 'Inactivo' }}
                     </span>
                 </td>
-                <!-- BOTONES -->
                 <td>
-                    <!-- Eliminar -->
-                    <button *ngIf="post.estado" class="btn-accion eliminar" (click)="eliminar(post)" title="Eliminar">
+                    <button *ngIf="post.estado" class="btn-accion eliminar" (click)="EliminarPostulaciones(post)"
+                        title="Eliminar">
                         🗑️
                     </button>
 
-                    <!-- Reactivar -->
-                    <button *ngIf="!post.estado" class="btn-accion reactivar" (click)="reactivar(post)"
+                    <button *ngIf="!post.estado" class="btn-accion reactivar" (click)="ReactivarPostulaciones(post)"
                         title="Reactivar">
                         🔄
                     </button>
