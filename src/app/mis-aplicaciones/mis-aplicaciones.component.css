@@ -1,174 +1,191 @@
 body {
     margin: 0;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Poppins', sans-serif;
     background-color: #fff7f0;
 }
 
 header {
     position: fixed;
     top: 0;
-    left: 0;
     width: 100%;
-    z-index: 1000;
+    height: 80px;
     background-color: #feca8e;
-    padding: 5px;
-    box-shadow: 0 2px 5px rgba(240, 105, 105, 0.2);
-}
-
-.filaItems {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 5px 15px;
-    flex-wrap: wrap;
+    padding: 0 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    z-index: 1000;
 }
 
 .logo img {
-    max-height: 70px;
+    max-height: 60px;
 }
 
-.opciones nav {
-    display: flex;
-    gap: 15px;
-}
-
-.opciones nav a {
-    text-decoration: none;
-    color: black;
-    font-weight: bold;
-    padding: 5px;
-    border-radius: 5px;
-}
-
-.opciones nav a:hover {
-    background-color: #ff6600;
-    color: white;
-}
-
-.contenido {
-    margin-top: 110px;
+.contenedor-principal {
+    margin-top: 100px;
     padding: 20px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.header-postulaciones {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.header-postulaciones h1 {
+    text-align: left;
 }
 
 h1 {
-    text-align: center;
+    margin: 0;
+    font-weight: 600;
+    color: #333;
 }
+
+.btn-volver-custom {
+    /* Colores exactos del primer botón */
+    border: 1px solid #f57c00 !important;
+    color: #f57c00 !important;
+    background-color: transparent !important;
+
+    /* Ajuste de forma: 
+       Si el de la primera foto es "un poco" redondo usa 4px o 8px.
+       Si quieres que sea "tipo cápsula" usa 20px o más. 
+       Probemos con 5px que es el estándar de Angular Material: */
+    border-radius: 5px !important;
+
+    /* Espaciado interno para que el tamaño sea igual */
+    padding: 0 16px !important;
+    height: 36px !important;
+    line-height: 36px !important;
+
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    text-transform: uppercase;
+    /* Material suele poner el texto en mayúsculas */
+}
+
+/* Aseguramos que el contenedor no deforme el botón */
+.botones {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+
+.btn-volver-custom:hover {
+    background-color: rgba(245, 124, 0, 0.05);
+    /* Un toque de color al pasar el mouse */
+}
+
 
 .tabla-postulaciones {
     width: 100%;
     border-collapse: collapse;
     background: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+    border-radius: 12px;
     overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    text-align: center;
 }
 
+/* HEADER TABLA */
 .tabla-postulaciones th {
-    background-color: #fcae6e;
+    background: linear-gradient(135deg, #fcae6e, #feca8e);
     color: white;
-    padding: 12px;
+    padding: 14px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
 }
 
+/* CELDAS */
 .tabla-postulaciones td {
-    padding: 12px;
-    text-align: center;
+    padding: 14px;
+    font-size: 14px;
+    border-bottom: 1px solid #f3e5dc;
 }
 
-.tabla-postulaciones tr:nth-child(even) {
+/* FILAS */
+.tabla-postulaciones tr {
+    transition: all 0.2s ease;
+}
+
+.tabla-postulaciones tr:hover {
     background-color: #fff1e6;
+    transform: scale(1.002);
 }
 
-/* ENCABEZADOS centrados */
-.tabla-postulaciones th {
-    text-align: center;
-}
-
-/* PUESTO y EMPRESA → izquierda */
+/* ALINEACIONES */
 .tabla-postulaciones td:nth-child(1),
 .tabla-postulaciones td:nth-child(2) {
     text-align: left;
     padding-left: 20px;
 }
 
-/* FECHA y ESTADO → centrado */
 .tabla-postulaciones td:nth-child(3),
 .tabla-postulaciones td:nth-child(4),
 .tabla-postulaciones td:nth-child(5) {
     text-align: center;
 }
 
-.eliminar {
-    font-size: 18px;
-    opacity: 0.7;
-}
-
-.eliminar:hover {
-    opacity: 1;
-    transform: scale(1.2);
-    filter: drop-shadow(0 0 4px red);
-}
-
-.reactivar {
-    background-color: #28a745;
-    color: white;
-}
-
-.reactivar:hover {
-    background-color: #1e7e34;
-}
-
-/* ESTADOS */
+/* ESTADOS (tipo badge moderno) */
 .estado {
-    padding: 6px 12px;
-    border-radius: 15px;
-    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
     font-size: 12px;
+    font-weight: 500;
+    display: inline-block;
 }
 
-/* ESTADO ACTIVO (verde) */
+/* ACTIVO */
 .activo {
     background-color: #d4edda;
     color: #155724;
 }
 
-/* ESTADO INACTIVO (rojo) */
+/* INACTIVO */
 .inactivo {
     background-color: #f8d7da;
     color: #721c24;
 }
 
-/* BOTONES */
-.btn {
-    padding: 6px 12px;
+.btn-accion {
     border: none;
-    border-radius: 5px;
+    background: transparent;
     cursor: pointer;
-    font-weight: bold;
+    font-size: 18px;
+    transition: all 0.2s ease;
 }
 
-.btn-ver {
-    background-color: #007BFF;
-    color: white;
+.eliminar:hover {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 5px red);
 }
 
-.btn-ver:hover {
-    background-color: #0056b3;
+.reactivar:hover {
+    transform: rotate(180deg) scale(1.2);
+    filter: drop-shadow(0 0 5px green);
 }
 
-/* RESPONSIVE */
+.btnAplicar {
+    align-items: flex-end;
+}
+
+
 @media (max-width: 768px) {
 
-    .tabla-postulaciones th,
-    .tabla-postulaciones td {
+    .tabla-postulaciones td,
+    .tabla-postulaciones th {
         font-size: 12px;
-        padding: 8px;
-    }
-
-    .contenido {
         padding: 10px;
     }
 
     h1 {
-        font-size: 18px;
+        font-size: 20px;
     }
 }

@@ -12,7 +12,10 @@ export class MisAplicacionesServiceService {
     return this.http.get<any[]>(this.apiUrl + `/perfil/${idPerfil}`);
   }
 
-  actualizarPostulacionesEstado(idPost: number, actualizado: any) {
-    return this.http.patch<any[]>(this.apiUrl + `/${idPost}`, actualizado);
+  actualizarPostulacionesEstado(idPost: number, estado: boolean) {
+    console.log('Actualizando postulacion con id:', idPost, 'Datos:', estado);
+    return this.http.patch<any[]>(this.apiUrl + `/estado/${idPost}`, {
+      estado,
+    });
   }
 }

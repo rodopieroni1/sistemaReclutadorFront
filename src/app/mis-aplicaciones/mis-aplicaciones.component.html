@@ -1,12 +1,22 @@
 <header>
-    <div class="filaItems">
-        <div class="logo">
-            <img src="assets/logo.png" alt="Logo">
-        </div>
+    <div class="logo">
+        <img src="assets/logo.png" alt="Logo">
     </div>
 </header>
-<div class="contenido">
-    <h1>Mis Postulaciones</h1>
+
+<!-- Contenedor principal con margen para que el header no lo tape -->
+<main class="contenedor-principal">
+    <div class="header-postulaciones">
+        <h1>Mis Postulaciones</h1>
+        <div class="btnAplicar">
+            <div class="botones">
+                <button mat-stroked-button class="btn-volver-custom" routerLink="/home">
+                    Volver
+                </button>
+            </div>
+        </div>
+    </div>
+
     <table class="tabla-postulaciones">
         <thead>
             <tr>
@@ -14,6 +24,7 @@
                 <th>Empresa</th>
                 <th>Fecha</th>
                 <th>Estado</th>
+                <th>Acciones</th> <!-- Agregada columna para botones -->
             </tr>
         </thead>
         <tbody>
@@ -26,18 +37,17 @@
                         {{ post.estado ? 'Activo' : 'Inactivo' }}
                     </span>
                 </td>
-                <td>
+                <td class="acciones">
                     <button *ngIf="post.estado" class="btn-accion eliminar" (click)="EliminarPostulaciones(post)"
                         title="Eliminar">
-                        🗑️
+                        ❌
                     </button>
-
                     <button *ngIf="!post.estado" class="btn-accion reactivar" (click)="ReactivarPostulaciones(post)"
                         title="Reactivar">
-                        🔄
+                        ↻
                     </button>
                 </td>
             </tr>
         </tbody>
     </table>
-</div>
+</main>

@@ -36,7 +36,7 @@ export class MisAplicacionesComponent implements OnInit {
       idOferta: post.idOferta,
     };
     this.aplicacionService
-      .actualizarPostulacionesEstado(post.idaplicacion, actualizado)
+      .actualizarPostulacionesEstado(post.idaplicacion, actualizado.estado)
       .subscribe({
         next: () => {
           post.estado = false;
@@ -51,12 +51,12 @@ export class MisAplicacionesComponent implements OnInit {
   ReactivarPostulaciones(post: any) {
     const actualizado = {
       ...post,
-      estado: false,
+      estado: true,
       idPerfil: post.idPerfil,
       idOferta: post.idOferta,
     };
     this.aplicacionService
-      .actualizarPostulacionesEstado(post.idaplicacion, actualizado)
+      .actualizarPostulacionesEstado(post.idaplicacion, actualizado.estado)
       .subscribe({
         next: () => {
           post.estado = true;
