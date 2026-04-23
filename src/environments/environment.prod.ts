@@ -11,9 +11,7 @@
 
 export const environment = {
   production: true,
-  local: {
-    urlHost: 'http://backend:8080/',
-    urlApi: 'http://backend:8080/',
-    userId: 1,
-  },
+  urlHost: 'http://backend:8080/',
+  urlApi: 'http://backend:8080/',
+  userId: 1,
 };

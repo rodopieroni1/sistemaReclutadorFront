@@ -5,7 +5,6 @@ import { User } from '../../loginuser/auth/user';
 import { environment } from '../../../environments/environment';
 import { UserServiceService } from '../../loginuser/user-service.service';
 import { NavigationServiceService } from '../../navigation-service.service';
-import { NavegacionComponent } from './navegacion/navegacion.component';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -13,7 +12,7 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-cabecera',
   standalone: true,
-  imports: [NavegacionComponent, CommonModule, RouterModule, CommonModule],
+  imports: [CommonModule, RouterModule, CommonModule],
   templateUrl: './cabecera.component.html',
   styleUrl: './cabecera.component.css',
 })

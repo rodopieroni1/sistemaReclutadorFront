@@ -13,16 +13,20 @@ import { lastValueFrom, Observable } from 'rxjs';
 })
 export class AuthServiceService {
   private backendUrl = 'http://localhost:8080/login';
+  private apiUrl = 'http://localhost:8080/';
 
-  constructor(private auth: Auth, private http: HttpClient) {}
+  constructor(
+    private auth: Auth,
+    private http: HttpClient,
+  ) {}
 
   checkEmailAndDni(
     email: string,
-    dni: string
+    dni: string,
   ): Observable<{ emailExists: boolean; dniExists: boolean }> {
     return this.http.post<{ emailExists: boolean; dniExists: boolean }>(
-      'http://localhost:8080/perfiles/verificar',
-      { email, dni }
+      this.apiUrl + '/perfiles/verificar',
+      { email, dni },
     );
   }
 
@@ -42,7 +46,7 @@ export class AuthServiceService {
     return lastValueFrom(
       this.http.post<void>(this.backendUrl, user, {
         headers: { 'Content-Type': 'application/json' },
-      })
+      }),
     );
   }
 

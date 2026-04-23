@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../environments/environment';
 @Injectable({
   providedIn: 'root',
 })
 export class ListadoOfertasService {
-  private apiUrl = 'http://localhost:8080/ofertas'; // URL de tu API REST
+  private apiUrl = environment.local.urlApi + '/ofertas'; // URL de tu API REST
   constructor(private http: HttpClient) {}
 
   getOfertas(): Observable<any[]> {

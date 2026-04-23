@@ -35,7 +35,7 @@ export class LoginuserComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private loginService: LoginService
+    private loginService: LoginService,
   ) {}
 
   private formBuilder = inject(FormBuilder);
@@ -43,19 +43,17 @@ export class LoginuserComponent implements OnInit {
     clave: ['', [Validators.required]],
     password: ['', [Validators.required]],
   });
+
   ngOnInit(): void {
-    let expiredParam = false;
-    this.route.queryParams.subscribe((params) => {
-      expiredParam = params['expired'] === 'true';
-      if (expiredParam) {
-        this.sessionExpired = true;
-        this.router.navigate([], {
-          queryParams: { expired: null },
-          queryParamsHandling: 'merge',
-          replaceUrl: true,
-        });
-      }
-    });
+    const isExpired = this.route.snapshot.queryParamMap.get('expired');
+    if (isExpired === 'true') {
+      this.sessionExpired = true;
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: {},
+        replaceUrl: true,
+      });
+    }
   }
 
   get email() {

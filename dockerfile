@@ -7,6 +7,12 @@ RUN npm run build -- --configuration production
 
 # Etapa 2: nginx
 FROM nginx:alpine
-COPY --from=build /app/dist/ /usr/share/nginx/html
+
+# 👇 Copiar config de nginx (CLAVE)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# 👇 Copiar SOLO el build de Angular
+COPY --from=build /app/dist/proyecto-reclutador/browser /usr/share/nginx/html
+
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

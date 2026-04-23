@@ -13,7 +13,7 @@
         <form [formGroup]="loginForm" (ngSubmit)="login()">
             <div class="form-group">
                 <label for="email">Nombre de Usuario</label>
-                <input formControlName="clave" type="email" id="email" (focus)="hideMessage()" />
+                <input formControlName="clave" type="email" id="email" (focus)="hideMessage()" autocomplete="off" />
                 <div *ngIf="email.invalid && (email.dirty || email.touched)" class="error">
                     <div *ngIf="email.errors?.['required']">Email es obligatorio.</div>
                     <div *ngIf="email.errors?.['minlength']">Debe tener al menos 4 caracteres.</div>
@@ -23,14 +23,14 @@
 
             <div class="form-group">
                 <label for="password">Password</label>
-                <input formControlName="password" type="password" id="password" (focus)="hideMessage()" />
+                <input formControlName="password" type="password" id="password" (focus)="hideMessage()"
+                    autocomplete="off" />
                 <div *ngIf="password.invalid && (password.dirty || password.touched)" class="error">
                     <div *ngIf="password.errors?.['required']">Password es obligatorio.</div>
                     <div *ngIf="password.errors?.['minlength']">Debe tener al menos 4 caracteres.</div>
                 </div>
             </div>
-
-            <button type="submit" [disabled]="loginForm.invalid">Ingresar</button>
+            <button type="submit">Ingresar</button>
         </form>
 
         <div class="links">

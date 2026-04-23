@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { ModalNuevaOfertaComponent } from './modal-nueva-oferta/modal-nueva-oferta.component';
 import { ModalNuevaEmpresaComponent } from './modal-nueva-empresa/modal-nueva-empresa.component';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 @Component({
   standalone: true,
   selector: 'app-admincontrol',
@@ -89,10 +90,9 @@ export class AdminControlComponent {
   nombreOferta: string = '';
   descripcion: string = '';
   fotoOferta: string = '';
-
   constructor(
     private http: HttpClient, // public dialogRef: MatDialogRef<ModalNuevaEmpresaComponent>
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit() {
@@ -118,7 +118,7 @@ export class AdminControlComponent {
           documentoUrl: string | null;
           estadoAplicaciones: boolean;
         }[]
-      >('http://localhost:8080/aplicaciones')
+      >(environment.local.urlApi + '/aplicaciones')
       .subscribe((data) => {
         // Mapeamos las claves recibidas para que coincidan con las claves esperadas
         this.aplicaciones = data.map((aplicacion) => ({
@@ -134,9 +134,9 @@ export class AdminControlComponent {
       });
 
     this.http
-      .get<{ idRubro: number; descripcionRubro: string }[]>(
-        'http://localhost:8080/rubro'
-      )
+      .get<
+        { idRubro: number; descripcionRubro: string }[]
+      >(environment.local.urlApi + '/rubro')
       .subscribe((data) => {
         this.rubros = data;
       });
@@ -152,7 +152,7 @@ export class AdminControlComponent {
           historiaEmpresa: string;
           observaciones: string;
         }[]
-      >('http://localhost:8080/empresas')
+      >(environment.local.urlApi + '/empresas')
       .subscribe((data) => {
         this.empresas = data;
       });
@@ -167,7 +167,7 @@ export class AdminControlComponent {
           empresa: { nombre: string };
           estadoOferta: boolean;
         }[]
-      >('http://localhost:8080/ofertas/todas')
+      >(environment.local.urlApi + '/ofertas/todas')
       .subscribe((data) => {
         this.ofertas = data;
       });
@@ -177,7 +177,7 @@ export class AdminControlComponent {
     const descripcion = prompt('Ingrese la descripción del nuevo rubro:');
     if (descripcion) {
       this.http
-        .post('http://localhost:8080/rubro/crear', {
+        .post(environment.local.urlApi + '/rubro/crear', {
           descripcionRubro: descripcion,
         })
         .subscribe({
@@ -194,9 +194,9 @@ export class AdminControlComponent {
 
   cargarRubros() {
     this.http
-      .get<{ idRubro: number; descripcionRubro: string }[]>(
-        'http://localhost:8080/rubro'
-      )
+      .get<
+        { idRubro: number; descripcionRubro: string }[]
+      >(environment.local.urlApi + '/rubro')
       .subscribe({
         next: (data) => {
           this.rubros = data;
@@ -210,7 +210,7 @@ export class AdminControlComponent {
   eliminarRubro(rubro: { idRubro: number; descripcionRubro: string }) {
     if (
       confirm(
-        `¿Estás seguro que deseas eliminar el rubro "${rubro.descripcionRubro}"?`
+        `¿Estás seguro que deseas eliminar el rubro "${rubro.descripcionRubro}"?`,
       )
     ) {
       this.http
@@ -229,7 +229,7 @@ export class AdminControlComponent {
   actualizarRubro(rubro: { idRubro: number; descripcionRubro: string }) {
     const nuevaDescripcion = prompt(
       'Editar descripción del rubro:',
-      rubro.descripcionRubro
+      rubro.descripcionRubro,
     );
     if (nuevaDescripcion) {
       this.http
@@ -271,7 +271,7 @@ export class AdminControlComponent {
           historiaEmpresa: string;
           observaciones: string;
         }[]
-      >('http://localhost:8080/empresas')
+      >(environment.local.urlApi + '/empresas')
       .subscribe({
         next: (data) => {
           this.empresas = data.map((empresa) => ({
@@ -352,7 +352,7 @@ export class AdminControlComponent {
           empresa: { nombre: string };
           estadoOferta: boolean;
         }[]
-      >('http://localhost:8080/ofertas/todas')
+      >(environment.local.urlApi + '/ofertas/todas')
       .subscribe({
         next: (data) => {
           this.ofertas = data.map((oferta) => ({
@@ -391,7 +391,7 @@ export class AdminControlComponent {
   deleteOferta(oferta: { idOferta: number; descripcionOferta: string }) {
     if (
       confirm(
-        `¿Estás seguro que deseas eliminar la oferta ${oferta.descripcionOferta}?`
+        `¿Estás seguro que deseas eliminar la oferta ${oferta.descripcionOferta}?`,
       )
     ) {
       this.http

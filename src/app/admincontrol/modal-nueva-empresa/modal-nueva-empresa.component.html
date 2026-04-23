@@ -1,6 +1,5 @@
 <h2>Agregar Empresa</h2>
-
-<form [formGroup]="miFormulario">
+<form [formGroup]="miFormulario" (ngSubmit)="guardar()">
     <h3>Empresa</h3>
     <!-- Campo oculto: id_empresa -->
     <mat-form-field appearance="fill" class="inputModalID">
@@ -57,12 +56,6 @@
         </mat-error>
     </mat-form-field>
 
-    <!-- Mostrar descripción afuera del select -->
-    <span *ngIf="rubroSeleccionado">
-        Rubro: {{ rubroSeleccionado.descripcionRubro }}
-    </span>
-
-
     <mat-form-field appearance="fill" class="inputModal">
         <mat-label>Email: </mat-label>
         <input matInput class="inputModal" placeholder="email" formControlName="emailEmpresa" name="emailEmpresa"
@@ -80,6 +73,6 @@
 
     <div class="modal-buttons">
         <button mat-button (click)="cerrar()">Cancelar</button>
-        <button mat-raised-button color="primary" id="guardar" (click)="guardar()">Guardar</button>
+        <button mat-raised-button color="primary" type="submit">Guardar</button>
     </div>
 </form>

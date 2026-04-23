@@ -139,7 +139,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
             const fotoActual = this.miFormulario.get('fotoOferta')?.value;
             if (fotoActual) {
               this.imagenPreview = fotoActual
-                ? 'assets/uploads/fotos/' + fotoActual
+                ? 'http://localhost:8080/uploads/fotos/' + fotoActual
                 : '';
             }
           },

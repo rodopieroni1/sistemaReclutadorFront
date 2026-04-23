@@ -126,7 +126,6 @@
                             <strong>Estado:</strong>
                             <span *ngIf="oferta?.estadoOferta">✅ Activa</span>
                             <span *ngIf="!oferta?.estadoOferta">❌Inactiva</span><br />
-                            <strong>Descripción:</strong> {{ oferta?.descripcionOferta || 'Sin descripción' }}<br />
                         </div>
                         <div class="botones-inferiores">
                             <button mat-icon-button color="accent" (click)="updateOferta(oferta)">
