@@ -63,7 +63,7 @@ export class ResetPasswordComponent {
     const token = this.route.snapshot.queryParamMap.get('token');
     this.isLoading = true;
     this.http
-      .post(environment.local.urlHost + 'perfiles/reset-password', {
+      .post(environment.local.urlHost + '/perfiles/reset-password', {
         token,
         newPassword: this.form.value.newPassword,
       })

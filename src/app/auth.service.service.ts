@@ -13,7 +13,7 @@ import { lastValueFrom, Observable } from 'rxjs';
 })
 export class AuthServiceService {
   private backendUrl = 'http://localhost:8080/login';
-  private apiUrl = 'http://localhost:8080/';
+  private apiUrl = 'http://localhost:8080';
 
   constructor(
     private auth: Auth,
