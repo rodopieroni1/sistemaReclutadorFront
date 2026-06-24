@@ -12,7 +12,6 @@ import { OlvidePasswordComponent } from './olvide-password/olvide-password-compo
 import { UpdateUserComponent } from './perfil/UpdateUser.component';
 import { AuthGuard } from './guards/auth.guard';
 import { MisAplicacionesComponent } from './mis-aplicaciones/mis-aplicaciones.component';
-//import { environment } from '../environments/environment.prod';
 import { environment } from '../environments/environment';
 
 interface JwtPayload {

@@ -1,16 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MisAplicacionesServiceService } from './mis-aplicaciones-service.service';
+import { Router, RouterModule } from '@angular/router';
+
 @Component({
   selector: 'app-mis-aplicaciones',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './mis-aplicaciones.component.html',
   styleUrl: './mis-aplicaciones.component.css',
 })
 export class MisAplicacionesComponent implements OnInit {
+  [x: string]: any;
   postulaciones: any[] = [];
-  constructor(private aplicacionService: MisAplicacionesServiceService) {}
+  constructor(
+    private aplicacionService: MisAplicacionesServiceService,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
     const idPerfil = sessionStorage.getItem('idPerfil');
@@ -66,5 +72,13 @@ export class MisAplicacionesComponent implements OnInit {
           console.error('Error al reactivar postulaciones', error);
         },
       });
+  }
+
+  verDetalle(post: any): void {
+    this.router.navigate(['/detalle-oferta'], {
+      state: {
+        oferta: post,
+      },
+    });
   }
 }

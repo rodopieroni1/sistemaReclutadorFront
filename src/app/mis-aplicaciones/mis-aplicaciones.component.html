@@ -28,7 +28,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let post of postulaciones">
+            <tr *ngFor="let post of postulaciones" (click)="verDetalle(post)" class="fila-click">
                 <td>{{ post.puesto }}</td>
                 <td>{{ post.empresa }}</td>
                 <td>{{ post.fecha | date:'dd/MM/yyyy HH:mm' }}</td>

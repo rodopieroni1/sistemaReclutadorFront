@@ -19,7 +19,7 @@ import { environment } from '../../../environments/environment';
 })
 export class LoginService {
   currentUserLoginOn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
-    true
+    true,
   );
   currentUserData: BehaviorSubject<string> = new BehaviorSubject<string>('');
   currentUserNombre: BehaviorSubject<string> = new BehaviorSubject<string>('');
@@ -37,18 +37,18 @@ export class LoginService {
     this.currentUserData = new BehaviorSubject<string>(token || '');
     this.currentUserNombre = new BehaviorSubject<string>(userName || '');
     this.currentUserProfileImage = new BehaviorSubject<string>(
-      imageUrl ? `${imageUrl}?${Date.now()}` : ''
+      imageUrl ? `${imageUrl}?${Date.now()}` : '',
     );
   }
 
   login(credential: LoginRequest): Observable<any> {
     return this.http
       .post<any>(
-        environment.local.urlHost + 'perfiles/auth/login',
+        environment.local.urlHost + '/perfiles/auth/login',
         credential,
         {
           headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-        }
+        },
       )
       .pipe(
         tap((userData: any) => {
@@ -57,7 +57,6 @@ export class LoginService {
           sessionStorage.setItem('userName', credential.clave); // Guarda el nombre en sessionStorage
           this.currentUserLoginOn.next(true);
           let nombreRec = sessionStorage.getItem('userName');
-
           this.http
             .get(`http://localhost:8080/perfiles/name/${nombreRec}`, {
               responseType: 'text',
@@ -69,12 +68,12 @@ export class LoginService {
                   sessionStorage.setItem('userName', parsedData.clave);
                   sessionStorage.setItem(
                     'userProfileImage',
-                    parsedData.fotoUrl
+                    parsedData.fotoUrl,
                   );
                   sessionStorage.setItem('idPerfil', parsedData.id_perfil); // Guarda el nombre en sessionStorage
                   this.currentUserNombre.next(parsedData.clave);
                   this.currentUserProfileImage.next(
-                    parsedData.fotoUrl + '?' + Date.now()
+                    parsedData.fotoUrl + '?' + Date.now(),
                   );
                   this.currentUserLoginOn.next(true);
                 } catch (e) {
@@ -85,7 +84,7 @@ export class LoginService {
             });
         }),
         map((userData) => userData.token),
-        catchError(this.handleError)
+        catchError(this.handleError),
       );
   }
 
@@ -112,11 +111,11 @@ export class LoginService {
       console.error(
         'Backend Retorno codigo de Error',
         error.status,
-        error.error
+        error.error,
       );
     }
     return throwError(
-      () => new Error('Algo Fallo por favor intente nuevamente')
+      () => new Error('Algo Fallo por favor intente nuevamente'),
     );
   }
 
