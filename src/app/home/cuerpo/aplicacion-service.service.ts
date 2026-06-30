@@ -49,29 +49,34 @@ export class AplicacionServiceService {
   ): void {
     this.postAplicar(idOferta, idPerfil).subscribe({
       next: (response: any) => {
-        // Usamos any para leer las propiedades del objeto de respuesta
         console.log('Respuesta del servidor:', response);
 
-        // Si el backend te devuelve Perfil null cuando ya aplicó (según tu código de Java)
-        if (
-          response &&
-          response.idPerfil === null &&
-          response.idOferta === null
-        ) {
+        // Evaluamos comparando con el Enum de Angular que mapea el string del Backend
+        if (response && response.status === ResultadoAplicacion.YA_APLICO) {
           this.snackBar.open(
             `Ya aplicaste para la oferta: ${nombreOferta}`,
             'Cerrar',
             { duration: 4000 },
           );
-        } else if (response && response.idAplicacion) {
-          // Si viene un ID de aplicación válido, significa que se creó exitosamente
+        } else if (
+          response &&
+          response.status === ResultadoAplicacion.ACTUALIZACION_ESTADO
+        ) {
+          this.snackBar.open(
+            `Se reactivó tu solicitud para la oferta: ${nombreOferta}`,
+            'Cerrar',
+            { duration: 5000 },
+          );
+        } else if (
+          response &&
+          response.status === ResultadoAplicacion.APLICACION_CREADA
+        ) {
           this.snackBar.open(
             `Acabas de aplicar para la oferta: ${nombreOferta}`,
             'Cerrar',
             { duration: 6000 },
           );
         } else {
-          // Estado por defecto o actualización
           this.snackBar.open(
             `Se procesó tu solicitud para la oferta: ${nombreOferta}`,
             'Cerrar',
@@ -87,6 +92,7 @@ export class AplicacionServiceService {
           'Cerrar',
           { duration: 5000 },
         );
+        alFinalizar();
       },
     });
   }

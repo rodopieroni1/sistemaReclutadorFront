@@ -38,15 +38,20 @@
                     </span>
                 </td>
                 <td class="acciones">
-                    <button *ngIf="post.estado" class="btn-accion eliminar" (click)="EliminarPostulaciones(post)"
-                        title="Eliminar">
+                    <!-- Pasamos $event como parámetro -->
+                    <button *ngIf="post.estado" class="btn-accion eliminar"
+                        (click)="EliminarPostulaciones($event, post)" title="Eliminar">
                         ❌
                     </button>
-                    <button *ngIf="!post.estado" class="btn-accion reactivar" (click)="ReactivarPostulaciones(post)"
-                        title="Reactivar">
+
+                    <!-- Pasamos $event como parámetro -->
+                    <button *ngIf="!post.estado" class="btn-accion reactivar"
+                        (click)="ReactivarPostulaciones($event, post)" title="Reactivar">
                         ↻
                     </button>
                 </td>
+
+
             </tr>
         </tbody>
     </table>

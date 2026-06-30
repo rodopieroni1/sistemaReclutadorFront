@@ -42,7 +42,8 @@ export class MisAplicacionesComponent implements OnInit {
     }
   }
 
-  EliminarPostulaciones(post: any) {
+  EliminarPostulaciones(event: Event, post: any): void {
+    event.stopPropagation();
     const actualizado = {
       ...post,
       estado: false,
@@ -62,7 +63,8 @@ export class MisAplicacionesComponent implements OnInit {
       });
   }
 
-  ReactivarPostulaciones(post: any) {
+  ReactivarPostulaciones(event: Event, post: any): void {
+    event.stopPropagation();
     const actualizado = {
       ...post,
       estado: true,
@@ -94,11 +96,7 @@ export class MisAplicacionesComponent implements OnInit {
           '2. ¡Datos de la oferta recuperados del servidor!',
           datosOfertaCompleta,
         );
-
-        // 👈 AQUÍ ESTÁ EL TRUCO: Guardamos la huella exacta antes de navegar.
-        // Reemplaza '/mis-aplicaciones' por la URL exacta que usas en tus rutas si es diferente.
         sessionStorage.setItem('ruta_procedencia', '/mis-aplicaciones');
-
         this.router.navigate(['/detalle-oferta'], {
           state: {
             oferta: datosOfertaCompleta,
