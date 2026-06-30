@@ -8,6 +8,7 @@ import { AplicacionServiceService } from '../home/cuerpo/aplicacion-service.serv
 import { MatIcon } from '@angular/material/icon';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router'; // 👈 IMPORTANTE
+import { NavigationService } from '../navigation.service.ts.service';
 @Component({
   selector: 'app-detalle-oferta',
   standalone: true,
@@ -28,11 +29,23 @@ export class DetalleOfertaComponent {
   constructor(
     private router: Router,
     private snackBar: MatSnackBar,
-    private aplicacionService: AplicacionServiceService, // Inyecta el servicio aquí
+    private aplicacionService: AplicacionServiceService,
+    private navigationService: NavigationService,
   ) {
-    this.oferta = history.state.oferta;
+    const navegacionActual = this.router.getCurrentNavigation();
+    this.oferta = navegacionActual?.extras.state?.['oferta'];
+
+    if (this.oferta) {
+      sessionStorage.setItem('oferta_actual', JSON.stringify(this.oferta));
+    } else {
+      const ofertaGuardada = sessionStorage.getItem('oferta_actual');
+      if (ofertaGuardada) {
+        this.oferta = JSON.parse(ofertaGuardada);
+      }
+    }
+
     if (!this.oferta) {
-      this.router.navigate(['/home']);
+      this.volver();
     }
   }
 
@@ -74,6 +87,8 @@ export class DetalleOfertaComponent {
   }
 
   volver(): void {
-    this.router.navigate(['/home']);
+    const destino = this.navigationService.getPreviousUrl();
+    console.log('Navegando a:', destino);
+    this.router.navigate([destino]);
   }
 }

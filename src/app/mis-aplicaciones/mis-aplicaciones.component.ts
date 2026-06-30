@@ -13,6 +13,14 @@ import { Router, RouterModule } from '@angular/router';
 export class MisAplicacionesComponent implements OnInit {
   [x: string]: any;
   postulaciones: any[] = [];
+  ofertas: {
+    idOferta: number;
+    nombreOferta: string;
+    descripcionOferta: string;
+    fotoOferta: string;
+    empresa: { nombre: string };
+  }[] = [];
+
   constructor(
     private aplicacionService: MisAplicacionesServiceService,
     private router: Router,
@@ -75,9 +83,33 @@ export class MisAplicacionesComponent implements OnInit {
   }
 
   verDetalle(post: any): void {
-    this.router.navigate(['/detalle-oferta'], {
-      state: {
-        oferta: post,
+    console.log(
+      '1. Clic en la postulación. Buscando datos completos para id:',
+      post.idOferta,
+    );
+
+    this.aplicacionService.obtenerPerfilPostulaciones(post.idOferta).subscribe({
+      next: (datosOfertaCompleta: any) => {
+        console.log(
+          '2. ¡Datos de la oferta recuperados del servidor!',
+          datosOfertaCompleta,
+        );
+
+        // 👈 AQUÍ ESTÁ EL TRUCO: Guardamos la huella exacta antes de navegar.
+        // Reemplaza '/mis-aplicaciones' por la URL exacta que usas en tus rutas si es diferente.
+        sessionStorage.setItem('ruta_procedencia', '/mis-aplicaciones');
+
+        this.router.navigate(['/detalle-oferta'], {
+          state: {
+            oferta: datosOfertaCompleta,
+          },
+        });
+      },
+      error: (error) => {
+        console.error(
+          'Error al realizar la búsqueda parcializada de la oferta:',
+          error,
+        );
       },
     });
   }

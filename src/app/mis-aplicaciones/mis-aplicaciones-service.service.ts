@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 })
 export class MisAplicacionesServiceService {
   private apiUrl = 'http://localhost:8080/aplicaciones';
+  private apiUrlOfertas = 'http://localhost:8080/ofertas';
   constructor(private http: HttpClient) {}
 
   obtenerPostulaciones(idPerfil: number) {
@@ -17,5 +18,8 @@ export class MisAplicacionesServiceService {
     return this.http.patch<any[]>(this.apiUrl + `/estado/${idPost}`, {
       estado,
     });
+  }
+  obtenerPerfilPostulaciones(idOferta: number) {
+    return this.http.get<any[]>(this.apiUrlOfertas + `/existeId/${idOferta}`);
   }
 }

@@ -20,10 +20,20 @@ export class AplicacionServiceService {
     idPerfil: number,
   ): Observable<ResultadoAplicacion> {
     const token = sessionStorage.getItem('token');
+
     const body = {
-      idOferta: { idOferta },
-      idPerfil: { id_perfil: idPerfil },
+      // 1. "id_oferta" coincide con @JsonProperty("id_oferta") en AplicacionRequest
+      // 2. "idOferta" interno coincide con la variable idOferta en Oferta.java
+      id_oferta: { idOferta: idOferta },
+
+      // 1. "id_perfil" coincide con @JsonProperty("id_perfil") en AplicacionRequest
+      // 2. "id_perfil" interno coincide con la variable id_perfil en Perfil.java
+      id_perfil: { id_perfil: idPerfil },
+
+      estadoaplicaciones: true,
+      fechaAplicacion: new Date().toISOString(),
     };
+    console.log('Cuerpo de la solicitud POST:', body); // Log del cuerpo de la solicitud
     return this.http.post<ResultadoAplicacion>(this.apiUrl, body, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -38,24 +48,32 @@ export class AplicacionServiceService {
     alFinalizar: () => void,
   ): void {
     this.postAplicar(idOferta, idPerfil).subscribe({
-      next: (response: ResultadoAplicacion) => {
-        if (response === ResultadoAplicacion.APLICACION_CREADA) {
-          this.snackBar.open(
-            `Acabas de aplicar para la oferta: ${nombreOferta}`,
-            'Cerrar',
-            { duration: 6000 },
-          );
-        }
-        if (response === ResultadoAplicacion.YA_APLICO) {
+      next: (response: any) => {
+        // Usamos any para leer las propiedades del objeto de respuesta
+        console.log('Respuesta del servidor:', response);
+
+        // Si el backend te devuelve Perfil null cuando ya aplicó (según tu código de Java)
+        if (
+          response &&
+          response.idPerfil === null &&
+          response.idOferta === null
+        ) {
           this.snackBar.open(
             `Ya aplicaste para la oferta: ${nombreOferta}`,
             'Cerrar',
             { duration: 4000 },
           );
-        }
-        if (response === ResultadoAplicacion.ACTUALIZACION_ESTADO) {
+        } else if (response && response.idAplicacion) {
+          // Si viene un ID de aplicación válido, significa que se creó exitosamente
           this.snackBar.open(
-            `Se actualizo el estado en esta oferta: ${nombreOferta}`,
+            `Acabas de aplicar para la oferta: ${nombreOferta}`,
+            'Cerrar',
+            { duration: 6000 },
+          );
+        } else {
+          // Estado por defecto o actualización
+          this.snackBar.open(
+            `Se procesó tu solicitud para la oferta: ${nombreOferta}`,
             'Cerrar',
             { duration: 4000 },
           );
@@ -64,9 +82,8 @@ export class AplicacionServiceService {
       },
       error: (error) => {
         console.error('ERROR COMPLETO', error);
-
         this.snackBar.open(
-          'Tu sesión expiró. Volvé a iniciar sesión.',
+          'Hubo un problema al procesar la solicitud o tu sesión expiró.',
           'Cerrar',
           { duration: 5000 },
         );

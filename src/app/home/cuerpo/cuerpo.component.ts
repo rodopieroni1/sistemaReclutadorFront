@@ -140,7 +140,7 @@ export class CuerpoComponent implements OnInit {
         nombreOferta,
         () => {
           this.isBtnAplicar = true;
-        }, // Esto es el callback que apaga tu botón al terminar
+        },
       );
     } else {
       this.snackBar.open(
@@ -152,6 +152,8 @@ export class CuerpoComponent implements OnInit {
   }
 
   verDetalle(oferta: any): void {
+    console.log('Datos que vienen de la fila de Mis Aplicaciones:', oferta);
+
     this.router.navigate(['/detalle-oferta'], {
       state: { oferta: oferta },
     });
