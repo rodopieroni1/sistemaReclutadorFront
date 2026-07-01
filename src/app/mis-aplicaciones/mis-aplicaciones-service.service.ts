@@ -1,12 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MisAplicacionesServiceService {
-  private apiUrl = 'http://localhost:8080/aplicaciones';
-  private apiUrlOfertas = 'http://localhost:8080/ofertas';
+  private apiUrl = environment.local.urlApi + '/aplicaciones';
+  private apiUrlOfertas = environment.local.urlApi + '/ofertas';
+
   constructor(private http: HttpClient) {}
 
   obtenerPostulaciones(idPerfil: number) {

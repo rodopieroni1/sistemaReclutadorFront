@@ -36,9 +36,9 @@ export class UserServiceService {
         () => new Error('Configuración de API o ID inválidos.'),
       );
     }
-
+    console.log('ID del baseUrl:', baseUrl);
     return this.http
-      .put(`${baseUrl}perfiles/${id}`, formData)
+      .put(`${baseUrl}/perfiles/${id}`, formData)
       .pipe(catchError(this.handleError));
   }
 

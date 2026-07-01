@@ -30,6 +30,7 @@ import { MatOptionModule } from '@angular/material/core';
 import { switchMap, catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { MatDividerModule } from '@angular/material/divider';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-modal-nueva-oferta',
@@ -82,7 +83,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
   archivoSeleccionado: File | null = null; // Archivo subido
   imagenPreview: string | null = null;
   isSubmitting = false;
-  uploadUrl = 'http://localhost:8080/api/uploads/';
+  uploadUrl = environment.local.urlApi + '/api/uploads/';
 
   constructor(
     private http: HttpClient,
@@ -107,7 +108,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
     if (this.data.oferta) {
       this.http
         .get<any>(
-          `http://localhost:8080/ofertas/existeId/${this.data.oferta.idOferta}`,
+          `${environment.local.urlApi}/ofertas/existeId/${this.data.oferta.idOferta}`,
         )
         .subscribe({
           next: (response) => {
@@ -139,7 +140,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
             const fotoActual = this.miFormulario.get('fotoOferta')?.value;
             if (fotoActual) {
               this.imagenPreview = fotoActual
-                ? 'http://localhost:8080/uploads/fotos/' + fotoActual
+                ? environment.local.urlApi + '/uploads/fotos/' + fotoActual
                 : '';
             }
           },
@@ -156,7 +157,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
     }
   }
   obtenerEmpresas(): void {
-    this.http.get<any[]>('http://localhost:8080/empresas').subscribe({
+    this.http.get<any[]>(environment.local.urlApi + '/empresas').subscribe({
       next: (data: any[]) => {
         this.empresas = data; // Asegúrate de asignar los datos correctamente
       },
@@ -183,7 +184,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
     if (this.accion === 'crear') {
       this.http
         .get<any>(
-          `http://localhost:8080/empresas/existeId/${datosOferta.idEmpresa}`,
+          `${environment.local.urlApi}/empresas/existeId/${datosOferta.idEmpresa}`,
           {
             headers: { 'Content-Type': 'application/json' },
           },
@@ -207,7 +208,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
             }
 
             return this.http.post<HttpResponse<any>>(
-              'http://localhost:8080/ofertas/crear',
+              `${environment.local.urlApi}/ofertas/crear`,
               oferta,
               { observe: 'response' },
             );
@@ -237,11 +238,14 @@ export class ModalNuevaOfertaComponent implements OnInit {
       ////AQUI EMPIEZA EL MODIFICAR
       const idEmpresa = this.miFormulario.value.idEmpresa;
       this.http
-        .get<any>(`http://localhost:8080/empresas/existeId/${idEmpresa}`, {
-          headers: {
-            'Content-Type': 'application/json',
+        .get<any>(
+          `${environment.local.urlApi}/empresas/existeId/${idEmpresa}`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
           },
-        })
+        )
         .subscribe({
           next: (response) => {
             const oferta = {
@@ -300,10 +304,14 @@ export class ModalNuevaOfertaComponent implements OnInit {
       nombreOferta: oferta.nombreOferta,
     };
     this.http
-      .put(`http://localhost:8080/ofertas/actualizar/${idOferta}`, oferta, {
-        headers: { 'Content-Type': 'application/json' },
-        observe: 'response',
-      })
+      .put(
+        `${environment.local.urlApi}/ofertas/actualizar/${idOferta}`,
+        oferta,
+        {
+          headers: { 'Content-Type': 'application/json' },
+          observe: 'response',
+        },
+      )
       .subscribe({
         next: (response) => {
           if (response.status === 201 || response.status === 200) {
@@ -330,7 +338,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
     if (this.imagenPreview) {
       return this.imagenPreview;
     } else if (this.imagenDesdeBD) {
-      return 'http://localhost:8080/uploads/fotos/' + this.imagenDesdeBD;
+      return `${environment.local.urlApi}/uploads/fotos/${this.imagenDesdeBD}`;
     }
     return '';
   }

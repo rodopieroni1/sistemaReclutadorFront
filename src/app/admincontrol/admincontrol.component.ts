@@ -90,6 +90,7 @@ export class AdminControlComponent {
   nombreOferta: string = '';
   descripcion: string = '';
   fotoOferta: string = '';
+  private apiUrl = environment.local.urlApi;
   constructor(
     private http: HttpClient, // public dialogRef: MatDialogRef<ModalNuevaEmpresaComponent>
     private dialog: MatDialog,
@@ -118,7 +119,7 @@ export class AdminControlComponent {
           documentoUrl: string | null;
           estadoAplicaciones: boolean;
         }[]
-      >(environment.local.urlApi + '/aplicaciones')
+      >(`${this.apiUrl}/aplicaciones`)
       .subscribe((data) => {
         // Mapeamos las claves recibidas para que coincidan con las claves esperadas
         this.aplicaciones = data.map((aplicacion) => ({
@@ -136,7 +137,7 @@ export class AdminControlComponent {
     this.http
       .get<
         { idRubro: number; descripcionRubro: string }[]
-      >(environment.local.urlApi + '/rubro')
+      >(`${this.apiUrl}/rubro`)
       .subscribe((data) => {
         this.rubros = data;
       });
@@ -152,7 +153,7 @@ export class AdminControlComponent {
           historiaEmpresa: string;
           observaciones: string;
         }[]
-      >(environment.local.urlApi + '/empresas')
+      >(`${this.apiUrl}/empresas`)
       .subscribe((data) => {
         this.empresas = data;
       });
@@ -167,7 +168,7 @@ export class AdminControlComponent {
           empresa: { nombre: string };
           estadoOferta: boolean;
         }[]
-      >(environment.local.urlApi + '/ofertas/todas')
+      >(`${this.apiUrl}/ofertas/disponibles`)
       .subscribe((data) => {
         this.ofertas = data;
       });
@@ -177,7 +178,7 @@ export class AdminControlComponent {
     const descripcion = prompt('Ingrese la descripción del nuevo rubro:');
     if (descripcion) {
       this.http
-        .post(environment.local.urlApi + '/rubro/crear', {
+        .post(`${this.apiUrl}/rubro/crear`, {
           descripcionRubro: descripcion,
         })
         .subscribe({
@@ -196,7 +197,7 @@ export class AdminControlComponent {
     this.http
       .get<
         { idRubro: number; descripcionRubro: string }[]
-      >(environment.local.urlApi + '/rubro')
+      >(`${this.apiUrl}/rubro`)
       .subscribe({
         next: (data) => {
           this.rubros = data;
@@ -214,7 +215,7 @@ export class AdminControlComponent {
       )
     ) {
       this.http
-        .delete(`http://localhost:8080/rubro/eliminar/${rubro.idRubro}`)
+        .delete(`${this.apiUrl}/rubro/eliminar/${rubro.idRubro}`)
         .subscribe({
           next: () => {
             alert('Rubro eliminado');
@@ -233,7 +234,7 @@ export class AdminControlComponent {
     );
     if (nuevaDescripcion) {
       this.http
-        .put(`http://localhost:8080/rubro/actualizar/${rubro.idRubro}`, {
+        .put(`${this.apiUrl}/rubro/actualizar/${rubro.idRubro}`, {
           descripcionRubro: nuevaDescripcion,
         })
         .subscribe({
@@ -271,7 +272,7 @@ export class AdminControlComponent {
           historiaEmpresa: string;
           observaciones: string;
         }[]
-      >(environment.local.urlApi + '/empresas')
+      >(`${this.apiUrl}/empresas`)
       .subscribe({
         next: (data) => {
           this.empresas = data.map((empresa) => ({
@@ -315,7 +316,7 @@ export class AdminControlComponent {
       confirm(`¿Estás seguro que deseas eliminar la empresa ${empresa.nombre}?`)
     ) {
       this.http
-        .delete(`http://localhost:8080/empresas/eliminar/${empresa.id_empresa}`)
+        .delete(`${this.apiUrl}/empresas/eliminar/${empresa.id_empresa}`)
         .subscribe({
           next: () => {
             alert('Empresa eliminada exitosamente');
@@ -352,7 +353,7 @@ export class AdminControlComponent {
           empresa: { nombre: string };
           estadoOferta: boolean;
         }[]
-      >(environment.local.urlApi + '/ofertas/todas')
+      >(`${this.apiUrl}/ofertas`)
       .subscribe({
         next: (data) => {
           this.ofertas = data.map((oferta) => ({
@@ -395,7 +396,7 @@ export class AdminControlComponent {
       )
     ) {
       this.http
-        .delete(`http://localhost:8080/ofertas/eliminar/${oferta.idOferta}`)
+        .delete(`${this.apiUrl}/ofertas/eliminar/${oferta.idOferta}`)
         .subscribe({
           next: () => {
             alert('Oferta eliminada exitosamente');

@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ResultadoAplicacion } from './resultado-aplicaciones.enum';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AplicacionServiceService {
-  private apiUrl = 'http://localhost:8080/aplicaciones'; // Ajusta la URL según tu backend
+  private apiUrl = environment.local.urlApi + '/aplicaciones'; // Ajusta la URL según tu backend
 
   constructor(
     private http: HttpClient,

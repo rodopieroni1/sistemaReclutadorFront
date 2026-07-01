@@ -1,11 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ArchivoServiceService {
-  private apiUrl = 'http://localhost:8080/archivos';
+  private apiUrl = environment.local.urlApi + '/archivos';
 
   constructor(private http: HttpClient) {}
   subirArchivo(archivo: File) {

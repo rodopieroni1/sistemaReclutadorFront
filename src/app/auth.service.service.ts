@@ -8,13 +8,13 @@ import {
 } from '@angular/fire/auth';
 import { browserSessionPersistence, setPersistence } from 'firebase/auth';
 import { lastValueFrom, Observable } from 'rxjs';
+import { environment } from '../environments/environment';
 @Injectable({
   providedIn: 'root',
 })
 export class AuthServiceService {
   private backendUrl = 'http://localhost:8080/login';
-  private apiUrl = 'http://localhost:8080';
-
+  private apiUrl = environment.local.urlApi;
   constructor(
     private auth: Auth,
     private http: HttpClient,

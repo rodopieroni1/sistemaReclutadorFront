@@ -6,7 +6,7 @@ import { environment } from '../environments/environment';
   providedIn: 'root',
 })
 export class ListadoOfertasService {
-  private apiUrl = environment.local.urlApi + '/ofertas'; // URL de tu API REST
+  private apiUrl = environment.local.urlApi + '/ofertas';
   constructor(private http: HttpClient) {}
 
   getOfertas(): Observable<any[]> {

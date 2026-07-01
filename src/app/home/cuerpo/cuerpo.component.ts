@@ -14,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 import { ResultadoAplicacion } from './resultado-aplicaciones.enum';
+import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-cuerpo',
   standalone: true,
@@ -51,7 +52,8 @@ export class CuerpoComponent implements OnInit {
   itemsPerPage: number = 5; // Número de elementos por página
   searchNombreOferta = new FormControl('');
   searchDescripcionEmpresa = new FormControl('');
-  apiUrl = 'http://localhost:8080/ofertas/buscar';
+  urlApiTodas = environment.local.urlApi;
+  private apiUrl = 'http://localhost:8080/ofertas/buscar';
   busquedaRealizada: boolean = false;
   resultados: any[] = [];
   ofertaEmpresa = new FormControl('');
@@ -65,13 +67,14 @@ export class CuerpoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.webSocketService.connect('ws://localhost:8080/ws'); // URL del servidor WebSocket
+    this.webSocketService.connect('ws://localhost:8080/ws');
     if (this.webSocketService['socket']) {
       this.webSocketService['socket'].onmessage = (event) => {
-        const newImageUrl = event.data; // Recibir URL de nueva imagen
+        const newImageUrl = event.data;
+        console.log('Nueva URL de imagen recibida:', newImageUrl);
       };
     }
-    this.userLoginOn = !!sessionStorage.getItem('token'); // Verifica si hay token
+    this.userLoginOn = !!sessionStorage.getItem('token');
     this.http
       .get<
         {
@@ -81,7 +84,7 @@ export class CuerpoComponent implements OnInit {
           fotoOferta: string;
           empresa: { nombre: string };
         }[]
-      >('http://localhost:8080/ofertas/todas')
+      >(this.urlApiTodas + '/ofertas/todas')
       .subscribe({
         next: (data) => {
           this.ofertas = data.map((oferta) => ({
