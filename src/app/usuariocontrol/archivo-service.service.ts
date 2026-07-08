@@ -9,6 +9,7 @@ export class ArchivoServiceService {
   private apiUrl = environment.local.urlApi + '/archivos';
 
   constructor(private http: HttpClient) {}
+
   subirArchivo(archivo: File) {
     const formData = new FormData();
     formData.append('archivo', archivo);

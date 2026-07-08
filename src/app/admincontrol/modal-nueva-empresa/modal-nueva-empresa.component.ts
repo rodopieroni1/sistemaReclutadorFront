@@ -87,8 +87,6 @@ export class ModalNuevaEmpresaComponent implements OnInit {
     private snackBar: MatSnackBar,
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<ModalNuevaEmpresaComponent>,
-    private route: ActivatedRoute,
-
     @Inject(MAT_DIALOG_DATA) public data: { accion: string; empresa?: any },
   ) {
     this.miFormulario = this.fb.group({
@@ -99,40 +97,79 @@ export class ModalNuevaEmpresaComponent implements OnInit {
       emailEmpresa: ['', [Validators.required, Validators.email]],
       cuitEmpresa: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
       id_empresa: [''],
-      idRubro: ['', Validators.required], // ← nuevo campo agregado
+      idRubro: ['', Validators.required],
     });
-    this.accion = data.accion; // Recibe la acción (crear o actualizar)
-    this.empresa = data.empresa || null; // Recibe la empresa si es actualización
+    this.accion = data.accion;
+    this.empresa = data.empresa || null;
   }
 
   ngOnInit() {
-    if (this.empresa && Object.keys(this.empresa).length > 0) {
-      this.miFormulario.patchValue({
-        nombreEmpresa: this.data.empresa?.nombre || '',
-        cuitEmpresa: this.data.empresa?.cuit || 0,
-        emailEmpresa: this.data.empresa?.email || '',
-        observacionesEmpresa: this.data.empresa?.observaciones || '',
-        direccionEmpresa: this.data.empresa?.direccion || '',
-        historiaEmpresa: this.data.empresa?.historiaEmpresa || '',
-        id_empresa: this.data.empresa?.id_empresa || 0,
-        idRubro: this.data.empresa?.idRubro || '', // ← nuevo campo agregado
-      });
-    }
+    // 1. Cargamos la lista de rubros de la API
+    this.http.get<any[]>(environment.local.urlApi + '/rubro').subscribe({
+      next: (data) => {
+        this.rubros = data;
 
-    // Cargar rubros normalmente
-    this.http.get<any[]>(environment.local.urlApi + 'rubro').subscribe({
-      next: (data) => (this.rubros = data),
+        // 2. Ejecutamos la asignación de datos de la empresa de forma aislada
+        this.asignarDatosFormulario();
+      },
       error: () =>
         this.snackBar.open('Error al cargar rubros', 'Cerrar', {
           duration: 3000,
         }),
     });
 
-    // Reaccionar al cambio de rubro
-    this.miFormulario.get('idRubro')?.valueChanges.subscribe((id: number) => {
-      this.rubroSeleccionado =
-        this.rubros.find((r) => r.idRubro === id) || null;
+    // Listener para cambios manuales en el select
+    this.miFormulario.get('idRubro')?.valueChanges.subscribe((id) => {
+      if (id) {
+        this.rubroSeleccionado =
+          this.rubros.find((r) => Number(r.idRubro) === Number(id)) || null;
+      }
     });
+  }
+
+  // 3. Creamos este método nuevo para procesar los datos de la empresa de manera limpia
+  asignarDatosFormulario() {
+    // Nos aseguramos de limpiar el formulario por completo antes de cargar la nueva empresa
+    this.miFormulario.reset();
+
+    if (this.data && this.data.empresa) {
+      // Forzamos la lectura limpia del ID de rubro actual
+      const rubroIdRaw =
+        this.data.empresa.idRubro || this.data.empresa.rubro?.idRubro;
+      const rubroId = rubroIdRaw ? Number(rubroIdRaw) : '';
+
+      this.miFormulario.patchValue({
+        nombreEmpresa:
+          this.data.empresa.nombre || this.data.empresa.nombreEmpresa || '',
+        cuitEmpresa:
+          this.data.empresa.cuit || this.data.empresa.cuitEmpresa || 0,
+        emailEmpresa:
+          this.data.empresa.email || this.data.empresa.emailEmpresa || '',
+        observacionesEmpresa:
+          this.data.empresa.observaciones ||
+          this.data.empresa.observacionesEmpresa ||
+          '',
+        direccionEmpresa:
+          this.data.empresa.direccion ||
+          this.data.empresa.direccionEmpresa ||
+          '',
+        historiaEmpresa:
+          this.data.empresa.historiaEmpresa || this.data.empresa.historia || '',
+        id_empresa: this.data.empresa.id_empresa || this.data.empresa.id || 0,
+        idRubro: rubroId, // Asignamos el ID limpio
+      });
+
+      // Sincronizamos el objeto rubro seleccionado de inmediato
+      if (rubroId && this.rubros.length > 0) {
+        this.rubroSeleccionado =
+          this.rubros.find((r) => Number(r.idRubro) === rubroId) || null;
+      }
+    }
+    console.log('Empresa:', this.data.empresa);
+    console.log(
+      'idRubro del formulario:',
+      this.miFormulario.get('idRubro')?.value,
+    );
   }
 
   guardar() {
@@ -170,7 +207,7 @@ export class ModalNuevaEmpresaComponent implements OnInit {
             console.log('this.miFormulario.value:  ', this.miFormulario.value);
             const empresa = this.miFormulario.value;
             this.http
-              .post(environment.local.urlApi + 'empresas/crear', empresa, {
+              .post(environment.local.urlApi + '/empresas/crear', empresa, {
                 headers: { 'Content-Type': 'application/json' },
                 observe: 'response',
               })
@@ -223,9 +260,10 @@ export class ModalNuevaEmpresaComponent implements OnInit {
       historiaEmpresa: empresa.historiaEmpresa,
       id_empresa: empresa.id_empresa,
     });
+    console.log('Empresa enviada al backend:', empresa);
     this.http
       .put(
-        `http://localhost:8080/empresas/actualizar/${empresa.id_empresa}`,
+        `${environment.local.urlApi}/empresas/actualizar/${empresa.id_empresa}`,
         empresa,
         {
           headers: { 'Content-Type': 'application/json' },

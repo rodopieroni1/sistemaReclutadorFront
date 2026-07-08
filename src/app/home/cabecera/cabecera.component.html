@@ -1,7 +1,9 @@
 <header *ngIf="mostrarCabecera">
     <div class="filaItems">
         <div class="logo">
-            <img src="../../../assets/logo.png">
+            <a [routerLink]="'/home'">
+                <img src="../../../assets/logopng.png" alt="Logo de la empresa">
+            </a>
         </div>
 
         <div class="opciones" style="font-family: 'fuenteCabecera', sans-serif;">

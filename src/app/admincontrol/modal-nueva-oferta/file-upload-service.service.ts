@@ -10,16 +10,25 @@ export class FileUploadService {
   [x: string]: any;
   private uploadUrl = 'http://localhost:8080/api/uploads/';
 
-  constructor(private http: HttpClient, private snackBar: MatSnackBar) {}
+  constructor(
+    private http: HttpClient,
+    private snackBar: MatSnackBar,
+  ) {}
 
-  uploadImage(file: File): Observable<any> {
+  uploadImage(file: File, tipo?: string): Observable<any> {
     const formData = new FormData();
     formData.append('file', file);
+
+    // Si pasas el tipo (ej: 'oferta'), lo adjuntamos al FormData
+    if (tipo) {
+      formData.append('tipo', tipo);
+    }
+
     return this.http
       .post(this.uploadUrl, formData, {
-        observe: 'response', // Con esto obtenés un HttpResponse completo
+        observe: 'response',
         responseType: 'json',
-      }) // Cambio aquí
+      })
       .pipe(
         tap((response) => {
           if (response.status === 200) {
@@ -36,8 +45,16 @@ export class FileUploadService {
         }),
         catchError((error) => {
           console.error('Error al subir el archivo:', error);
+          this.snackBar.open(
+            'Error crítico al conectar con el servidor',
+            'Cerrar',
+            {
+              duration: 3000,
+              panelClass: ['error-snackbar'],
+            },
+          );
           return throwError(() => error);
-        })
+        }),
       );
   }
 }

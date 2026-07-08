@@ -27,8 +27,12 @@ export class UsuarioControlComponent {
   datosActualizadosOferta: any;
   confirmarPassword: string = '';
   isSubmitting = false;
+  apiUrl = 'http://localhost:8080';
 
-  constructor(private http: HttpClient, private snackBar: MatSnackBar) {}
+  constructor(
+    private http: HttpClient,
+    private snackBar: MatSnackBar,
+  ) {}
 
   seleccionarArchivo(event: any, tipo: string): void {
     const archivo = event.target.files[0];
@@ -67,7 +71,7 @@ export class UsuarioControlComponent {
         'Cerrar',
         {
           duration: 4000,
-        }
+        },
       );
 
       this.isSubmitting = false;
@@ -79,7 +83,7 @@ export class UsuarioControlComponent {
         'Cerrar',
         {
           duration: 4000,
-        }
+        },
       );
       this.isSubmitting = false;
       return;
@@ -93,7 +97,7 @@ export class UsuarioControlComponent {
         'Cerrar',
         {
           duration: 4000,
-        }
+        },
       );
 
       this.isSubmitting = false;
@@ -106,7 +110,7 @@ export class UsuarioControlComponent {
         'Cerrar',
         {
           duration: 4000,
-        }
+        },
       );
       this.isSubmitting = false;
       return;
@@ -131,7 +135,7 @@ export class UsuarioControlComponent {
 
     // Realizar la solicitud HTTP POST
     this.http
-      .post('http://localhost:8080/perfiles', formData, {
+      .post(this.apiUrl + '/perfiles', formData, {
         observe: 'response', // Observa toda la respuesta HTTP
       })
       .subscribe({

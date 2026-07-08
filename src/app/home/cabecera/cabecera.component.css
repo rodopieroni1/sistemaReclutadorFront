@@ -18,13 +18,6 @@
     margin: 5px 8px;
   }
 
-  /* Opcional: separar visualmente de la imagen */
-  .logo {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-
   .social-header {
     background: none !important;
     box-shadow: none !important;
@@ -38,7 +31,7 @@
 
   .perfil-img {
     width: 40px;
-    height: 40px;
+    height: 50px;
     object-fit: cover;
     border-radius: 50%;
   }
@@ -73,24 +66,17 @@ body {
   font-family: 'Courier New', Courier, monospace;
 }
 
-/* Estilos del encabezado */
 header {
-  position: fixed;
-  /* Mantiene la cabecera fija */
-  top: 0;
-  left: 0;
-  width: 100%;
-  /* Abarca todo el ancho de la pantalla */
-  z-index: 1000;
-  /* Garantiza que se mantenga sobre otros elementos */
-  background-color: #feca8e;
-  /* Fondo oscuro para destacar */
-  padding: 1px;
-  box-shadow: 0 2px 5px rgba(240, 105, 105, 0.2);
-  /* Añade una sombra elegante */
+  height: 100px;
+  background: #feca8e;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+}
+
+.logo img {
+  width: 380px;
+  height: auto;
 }
 
 
@@ -108,11 +94,6 @@ header {
   /* Asegura que abarquen todo el ancho */
   gap: 20px;
   /* Espaciado horizontal entre los elementos */
-}
-
-.logo img {
-  max-height: 90px;
-  /* Ajusta el tamaño de la imagen del logo */
 }
 
 .perfil-img {

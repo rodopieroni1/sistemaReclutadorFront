@@ -285,36 +285,46 @@ export class ModalNuevaOfertaComponent implements OnInit {
   cargarUpdate(oferta: any, response: any) {
     const idOferta =
       this.miFormulario.value.idOferta || this.data.oferta.idOferta;
-    const fotoOfertaFinal = response.fotoOferta;
-    const idEmpresa = oferta.empresa.id_empresa;
-    if (!idEmpresa) {
-      this.snackBar.open('Error: idEmpresa está vacío.', 'Cerrar', {
+    const fotoCalculada =
+      response?.fotoOferta ||
+      this.miFormulario.value.fotoOferta ||
+      oferta.fotoOferta;
+
+    const idEmpresaNum = oferta.empresa?.id_empresa || oferta.idEmpresa;
+
+    if (!idEmpresaNum) {
+      this.snackBar.open('Error: El ID de la empresa está vacío.', 'Cerrar', {
         duration: 3000,
       });
       return;
     }
-    oferta = {
+
+    // 2. Construimos el payload limpio para enviar al backend
+    const ofertaPayload = {
       descripcionOferta: oferta.descripcionOferta,
       estadoOferta: oferta.estadoOferta,
-      fotoOferta: oferta.fotoOferta || fotoOfertaFinal, // Usa la foto existente si no se sube una nueva
+      fotoOferta: fotoCalculada, // <-- Ahora sí guardará la imagen correcta
+      nombreOferta: oferta.nombreOferta,
       empresa: {
-        id_empresa: idEmpresa, // Usar el valor del backend
+        id_empresa: idEmpresaNum,
       },
       idOferta: idOferta,
-      nombreOferta: oferta.nombreOferta,
     };
+
     this.http
       .put(
         `${environment.local.urlApi}/ofertas/actualizar/${idOferta}`,
-        oferta,
+        ofertaPayload, // <-- Enviamos el payload corregido
         {
           headers: { 'Content-Type': 'application/json' },
           observe: 'response',
         },
       )
       .subscribe({
-        next: (response) => {
-          if (response.status === 201 || response.status === 200) {
+        next: (res) => {
+          if (res.status === 201 || res.status === 200) {
+            console.log('Oferta actualizada con éxito:', res.body);
+
             this.snackBar.open(
               'Oferta actualizada satisfactoriamente',
               'Cerrar',
@@ -324,9 +334,10 @@ export class ModalNuevaOfertaComponent implements OnInit {
             this.dialogRef.close();
           }
         },
-        error: () => {
+        error: (err) => {
+          console.error('Error al actualizar en el servidor:', err);
           this.snackBar.open(
-            'Error al actualizar la Oferta. Inténtelo nuevamenteee.',
+            'Error al actualizar la Oferta. Inténtelo nuevamente.',
             'Cerrar',
             { duration: 3000 },
           );

@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { CabeceraComponent } from '../home/cabecera/cabecera.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -10,7 +9,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { ModalNuevaOfertaComponent } from './modal-nueva-oferta/modal-nueva-oferta.component';
 import { ModalNuevaEmpresaComponent } from './modal-nueva-empresa/modal-nueva-empresa.component';
-import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 @Component({
   standalone: true,
@@ -45,7 +43,6 @@ export class AdminControlComponent {
       documentoUrl: string;
       fotoUrl: string;
     };
-    estadoAplicaciones: boolean;
     documentoUrl: string | null;
   }[] = [];
   rubros: {
@@ -60,6 +57,10 @@ export class AdminControlComponent {
     email: string;
     cuit: number;
     id_empresa: number;
+    rubro: {
+      idRubro: number;
+      descripcionRubro: string;
+    };
   }[] = [];
   ofertas: {
     empresa: any;
@@ -119,7 +120,7 @@ export class AdminControlComponent {
           documentoUrl: string | null;
           estadoAplicaciones: boolean;
         }[]
-      >(`${this.apiUrl}/aplicaciones`)
+      >(`${this.apiUrl}/aplicaciones/activas`)
       .subscribe((data) => {
         // Mapeamos las claves recibidas para que coincidan con las claves esperadas
         this.aplicaciones = data.map((aplicacion) => ({
@@ -130,7 +131,6 @@ export class AdminControlComponent {
           documentoUrl: aplicacion.perfil.documentoUrl
             ? aplicacion.perfil.documentoUrl.replace(/\\/g, '/')
             : null,
-          estadoAplicaciones: aplicacion.estadoAplicaciones,
         }));
       });
 
@@ -152,6 +152,10 @@ export class AdminControlComponent {
           direccion: string;
           historiaEmpresa: string;
           observaciones: string;
+          rubro: {
+            idRubro: number;
+            descripcionRubro: string;
+          };
         }[]
       >(`${this.apiUrl}/empresas`)
       .subscribe((data) => {
@@ -251,7 +255,10 @@ export class AdminControlComponent {
 
   NuevaEmpresa() {
     const dialogRef = this.dialog.open(ModalNuevaEmpresaComponent, {
-      width: '700px',
+      width: '750px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      autoFocus: false,
       data: { accion: 'crear' }, // Pasando la acción al modal
     });
     // Verifica que la instancia tenga acceso al evento y suscríbete
@@ -271,6 +278,10 @@ export class AdminControlComponent {
           direccion: string;
           historiaEmpresa: string;
           observaciones: string;
+          rubro: {
+            idRubro: number;
+            descripcionRubro: string;
+          };
         }[]
       >(`${this.apiUrl}/empresas`)
       .subscribe({
@@ -283,6 +294,7 @@ export class AdminControlComponent {
             email: empresa.email,
             cuit: empresa.cuit,
             id_empresa: empresa.id_empresa,
+            rubro: empresa.rubro,
           }));
         },
         error: (error) => {
@@ -302,7 +314,10 @@ export class AdminControlComponent {
     observaciones: string;
   }) {
     const dialogRef = this.dialog.open(ModalNuevaEmpresaComponent, {
-      width: '700px',
+      width: '750px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      autoFocus: false,
       data: { accion: 'actualizar', empresa: empresa }, // Pasando la acción y datos de la empresa
     });
     dialogRef.componentInstance.datosActualizadosEmpresa.subscribe(() => {
@@ -331,7 +346,10 @@ export class AdminControlComponent {
 
   NuevaOferta() {
     const dialogRef = this.dialog.open(ModalNuevaOfertaComponent, {
-      width: '700px',
+      width: '750px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      autoFocus: false,
       data: { accion: 'crear' }, // Pasando la acción al modal
     });
 
@@ -379,7 +397,10 @@ export class AdminControlComponent {
     empresa: { nombre: string };
   }) {
     const dialogRef = this.dialog.open(ModalNuevaOfertaComponent, {
-      width: '700px',
+      width: '750px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      autoFocus: false,
       data: { accion: 'actualizar', oferta: oferta }, // Pasando la acción y datos de la empresa
     });
     console.log('Ejecutando cargarOfertas');

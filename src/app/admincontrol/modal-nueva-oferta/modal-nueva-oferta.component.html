@@ -70,16 +70,11 @@
                 <div class="preview-container">
                     <img *ngIf="imagenPreview" [src]="imagenPreview" alt="Previsualización" class="preview-img" />
                     <img *ngIf="!imagenPreview && imagenDesdeBD"
-                        [src]="'http://localhost:8080/uploads/fotos/'+ imagenDesdeBD" alt="Imagen actual"
+                        [src]="'http://localhost:8080/uploads/ofertas/'+ imagenDesdeBD" alt="Imagen actual"
                         class="preview-img" />
                 </div>
             </div>
         </section>
-
-        <!-- <div class="modal-buttons">
-            <button type="button" mat-button (click)="cerrar()">Cancelar</button>
-            <button type="submit" mat-raised-button color="primary">Guardar</button>
-        </div> -->
 
     </form>
 </mat-dialog-content>

@@ -1,137 +1,265 @@
-@media (max-width: 768px) {
+/* ===========================================================
+   CELULARES
+=========================================================== */
+@media (max-width:1024px) {
 
-  .responsive-accordion,
-  .mat-expansion-panel {
-    width: 100%;
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
+  .layout-fijo {
+    display: contents;
+  }
+
+  .columna-titulo,
   .columna-imagen {
     display: none !important;
   }
+
+  .columna-contenido {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 15px;
+    box-sizing: border-box;
+    background: #f09b56;
+    height: auto;
+    overflow: visible;
+  }
+
+  .responsive-accordion,
+  .mat-accordion,
+  .mat-expansion-panel {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .imagen-mobile {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    padding-bottom: 110px;
+  }
+
+  .imagen-mobile img {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid #222;
+    background: #fff;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .25);
+  }
+
 }
 
-.grid-imagen {
-  background-image: url('../../assets/trabajadorPortada.avif');
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  opacity: 0.1;
-  height: 100%;
+
+/* ===========================================================
+   TABLETS
+=========================================================== */
+@media (min-width:769px) and (max-width:1024px) {
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .layout-fijo {
+    display: contents;
+  }
+
+  .columna-titulo,
+  .columna-imagen {
+    display: none !important;
+  }
+
+  .columna-contenido {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 15px;
+    box-sizing: border-box;
+    background: #f09b56;
+    height: auto;
+    overflow: visible;
+  }
+
+  .responsive-accordion {
+    width: 100%;
+    max-width: 100%;
+  }
 }
+
+
+/* ===========================================================
+   ESCRITORIO
+=========================================================== */
 
 .layout-fijo {
   display: grid;
-  grid-template-columns: 15% 70% 15%;
+  grid-template-columns: 18% 62% 20%;
   height: 100vh;
+  background: #f09b56;
   overflow: hidden;
-  position: relative;
-  background-color: #f09b56;
 }
 
-/* Título a la izquierda fijo */
 .columna-titulo {
   position: fixed;
   left: 0;
   top: 0;
-  width: 15%;
+  width: 18%;
   height: 100vh;
-  padding: 10px;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  margin-top: 250px;
-  margin-left: 10px;
-  z-index: 2;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 45px;
+  box-sizing: border-box;
 }
 
+.contenedor-logo {
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #fff;
+  border: 4px solid #1d1d1d;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 35px;
+}
+
+.contenedor-logo img {
+  width: 170px;
+  height: auto;
+}
+
+.panel-title {
+  margin-top: 30px;
+  text-align: center;
+  color: #241b1b;
+}
 
 .panel-title span {
   display: block;
-  text-align: center;
-  font-size: 30px;
-  color: rgb(29, 28, 28);
+  font-size: 34px;
+  line-height: 1.2;
 }
 
-/* Imagen fija a la derecha */
+.columna-contenido {
+  grid-column: 2;
+  width: 100%;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 25px;
+  box-sizing: border-box;
+  background: #f09b56;
+}
+
 .columna-imagen {
   position: fixed;
   right: 0;
   top: 0;
   width: 20%;
   height: 100vh;
-  pointer-events: none;
-  z-index: 1;
-  margin-top: 0px;
   overflow: hidden;
+  pointer-events: none;
 }
 
 .columna-imagen::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
+  background: url('../../assets/trabajadorPortada.avif') center/cover no-repeat;
+  opacity: .30;
+}
+
+.responsive-accordion {
   width: 100%;
-  height: 100%;
-  background-image: url('../../assets/trabajadorPortada.avif');
-  background-size: cover;
-  background-position: center;
-  opacity: 0.3;
-  z-index: -1;
 }
 
-.panel-title {
-  margin-left: 10px;
-  margin-top: 200px;
-  opacity: 0.9;
-  color: rgb(36, 2, 2) !important;
-  z-index: 2;
+.mat-expansion-panel {
+  margin-bottom: 18px;
+  border-radius: 16px !important;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .08);
+  transition: .25s;
 }
 
-.columna-contenido {
-  grid-column: 2 / 3;
-  height: 100vh;
-  width: 80%;
-  padding: 2%;
-  z-index: 1;
-  background-color: #f09b56;
+.mat-expansion-panel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .12);
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 20px;
+}
+
+.card-empresa {
+  background: white;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .08);
+}
+
+.oferta-empresa-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.oferta-empresa-info {
+  flex: 1;
+}
+
+.oferta-empresa-info h3,
+.oferta-empresa-info h4 {
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.oferta-empresa-info p {
+  margin: 8px 0;
 }
 
 .barra-ofertas-superior {
   display: flex;
   justify-content: flex-end;
-  padding: 8px 16px;
-  position: sticky;
-  top: 0;
-  z-index: 2;
+  margin-bottom: 18px;
 }
 
 .botones-inferiores {
   display: flex;
-  justify-content: flex-end;
-  padding: 8px 16px;
-  position: sticky;
-  top: 0;
-  z-index: 2;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.columna-titulo-Accordion,
-.panel-title-accordion {
-  align-items: center;
-  display: none;
-}
-
-.contenedor-logo {
+.header-admin {
+  height: 80px;
+  background: white;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  width: 100%;
-  box-sizing: border-box;
-  padding-top: 50px;
+  padding: 0 35px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, .08);
 }
 
-.contenedor-logo img {
-  max-width: 100%;
-  height: auto;
-  max-height: 80vh;
-  object-fit: contain;
+.imagen-mobile {
+  display: none;
 }
