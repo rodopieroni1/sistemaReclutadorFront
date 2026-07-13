@@ -83,7 +83,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
   archivoSeleccionado: File | null = null; // Archivo subido
   imagenPreview: string | null = null;
   isSubmitting = false;
-  uploadUrl = environment.local.urlApi + '/api/uploads/';
+  uploadUrl = environment.local.urlApi;
 
   constructor(
     private http: HttpClient,
@@ -140,7 +140,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
             const fotoActual = this.miFormulario.get('fotoOferta')?.value;
             if (fotoActual) {
               this.imagenPreview = fotoActual
-                ? environment.local.urlApi + '/uploads/fotos/' + fotoActual
+                ? environment.local.urlApi + '/uploads/ofertas/' + fotoActual
                 : '';
             }
           },
@@ -258,18 +258,19 @@ export class ModalNuevaOfertaComponent implements OnInit {
               fotoOferta: this.archivoSeleccionado?.name,
             };
             if (this.miFormulario.value.descripcionOferta === '') {
-              this.snackBar.open('Agrege valores a la oferta 1.', 'Cerrar', {
+              this.snackBar.open('Agrege valores a la oferta.', 'Cerrar', {
                 duration: 3000,
               });
               return;
             }
             if (!response || !response.id_empresa) {
-              this.snackBar.open('Agrege valores a la oferta 2.', 'Cerrar', {
+              this.snackBar.open('Agrege valores a la oferta.', 'Cerrar', {
                 duration: 3000,
               });
               return;
             }
-
+            console.log('Archivo seleccionado:', this.archivoSeleccionado);
+            console.log('Nombre:', this.archivoSeleccionado?.name);
             this.cargarUpdate(oferta, response);
           },
           error: () => {
@@ -289,34 +290,48 @@ export class ModalNuevaOfertaComponent implements OnInit {
       response?.fotoOferta ||
       this.miFormulario.value.fotoOferta ||
       oferta.fotoOferta;
-
     const idEmpresaNum = oferta.empresa?.id_empresa || oferta.idEmpresa;
-
     if (!idEmpresaNum) {
       this.snackBar.open('Error: El ID de la empresa está vacío.', 'Cerrar', {
         duration: 3000,
       });
       return;
     }
+    console.log('¿Es un archivo válido?:', response?.archivo);
+    const ofertaPayload = new FormData();
+    ofertaPayload.append('descripcionOferta', oferta.descripcionOferta);
+    ofertaPayload.append('estadoOferta', String(oferta.estadoOferta));
+    ofertaPayload.append('fotoOferta', fotoCalculada || '');
+    ofertaPayload.append('nombreOferta', oferta.nombreOferta);
 
-    // 2. Construimos el payload limpio para enviar al backend
-    const ofertaPayload = {
-      descripcionOferta: oferta.descripcionOferta,
-      estadoOferta: oferta.estadoOferta,
-      fotoOferta: fotoCalculada, // <-- Ahora sí guardará la imagen correcta
-      nombreOferta: oferta.nombreOferta,
-      empresa: {
-        id_empresa: idEmpresaNum,
-      },
-      idOferta: idOferta,
-    };
+    // CORRECCIÓN CLAVE: Cambiado de 'idEmpresa.id_empresa' a 'idEmpresa'
+    // para que coincida exactamente con tu @RequestParam("idEmpresa") del Controlador
+    ofertaPayload.append('idEmpresa', idEmpresaNum.toString());
+
+    // Nota: Si tu controlador no tiene un @RequestParam("idOferta"), esta línea es opcional
+    ofertaPayload.append('idOferta', idOferta.toString());
+
+    console.log('Archivo seleccionado:', this.archivoSeleccionado);
+
+    if (this.archivoSeleccionado) {
+      console.log('Nombre:', this.archivoSeleccionado.name);
+      console.log('Tamaño:', this.archivoSeleccionado.size);
+    }
+
+    // Este nombre "fotoArchivo" mapea directo al @RequestParam(value = "fotoArchivo")
+    if (this.archivoSeleccionado) {
+      ofertaPayload.append(
+        'fotoArchivo',
+        this.archivoSeleccionado,
+        this.archivoSeleccionado.name,
+      );
+    }
 
     this.http
       .put(
         `${environment.local.urlApi}/ofertas/actualizar/${idOferta}`,
-        ofertaPayload, // <-- Enviamos el payload corregido
+        ofertaPayload,
         {
-          headers: { 'Content-Type': 'application/json' },
           observe: 'response',
         },
       )
@@ -349,7 +364,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
     if (this.imagenPreview) {
       return this.imagenPreview;
     } else if (this.imagenDesdeBD) {
-      return `${environment.local.urlApi}/uploads/fotos/${this.imagenDesdeBD}`;
+      return `${environment.local.urlApi}/uploads/ofertas/${this.imagenDesdeBD}`;
     }
     return '';
   }

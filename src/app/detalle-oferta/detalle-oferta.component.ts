@@ -9,6 +9,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router'; // 👈 IMPORTANTE
 import { NavigationService } from '../navigation.service.ts.service';
+import { environment } from '../../environments/environment';
 @Component({
   selector: 'app-detalle-oferta',
   standalone: true,
@@ -26,6 +27,7 @@ import { NavigationService } from '../navigation.service.ts.service';
 export class DetalleOfertaComponent {
   oferta: any;
   isBtnAplicar: boolean = false;
+  apiUrl = environment.local.urlApi;
   constructor(
     private router: Router,
     private snackBar: MatSnackBar,
@@ -34,7 +36,6 @@ export class DetalleOfertaComponent {
   ) {
     const navegacionActual = this.router.getCurrentNavigation();
     this.oferta = navegacionActual?.extras.state?.['oferta'];
-
     if (this.oferta) {
       sessionStorage.setItem('oferta_actual', JSON.stringify(this.oferta));
     } else {

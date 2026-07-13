@@ -69,9 +69,8 @@
 
                 <div class="preview-container">
                     <img *ngIf="imagenPreview" [src]="imagenPreview" alt="Previsualización" class="preview-img" />
-                    <img *ngIf="!imagenPreview && imagenDesdeBD"
-                        [src]="'http://localhost:8080/uploads/ofertas/'+ imagenDesdeBD" alt="Imagen actual"
-                        class="preview-img" />
+                    <img *ngIf="!imagenPreview && imagenDesdeBD" [src]="uploadUrl + '/uploads/ofertas/' + imagenDesdeBD"
+                        alt="Imagen actual" class="preview-img" />
                 </div>
             </div>
         </section>

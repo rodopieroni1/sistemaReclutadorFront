@@ -21,18 +21,21 @@
                 </mat-expansion-panel-header>
                 <ul>
                     <li *ngFor="let aplicacion of getPaginatedDataAplicaciones()">
-                        <div class="oferta-empresa-header">
-                            <div class="oferta-empresa-info">
-                                <h4>
-                                    {{ aplicacion.oferta?.empresa?.nombre || 'Empresa desconocida' }},
-                                    {{ aplicacion.perfil?.nombre || 'Perfil no disponible' }}
-                                </h4><br />
-                                <strong>Fecha de aplicación:</strong> {{ aplicacion.fechaAplicacion || 'Sin fecha'
-                                }}<br />
-                                <strong>Propuesta:</strong> {{ aplicacion.oferta?.descripcionOferta || 'No disponible'
-                                }}<br />
+                        <div class="card-empresa">
+                            <div class="oferta-empresa-header">
+                                <div class="oferta-empresa-info">
+                                    <h4>
+                                        {{ aplicacion.oferta?.empresa?.nombre || 'Empresa desconocida' }},
+                                        {{ aplicacion.perfil?.nombre || 'Perfil no disponible' }}
+                                    </h4><br />
+                                    <strong>Fecha de aplicación:</strong> {{ aplicacion.fechaAplicacion || 'Sin fecha'
+                                    }}<br />
+                                    <strong>Propuesta:</strong> {{ aplicacion.oferta?.descripcionOferta || 'No
+                                    disponible'
+                                    }}<br />
 
-                                <a [href]="aplicacion.documentoUrl" download>📄 Descargar CV</a><br /><br />
+                                    <a [href]="aplicacion.documentoUrl" download>📄 Descargar CV</a><br /><br />
+                                </div>
                             </div>
                         </div>
                     </li>
@@ -58,17 +61,20 @@
                 </div>
                 <ul>
                     <li *ngFor="let rubros of getPaginatedDataRubros()">
-                        <div class="oferta-empresa-header">
-                            <div class="oferta-empresa-info">
-                                <strong>Descripción:</strong> {{ rubros?.descripcionRubro || 'Sin descripción' }}<br />
-                            </div>
-                            <div class="botones-inferiores">
-                                <button mat-icon-button color="accent" (click)="actualizarRubro(rubros)">
-                                    <mat-icon>edit</mat-icon>
-                                </button>
-                                <button mat-icon-button color="warn" (click)="eliminarRubro(rubros)">
-                                    <mat-icon>delete</mat-icon>
-                                </button>
+                        <div class="card-empresa">
+                            <div class="oferta-empresa-header">
+                                <div class="oferta-empresa-info">
+                                    <strong>Descripción:</strong> {{ rubros?.descripcionRubro || 'Sin descripción'
+                                    }}<br />
+                                </div>
+                                <div class="botones-inferiores">
+                                    <button mat-icon-button color="accent" (click)="actualizarRubro(rubros)">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                    <button mat-icon-button color="warn" (click)="eliminarRubro(rubros)">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </li>
@@ -135,21 +141,24 @@
                 </div>
                 <ul>
                     <li *ngFor="let oferta of getPaginatedDataOfertas()">
-                        <div class="oferta-empresa-header">
-                            <div class="oferta-empresa-info">
-                                <h4>{{ oferta?.nombreOferta || 'Sin título' }}</h4><br />
-                                <strong>Empresa:</strong> {{ oferta?.empresa?.nombre || 'Empresa desconocida' }}<br />
-                                <strong>Estado:</strong>
-                                <span *ngIf="oferta?.estadoOferta">✅ Activa</span>
-                                <span *ngIf="!oferta?.estadoOferta">❌Inactiva</span><br />
-                            </div>
-                            <div class="botones-inferiores">
-                                <button mat-icon-button color="accent" (click)="updateOferta(oferta)">
-                                    <mat-icon>edit</mat-icon>
-                                </button>
-                                <button mat-icon-button color="warn" (click)="deleteOferta(oferta)">
-                                    <mat-icon>delete</mat-icon>
-                                </button>
+                        <div class="card-empresa">
+                            <div class="oferta-empresa-header">
+                                <div class="oferta-empresa-info">
+                                    <h4>{{ oferta?.nombreOferta || 'Sin título' }}</h4><br />
+                                    <strong>Empresa:</strong> {{ oferta?.empresa?.nombre || 'Empresa desconocida'
+                                    }}<br />
+                                    <strong>Estado:</strong>
+                                    <span *ngIf="oferta?.estadoOferta">✅ Activa</span>
+                                    <span *ngIf="!oferta?.estadoOferta">❌Inactiva</span><br />
+                                </div>
+                                <div class="botones-inferiores">
+                                    <button mat-icon-button color="accent" (click)="updateOferta(oferta)">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                    <button mat-icon-button color="warn" (click)="deleteOferta(oferta)">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </li>

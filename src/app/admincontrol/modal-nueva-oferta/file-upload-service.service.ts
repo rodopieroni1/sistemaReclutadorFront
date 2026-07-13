@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FileUploadService {
   [x: string]: any;
-  private uploadUrl = 'http://localhost:8080/api/uploads/';
+  private uploadUrl = environment.local.urlApi + 'api/uploads/';
 
   constructor(
     private http: HttpClient,
@@ -18,8 +19,6 @@ export class FileUploadService {
   uploadImage(file: File, tipo?: string): Observable<any> {
     const formData = new FormData();
     formData.append('file', file);
-
-    // Si pasas el tipo (ej: 'oferta'), lo adjuntamos al FormData
     if (tipo) {
       formData.append('tipo', tipo);
     }
