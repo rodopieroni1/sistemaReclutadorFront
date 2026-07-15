@@ -34,6 +34,7 @@ export class AdminControlComponent {
     oferta: {
       id: number;
       descripcionOferta: string;
+      nombreOferta: string;
       empresa: { nombre: string };
     };
     perfil: {
@@ -219,14 +220,16 @@ export class AdminControlComponent {
       )
     ) {
       this.http
-        .delete(`${this.apiUrl}/rubro/eliminar/${rubro.idRubro}`)
+        .delete(`${this.apiUrl}/rubro/eliminar/${rubro.idRubro}`, {
+          responseType: 'text',
+        })
         .subscribe({
-          next: () => {
-            alert('Rubro eliminado');
+          next: (mensaje) => {
+            alert(mensaje);
             this.cargarRubros();
           },
-          error: () => {
-            alert('Error al eliminar el rubro');
+          error: (error) => {
+            alert(error.error);
           },
         });
     }

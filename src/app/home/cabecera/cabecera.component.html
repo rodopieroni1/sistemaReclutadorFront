@@ -1,62 +1,64 @@
 <header *ngIf="mostrarCabecera">
-    <div class="filaItems">
-        <div class="logo">
-            <a routerLink="/home">
+    <div class="header-superior">
+        <div class="marca">
+            <a routerLink="/home" class="logo">
                 <img class="logoIcono" src="assets/logopng1.png">
             </a>
-        </div>
-
-        <div class="logoLetras">
-            <a routerLink="/home">
+            <a routerLink="/home" class="logoLetras">
                 <img class="logoTexto" src="assets/logoLetras.png">
             </a>
         </div>
-
-        <div class="opciones" style="font-family: 'fuenteCabecera', sans-serif;">
-            <div class="social-header">
-                <nav class="social-menu">
-
-                    <!-- Redes -->
-                    <a href="https://www.facebook.com/carina.difonzo.3" target="_blank" rel="noopener">
-                        <img src="../../../assets/facebook-icon.png" alt="Facebook">
+        <div class="acciones">
+            <nav class="social-menu">
+                <a href="https://www.facebook.com/carina.difonzo.3" target="_blank" rel="noopener">
+                    <img src="../../../assets/facebook-icon.png" alt="Facebook">
+                </a>
+                <a href="https://www.instagram.com/carina.difonzo/" target="_blank" rel="noopener">
+                    <img src="../../../assets/instagram-icon.png" alt="Instagram">
+                </a>
+                <a href="https://www.linkedin.com/company/carina-di-fonzo-organizaci-n-&-empleo/" target="_blank"
+                    rel="noopener">
+                    <img src="../../../assets/linkedin-icon.png" alt="LinkedIn">
+                </a>
+                <!-- LOGIN / REGISTRO visibles SIEMPRE -->
+                <ng-container *ngIf="!userLoginOn">
+                    <a class="nav-link d-inline" [routerLink]="'/login-user'">Iniciar Sesión</a>
+                    <a class="nav-link d-inline" [routerLink]="'/usuariocontrol'">Registrarse</a>
+                </ng-container>
+                <!-- PERFIL cuando está logueado -->
+                <div *ngIf="userLoginOn" class="perfil dropdown">
+                    <a class="d-flex align-items-center dropdown-toggle" href="#" id="perfilDropdownHeader"
+                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img [src]="userProfileImage" class="perfil-img rounded-circle">
+                        <span class="ms-2">{{ userName }}</span>
                     </a>
-                    <a href="https://www.instagram.com/carina.difonzo/" target="_blank" rel="noopener">
-                        <img src="../../../assets/instagram-icon.png" alt="Instagram">
-                    </a>
-                    <a href="https://www.linkedin.com/company/carina-di-fonzo-organizaci-n-&-empleo/" target="_blank"
-                        rel="noopener">
-                        <img src="../../../assets/linkedin-icon.png" alt="LinkedIn">
-                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li class="dropdown-header text-center">
+                            <strong>{{ userName }}</strong>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" (click)="editarPerfil()">Editar Perfil</a></li>
+                        <li><a class="dropdown-item" (click)="misAplicaciones()">Mis Aplicaciones</a></li>
+                        <li><a class="dropdown-item text-danger" (click)="logout()">Cerrar Sesión</a></li>
+                    </ul>
+                </div>
 
-                    <!-- LOGIN / REGISTRO visibles SIEMPRE -->
-                    <ng-container *ngIf="!userLoginOn">
-                        <a class="nav-link d-inline" [routerLink]="'/login-user'">Iniciar Sesión</a>
-                        <a class="nav-link d-inline" [routerLink]="'/usuariocontrol'">Registrarse</a>
-                    </ng-container>
-
-                    <!-- PERFIL cuando está logueado -->
-                    <div *ngIf="userLoginOn" class="perfil dropdown">
-                        <a class="d-flex align-items-center dropdown-toggle" href="#" id="perfilDropdownHeader"
-                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img [src]="userProfileImage" class="perfil-img rounded-circle">
-                            <span class="ms-2">{{ userName }}</span>
-                        </a>
-
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li class="dropdown-header text-center">
-                                <strong>{{ userName }}</strong>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" (click)="editarPerfil()">Editar Perfil</a></li>
-                            <li><a class="dropdown-item" (click)="misAplicaciones()">Mis Aplicaciones</a></li>
-                            <li><a class="dropdown-item text-danger" (click)="logout()">Cerrar Sesión</a></li>
-                        </ul>
-                    </div>
-
-                </nav>
-            </div>
+            </nav>
         </div>
     </div>
+    <!-- FILA INFERIOR -->
+
+    <nav class="menu-principal">
+
+        <a routerLink="/home">Inicio</a>
+
+        <a routerLink="/ofertas">Buscar ofertas</a>
+
+        <a routerLink="/empresas">Empresas</a>
+
+        <a routerLink="/contacto">Contacto</a>
+
+    </nav>
 </header>

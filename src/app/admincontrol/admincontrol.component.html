@@ -28,12 +28,14 @@
                                         {{ aplicacion.oferta?.empresa?.nombre || 'Empresa desconocida' }},
                                         {{ aplicacion.perfil?.nombre || 'Perfil no disponible' }}
                                     </h4><br />
-                                    <strong>Fecha de aplicación:</strong> {{ aplicacion.fechaAplicacion || 'Sin fecha'
+                                    <h5>
+                                        {{ aplicacion.oferta?.nombreOferta || '' }}
+                                    </h5><br />
+                                    <strong>Fecha de aplicación:</strong>
+                                    {{ aplicacion.fechaAplicacion || 'Sin fecha' }}<br />
+                                    <strong>Propuesta:</strong>
+                                    {{ aplicacion.oferta?.descripcionOferta || 'No disponible'
                                     }}<br />
-                                    <strong>Propuesta:</strong> {{ aplicacion.oferta?.descripcionOferta || 'No
-                                    disponible'
-                                    }}<br />
-
                                     <a [href]="aplicacion.documentoUrl" download>📄 Descargar CV</a><br /><br />
                                 </div>
                             </div>

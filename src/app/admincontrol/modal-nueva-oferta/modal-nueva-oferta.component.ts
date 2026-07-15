@@ -298,6 +298,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
       return;
     }
     console.log('¿Es un archivo válido?:', response?.archivo);
+    console.log(this.archivoSeleccionado instanceof File);
     const ofertaPayload = new FormData();
     ofertaPayload.append('descripcionOferta', oferta.descripcionOferta);
     ofertaPayload.append('estadoOferta', String(oferta.estadoOferta));
@@ -326,6 +327,10 @@ export class ModalNuevaOfertaComponent implements OnInit {
         this.archivoSeleccionado.name,
       );
     }
+
+    console.log('archivoSeleccionado:', this.archivoSeleccionado);
+    console.log('preview:', this.imagenPreview);
+    console.log('imagenDesdeBD:', this.imagenDesdeBD);
 
     this.http
       .put(

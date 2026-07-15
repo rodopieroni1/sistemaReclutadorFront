@@ -70,11 +70,24 @@ body {
 }
 
 header {
-  height: 85px;
-  background: #feca8e;
+  background: #FECA8E;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.header-superior {
+  height: 90px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 30px;
+}
+
+.marca {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 20px;
 }
 
 .logo a {
@@ -84,28 +97,65 @@ header {
 }
 
 .logoIcono {
-  height: 60px;
+  height: 66px;
 }
 
 .logoLetras {
   display: flex;
-  justify-content: center;
   align-items: center;
-  flex: 1;
-  max-width: 550px;
+  max-width: 300px;
 }
 
 .logoLetras img {
-  padding-top: 25px;
   width: 100%;
-  max-width: 500px;
+  max-width: 400px;
   height: auto;
-  display: block;
+  padding-top: 13px;
 }
 
 .logoTexto {
   height: 62px;
   width: auto;
+}
+
+.menu-principal {
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+  border-top: 1px solid rgba(0, 0, 0, .15);
+}
+
+.menu-principal a {
+  font-family: 'Poppins', sans-serif;
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: .3px;
+  color: #222;
+  text-decoration: none;
+  position: relative;
+  transition: color .25s ease;
+}
+
+.menu-principal a:hover {
+  color: #9A4F00;
+}
+
+.menu-principal a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  width: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: #9A4F00;
+  transition: .25s;
+}
+
+.menu-principal a:hover::after {
+  width: 100%;
 }
 
 .filaItems {
@@ -121,15 +171,6 @@ nav a {
   margin: 0 10px;
   color: #000;
   font-weight: bold;
-}
-
-.social-menu .cta-button {
-  padding: 10px 20px;
-  background-color: #007BFF;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
 }
 
 .cta-button:hover {
@@ -155,13 +196,18 @@ nav a {
   border-radius: 5px;
 }
 
+.perfil {
+
+  margin-left: 25px;
+  margin-top: 10PX;
+
+}
+
 @font-face {
   font-family: 'fuenteCabecera';
   src: url('/assets/fonts/CreatoDisplay-Medium.otf') format('truetype');
-  /* Cambia el nombre y formato del archivo si es necesario */
 }
 
-/* Efecto hover para los enlaces */
 .opciones nav a:hover {
   background-color: #ff6600;
   /* Cambia el fondo al pasar el mouse */
@@ -176,17 +222,29 @@ nav a {
   /* Color de fondo */
 }
 
+.social-menu {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
 .social-menu img {
-  width: 40px;
-  /* Ajusta el tamaño de las imágenes */
-  height: 40px;
-  /* Asegúrate de proporciones consistentes */
-  transition: transform 0.3s ease;
-  /* Suavidad en efecto hover */
-  vertical-align: middle;
+  width: 36px;
+  height: 36px;
+  transition: transform .3s;
 }
 
 .social-menu img:hover {
-  transform: scale(1.2);
-  /* Ampliar un poco el ícono en hover */
+  transform: scale(1.15);
+}
+
+.acciones {
+  display: flex;
+  align-items: center;
+}
+
+.cabecera-derecha {
+  display: flex;
+  align-items: center;
+  gap: 25px;
 }

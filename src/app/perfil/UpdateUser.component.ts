@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
-import { UserServiceService } from '../loginuser/user-service.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { UserServiceService } from '../perfil/user-service.service';
 
 interface Usuario {
   dni: string;
@@ -58,7 +58,6 @@ export class UpdateUserComponent implements OnInit {
             documentoUrl: data.documentoUrl,
             fotoUrl: data.fotoUrl,
           };
-          console.log('USUARIO', this.usuario);
         },
         error: (err) => {
           console.error('Error al cargar perfil:', err);
@@ -79,6 +78,15 @@ export class UpdateUserComponent implements OnInit {
 
   actualizarUsuario(event: Event) {
     event.preventDefault();
+    const errores = this.usuarioService.validarUsuario(
+      this.usuario,
+      this.foto,
+      this.cv,
+    );
+    if (errores.length > 0) {
+      alert(errores.join('\n'));
+      return;
+    }
     const formData = new FormData();
     for (const key in this.usuario) {
       formData.append(key, (this.usuario as any)[key]);
