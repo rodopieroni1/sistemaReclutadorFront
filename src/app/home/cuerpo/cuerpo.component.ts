@@ -13,7 +13,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
-import { ResultadoAplicacion } from './resultado-aplicaciones.enum';
 import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-cuerpo',

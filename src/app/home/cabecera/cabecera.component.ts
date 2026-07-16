@@ -66,6 +66,54 @@ export class CabeceraComponent implements OnInit {
     });
   }
 
+  irAOfertas(): void {
+    if (this.router.url.startsWith('/home')) {
+      const seccion = document.getElementById('propuestas');
+
+      if (seccion) {
+        seccion.scrollIntoView({
+          behavior: 'smooth',
+        });
+      }
+    } else {
+      this.router.navigate(['/home']).then(() => {
+        setTimeout(() => {
+          const seccion = document.getElementById('propuestas');
+
+          if (seccion) {
+            seccion.scrollIntoView({
+              behavior: 'smooth',
+            });
+          }
+        }, 100);
+      });
+    }
+  }
+
+  irAContactos(): void {
+    if (this.router.url.startsWith('/home')) {
+      const seccion = document.getElementById('contactos');
+
+      if (seccion) {
+        seccion.scrollIntoView({
+          behavior: 'smooth',
+        });
+      }
+    } else {
+      this.router.navigate(['/home']).then(() => {
+        setTimeout(() => {
+          const seccion = document.getElementById('contactos');
+
+          if (seccion) {
+            seccion.scrollIntoView({
+              behavior: 'smooth',
+            });
+          }
+        }, 100);
+      });
+    }
+  }
+
   editarPerfil(): void {
     if (this.userLoginOn) {
       this.router.navigate(['/editar-perfil']);

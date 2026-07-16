@@ -1,0 +1,92 @@
+.banner-empresas {
+    height: 320px;
+    background: linear-gradient(135deg, #f6b06f, #f4a460);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+}
+
+.contenido-banner {
+    width: min(900px, 90%);
+}
+
+.banner-empresas h1 {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.banner-empresas p {
+    font-size: 1.1rem;
+    margin-bottom: 35px;
+}
+
+.buscador {
+    width: 100%;
+    max-width: 600px;
+}
+
+.contenedor-empresas {
+    max-width: 1400px;
+    margin: auto;
+    padding: 70px 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 35px;
+}
+
+.empresa-card {
+    padding: 30px;
+    text-align: center;
+    border-radius: 18px;
+    transition: .3s;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .08);
+}
+
+.empresa-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 35px rgba(0, 0, 0, .15);
+}
+
+.logoEmpresa {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: auto;
+    margin-bottom: 20px;
+}
+
+.empresa-card h3 {
+    font-size: 1.5rem;
+    color: #222;
+    margin-bottom: 10px;
+}
+
+.rubro {
+    color: #f4a460;
+    font-weight: 600;
+}
+
+.ubicacion {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    color: #666;
+}
+
+.cantidad {
+    margin: 25px 0;
+    background: #fff4ea;
+    color: #f08a2b;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+button {
+    width: 100%;
+}

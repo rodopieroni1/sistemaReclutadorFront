@@ -105,6 +105,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
 
   ngOnInit(): void {
     this.obtenerEmpresas();
+
     if (this.data.oferta) {
       this.http
         .get<any>(
@@ -113,44 +114,31 @@ export class ModalNuevaOfertaComponent implements OnInit {
         .subscribe({
           next: (response) => {
             this.miFormulario.patchValue({
-              descripcionOferta:
-                response.descripcionOferta ??
-                this.miFormulario.value.descripcionOferta,
+              descripcionOferta: response.descripcionOferta || '',
               nombreOferta: response.nombreOferta || '',
               idEmpresa: response.empresa?.id_empresa || '',
               estadoOferta: response.estadoOferta,
+              fotoOferta: response.fotoOferta || '',
             });
-            console.log(
-              '📝 Descripción cargada en el formulario:',
-              this.miFormulario.get('descripcionOferta')?.value,
-            );
 
-            if (response.fotoOferta) {
-              this.archivoSeleccionado = new File(
-                [response.fotoOferta],
-                response.fotoOferta, // Nombre del archivo
-                { type: 'image/jpeg' }, // Ajusta el tipo si es diferente
-              );
-            }
+            // Nombre de la imagen guardado en la BD
             this.imagenDesdeBD = response.fotoOferta;
-            console.log('this.imagenDesdeBD ', this.imagenDesdeBD);
-            this.miFormulario.patchValue({
-              fotoOferta: response.fotoOferta,
-            });
-            const fotoActual = this.miFormulario.get('fotoOferta')?.value;
-            if (fotoActual) {
-              this.imagenPreview = fotoActual
-                ? environment.local.urlApi + '/uploads/ofertas/' + fotoActual
-                : '';
+
+            // Mostrar la imagen
+            if (this.imagenDesdeBD) {
+              this.imagenPreview = `${environment.local.urlApi}/uploads/ofertas/${this.imagenDesdeBD}`;
             }
+
+            // Muy importante: NO crear un File con el nombre
+            this.archivoSeleccionado = null;
+
+            console.log('Imagen desde BD:', this.imagenDesdeBD);
           },
           error: (err) => {
             this.snackBar.open(
               'Error al cargar la oferta para modificar.',
-              err,
-              {
-                duration: 3000,
-              },
+              'Cerrar',
+              { duration: 3000 },
             );
           },
         });
@@ -269,8 +257,6 @@ export class ModalNuevaOfertaComponent implements OnInit {
               });
               return;
             }
-            console.log('Archivo seleccionado:', this.archivoSeleccionado);
-            console.log('Nombre:', this.archivoSeleccionado?.name);
             this.cargarUpdate(oferta, response);
           },
           error: () => {
@@ -287,9 +273,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
     const idOferta =
       this.miFormulario.value.idOferta || this.data.oferta.idOferta;
     const fotoCalculada =
-      response?.fotoOferta ||
-      this.miFormulario.value.fotoOferta ||
-      oferta.fotoOferta;
+      this.miFormulario.value.fotoOferta || this.imagenDesdeBD;
     const idEmpresaNum = oferta.empresa?.id_empresa || oferta.idEmpresa;
     if (!idEmpresaNum) {
       this.snackBar.open('Error: El ID de la empresa está vacío.', 'Cerrar', {
@@ -297,40 +281,22 @@ export class ModalNuevaOfertaComponent implements OnInit {
       });
       return;
     }
-    console.log('¿Es un archivo válido?:', response?.archivo);
-    console.log(this.archivoSeleccionado instanceof File);
+
     const ofertaPayload = new FormData();
     ofertaPayload.append('descripcionOferta', oferta.descripcionOferta);
     ofertaPayload.append('estadoOferta', String(oferta.estadoOferta));
     ofertaPayload.append('fotoOferta', fotoCalculada || '');
     ofertaPayload.append('nombreOferta', oferta.nombreOferta);
-
-    // CORRECCIÓN CLAVE: Cambiado de 'idEmpresa.id_empresa' a 'idEmpresa'
-    // para que coincida exactamente con tu @RequestParam("idEmpresa") del Controlador
     ofertaPayload.append('idEmpresa', idEmpresaNum.toString());
-
-    // Nota: Si tu controlador no tiene un @RequestParam("idOferta"), esta línea es opcional
     ofertaPayload.append('idOferta', idOferta.toString());
 
-    console.log('Archivo seleccionado:', this.archivoSeleccionado);
-
-    if (this.archivoSeleccionado) {
-      console.log('Nombre:', this.archivoSeleccionado.name);
-      console.log('Tamaño:', this.archivoSeleccionado.size);
-    }
-
-    // Este nombre "fotoArchivo" mapea directo al @RequestParam(value = "fotoArchivo")
-    if (this.archivoSeleccionado) {
+    if (this.archivoSeleccionado && this.archivoSeleccionado.size > 0) {
       ofertaPayload.append(
         'fotoArchivo',
         this.archivoSeleccionado,
         this.archivoSeleccionado.name,
       );
     }
-
-    console.log('archivoSeleccionado:', this.archivoSeleccionado);
-    console.log('preview:', this.imagenPreview);
-    console.log('imagenDesdeBD:', this.imagenDesdeBD);
 
     this.http
       .put(

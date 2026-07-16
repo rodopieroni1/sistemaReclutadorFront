@@ -13,6 +13,7 @@ import { UpdateUserComponent } from './perfil/UpdateUser.component';
 import { AuthGuard } from './guards/auth.guard';
 import { MisAplicacionesComponent } from './mis-aplicaciones/mis-aplicaciones.component';
 import { environment } from '../environments/environment';
+import { EmpresasComponent } from './empresas/empresas.component';
 
 interface JwtPayload {
   exp: number;
@@ -72,6 +73,10 @@ export const routes: Routes = [
     path: 'usuariocontrol',
     component: UsuarioControlComponent,
     canActivate: [PostulanteGuard],
+  },
+  {
+    path: 'empresas',
+    component: EmpresasComponent,
   },
 ];
 

@@ -32,7 +32,7 @@
             </div>
         </header>
     </section>
-    <section class="propuestas">
+    <section class="propuestas" id="propuestas">
         <h2>Propuestas</h2>
         <div *ngIf="busquedaRealizada; else mostrarTodo" class="card-list">
             <mat-card *ngFor="let oferta of resultados" class="card">
