@@ -85,17 +85,8 @@ export class MisAplicacionesComponent implements OnInit {
   }
 
   verDetalle(post: any): void {
-    console.log(
-      '1. Clic en la postulación. Buscando datos completos para id:',
-      post.idOferta,
-    );
-
     this.aplicacionService.obtenerPerfilPostulaciones(post.idOferta).subscribe({
       next: (datosOfertaCompleta: any) => {
-        console.log(
-          '2. ¡Datos de la oferta recuperados del servidor!',
-          datosOfertaCompleta,
-        );
         sessionStorage.setItem('ruta_procedencia', '/mis-aplicaciones');
         this.router.navigate(['/detalle-oferta'], {
           state: {

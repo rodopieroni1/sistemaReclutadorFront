@@ -47,42 +47,24 @@ h1 {
 }
 
 .btn-volver-custom {
-    /* Colores exactos del primer botón */
     border: 1px solid #f57c00 !important;
     color: #f57c00 !important;
     background-color: transparent !important;
-
-    /* Ajuste de forma: 
-       Si el de la primera foto es "un poco" redondo usa 4px o 8px.
-       Si quieres que sea "tipo cápsula" usa 20px o más. 
-       Probemos con 5px que es el estándar de Angular Material: */
     border-radius: 5px !important;
-
-    /* Espaciado interno para que el tamaño sea igual */
     padding: 0 16px !important;
     height: 36px !important;
     line-height: 36px !important;
-
     font-family: 'Poppins', sans-serif !important;
     font-size: 14px !important;
     font-weight: 500 !important;
     text-transform: uppercase;
-    /* Material suele poner el texto en mayúsculas */
 }
 
-/* Aseguramos que el contenedor no deforme el botón */
 .botones {
     display: flex;
     flex-direction: row;
     gap: 10px;
 }
-
-
-.btn-volver-custom:hover {
-    background-color: rgba(245, 124, 0, 0.05);
-    /* Un toque de color al pasar el mouse */
-}
-
 
 .tabla-postulaciones {
     width: 100%;
