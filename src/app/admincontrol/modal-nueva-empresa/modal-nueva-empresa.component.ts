@@ -57,6 +57,7 @@ export class ModalNuevaEmpresaComponent implements OnInit {
   cuitEmpresa: number = 1;
   id_empresa: number = 1;
   miFormulario: FormGroup;
+  logoSeleccionado: File | null = null;
   @Output() datosActualizadosEmpresa = new EventEmitter<void>(); // Evento para notificar cambios
   @Input() empresa: {
     nombreEmpresa: string;
@@ -78,10 +79,14 @@ export class ModalNuevaEmpresaComponent implements OnInit {
     historiaEmpresa: '',
   };
   rubroSeleccionado: any = null;
-  rubros: any[] = []; // Lista de rubros
-  // Agregar propiedad para la acción (crear o actualizar)
+  rubros: any[] = [];
   accion: string | undefined;
-  mostrarIdHidden: boolean = true; // Inicialmente oculto
+  mostrarIdHidden: boolean = true;
+  imagenPreview: string | null = null;
+  isSubmitting = false;
+  imagenDesdeBD: string | null = null;
+  uploadUrl = environment.local.urlApi;
+
   constructor(
     private http: HttpClient,
     private snackBar: MatSnackBar,
@@ -104,12 +109,9 @@ export class ModalNuevaEmpresaComponent implements OnInit {
   }
 
   ngOnInit() {
-    // 1. Cargamos la lista de rubros de la API
     this.http.get<any[]>(environment.local.urlApi + '/rubro').subscribe({
       next: (data) => {
         this.rubros = data;
-
-        // 2. Ejecutamos la asignación de datos de la empresa de forma aislada
         this.asignarDatosFormulario();
       },
       error: () =>
@@ -117,8 +119,6 @@ export class ModalNuevaEmpresaComponent implements OnInit {
           duration: 3000,
         }),
     });
-
-    // Listener para cambios manuales en el select
     this.miFormulario.get('idRubro')?.valueChanges.subscribe((id) => {
       if (id) {
         this.rubroSeleccionado =
@@ -127,17 +127,13 @@ export class ModalNuevaEmpresaComponent implements OnInit {
     });
   }
 
-  // 3. Creamos este método nuevo para procesar los datos de la empresa de manera limpia
   asignarDatosFormulario() {
-    // Nos aseguramos de limpiar el formulario por completo antes de cargar la nueva empresa
     this.miFormulario.reset();
-
     if (this.data && this.data.empresa) {
-      // Forzamos la lectura limpia del ID de rubro actual
+      this.imagenDesdeBD = this.data.empresa.logo || null;
       const rubroIdRaw =
         this.data.empresa.idRubro || this.data.empresa.rubro?.idRubro;
       const rubroId = rubroIdRaw ? Number(rubroIdRaw) : '';
-
       this.miFormulario.patchValue({
         nombreEmpresa:
           this.data.empresa.nombre || this.data.empresa.nombreEmpresa || '',
@@ -156,23 +152,37 @@ export class ModalNuevaEmpresaComponent implements OnInit {
         historiaEmpresa:
           this.data.empresa.historiaEmpresa || this.data.empresa.historia || '',
         id_empresa: this.data.empresa.id_empresa || this.data.empresa.id || 0,
-        idRubro: rubroId, // Asignamos el ID limpio
+        idRubro: rubroId,
       });
-
-      // Sincronizamos el objeto rubro seleccionado de inmediato
       if (rubroId && this.rubros.length > 0) {
         this.rubroSeleccionado =
-          this.rubros.find((r) => Number(r.idRubro) === rubroId) || null;
+          this.rubros.find((r) => Number(r.idRubro) === Number(rubroId)) ||
+          null;
       }
     }
-    console.log('Empresa:', this.data.empresa);
-    console.log(
-      'idRubro del formulario:',
-      this.miFormulario.get('idRubro')?.value,
-    );
+    console.log('Logo:', this.imagenDesdeBD);
   }
 
   guardar() {
+    console.log('ENTRO A GUARDAR');
+    console.log(this.miFormulario.valid);
+    console.log(this.miFormulario.errors);
+
+    Object.keys(this.miFormulario.controls).forEach((key) => {
+      const control = this.miFormulario.get(key);
+
+      console.log(
+        key,
+        'valor:',
+        control?.value,
+        'valid:',
+        control?.valid,
+        'errores:',
+        control?.errors,
+      );
+    });
+    console.log(this.miFormulario.value);
+
     if (this.miFormulario.invalid) {
       this.miFormulario.markAllAsTouched();
       return;
@@ -204,11 +214,28 @@ export class ModalNuevaEmpresaComponent implements OnInit {
               );
               return;
             }
-            console.log('this.miFormulario.value:  ', this.miFormulario.value);
-            const empresa = this.miFormulario.value;
+            const formData = new FormData();
+            formData.append('nombre', this.miFormulario.value.nombreEmpresa);
+            formData.append(
+              'direccion',
+              this.miFormulario.value.direccionEmpresa,
+            );
+            formData.append(
+              'historiaEmpresa',
+              this.miFormulario.value.historiaEmpresa,
+            );
+            formData.append(
+              'observaciones',
+              this.miFormulario.value.observacionesEmpresa,
+            );
+            formData.append('email', this.miFormulario.value.emailEmpresa);
+            formData.append('cuit', this.miFormulario.value.cuitEmpresa);
+            formData.append('idRubro', this.miFormulario.value.idRubro);
+            if (this.logoSeleccionado) {
+              formData.append('logo', this.logoSeleccionado);
+            }
             this.http
-              .post(environment.local.urlApi + '/empresas/crear', empresa, {
-                headers: { 'Content-Type': 'application/json' },
+              .post(environment.local.urlApi + '/empresas/crear', formData, {
                 observe: 'response',
               })
               .subscribe({
@@ -239,7 +266,6 @@ export class ModalNuevaEmpresaComponent implements OnInit {
           },
         });
     } else {
-      console.log('this.miFormulario.value', this.miFormulario.value);
       this.cargarUpdate(this.miFormulario.value);
       this.dialogRef.close();
     }
@@ -250,23 +276,25 @@ export class ModalNuevaEmpresaComponent implements OnInit {
   }
 
   cargarUpdate(empresa: any) {
-    // Usar patchValue para asignar los datos al formulario
-    this.miFormulario.patchValue({
-      nombreEmpresa: empresa.nombreEmpresa,
-      cuitEmpresa: empresa.cuitEmpresa,
-      emailEmpresa: empresa.emailEmpresa,
-      observacionesEmpresa: empresa.observacionesEmpresa,
-      direccionEmpresa: empresa.direccionEmpresa,
-      historiaEmpresa: empresa.historiaEmpresa,
-      id_empresa: empresa.id_empresa,
-    });
-    console.log('Empresa enviada al backend:', empresa);
+    const formData = new FormData();
+    formData.append('nombre', empresa.nombreEmpresa);
+    formData.append('direccion', empresa.direccionEmpresa);
+    formData.append('historiaEmpresa', empresa.historiaEmpresa);
+    formData.append('observaciones', empresa.observacionesEmpresa);
+    formData.append('email', empresa.emailEmpresa);
+    formData.append('cuit', empresa.cuitEmpresa);
+    formData.append('idRubro', this.miFormulario.value.idRubro);
+    console.log('📸 Imagen seleccionada:', this.logoSeleccionado);
+    if (this.logoSeleccionado) {
+      formData.append('logo', this.logoSeleccionado);
+      console.log('📸 Imagen seleccionada2:', this.logoSeleccionado);
+    }
+
     this.http
       .put(
         `${environment.local.urlApi}/empresas/actualizar/${empresa.id_empresa}`,
-        empresa,
+        formData,
         {
-          headers: { 'Content-Type': 'application/json' },
           observe: 'response',
         },
       )
@@ -302,5 +330,19 @@ export class ModalNuevaEmpresaComponent implements OnInit {
     });
 
     this.miFormulario.updateValueAndValidity();
+  }
+
+  onLogoSeleccionado(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+    this.logoSeleccionado = input.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagenPreview = reader.result as string;
+    };
+    reader.readAsDataURL(this.logoSeleccionado);
+    console.log('Logo seleccionado:', this.logoSeleccionado.name);
   }
 }

@@ -1,20 +1,70 @@
 import { Component } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ModalNuevaOfertaComponent } from './modal-nueva-oferta/modal-nueva-oferta.component';
 import { ModalNuevaEmpresaComponent } from './modal-nueva-empresa/modal-nueva-empresa.component';
 import { environment } from '../../environments/environment';
+
+interface Empresa {
+  nombre: string;
+  direccion: string;
+  historiaEmpresa: string;
+  observaciones: string;
+  email: string;
+  cuit: number;
+  id_empresa: number;
+  rubro: {
+    idRubro: number;
+    descripcionRubro: string;
+  };
+}
+
+interface Rubros {
+  idRubro: number;
+  descripcionRubro: string;
+}
+
+interface Ofertas {
+  idOferta: number;
+  nombreOferta: string;
+  descripcionOferta: string;
+  fotoOferta: string;
+  empresa: { nombre: string };
+  estadoOferta: boolean;
+}
+
+interface Aplicaciones {
+  id_aplicacion: number;
+  fechaAplicacion: Date;
+  oferta: {
+    id: number;
+    descripcionOferta: string;
+    nombreOferta: string;
+    empresa: { nombre: string };
+  };
+  perfil: {
+    id: number;
+    nombre: string;
+    email: string;
+    documentoUrl: string;
+    fotoUrl: string;
+  };
+  documentoUrl: string | null;
+}
+
 @Component({
   standalone: true,
   selector: 'app-admincontrol',
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     MatExpansionModule,
     MatFormFieldModule,
     MatInputModule,
@@ -79,6 +129,11 @@ export class AdminControlComponent {
   fechaAplicacion: Date = new Date();
   id_perfil: number = 1;
   estadoAplicaciones: boolean = true;
+  buscarAplicaciones = new FormControl('');
+  aplicacionesFiltradas: Aplicaciones[] = [];
+  //Rubro
+  buscarRubro = new FormControl('');
+  rubrosFiltradas: Rubros[] = [];
   //Empresa
   nombreEmpresa: string = '';
   direccionEmpresa: string = '';
@@ -87,11 +142,16 @@ export class AdminControlComponent {
   emailEmpresa: string = '';
   cuitEmpresa: number = 1;
   id_empresa: number = 1;
+  buscarEmpresa = new FormControl('');
+  empresasFiltradas: Empresa[] = [];
   //Oferta
   idOferta: number = 1;
   nombreOferta: string = '';
   descripcion: string = '';
   fotoOferta: string = '';
+  buscarOferta = new FormControl('');
+  ofertasFiltradas: Ofertas[] = [];
+
   private apiUrl = environment.local.urlApi;
   constructor(
     private http: HttpClient, // public dialogRef: MatDialogRef<ModalNuevaEmpresaComponent>
@@ -123,26 +183,29 @@ export class AdminControlComponent {
         }[]
       >(`${this.apiUrl}/aplicaciones/activas`)
       .subscribe((data) => {
-        // Mapeamos las claves recibidas para que coincidan con las claves esperadas
-        this.aplicaciones = data.map((aplicacion) => ({
-          id_aplicacion: aplicacion.idaplicacion,
-          fechaAplicacion: aplicacion.fecha,
-          oferta: aplicacion.oferta, // Mantiene el objeto completo
-          perfil: aplicacion.perfil, // Mantiene el objeto completo
-          documentoUrl: aplicacion.perfil.documentoUrl
-            ? aplicacion.perfil.documentoUrl.replace(/\\/g, '/')
-            : null,
+        this.aplicaciones = data.map((item) => ({
+          ...item,
+          id_aplicacion: item.idaplicacion,
+          fechaAplicacion: item.fecha,
         }));
+        this.aplicacionesFiltradas = [...this.aplicaciones];
       });
-
+    this.cargarAplicaciones();
+    this.buscarAplicaciones.valueChanges.subscribe((valor) => {
+      this.filtrarAplicaciones(valor ?? '');
+    });
     this.http
       .get<
         { idRubro: number; descripcionRubro: string }[]
       >(`${this.apiUrl}/rubro`)
       .subscribe((data) => {
         this.rubros = data;
+        this.rubrosFiltradas = [...this.rubros];
       });
-
+    this.cargarRubros();
+    this.buscarRubro.valueChanges.subscribe((valor) => {
+      this.filtrarRubros(valor ?? '');
+    });
     this.http
       .get<
         {
@@ -161,8 +224,12 @@ export class AdminControlComponent {
       >(`${this.apiUrl}/empresas`)
       .subscribe((data) => {
         this.empresas = data;
+        this.empresasFiltradas = [...this.empresas];
       });
-
+    this.cargarEmpresas();
+    this.buscarEmpresa.valueChanges.subscribe((valor) => {
+      this.filtrarEmpresas(valor ?? '');
+    });
     this.http
       .get<
         {
@@ -176,10 +243,15 @@ export class AdminControlComponent {
       >(`${this.apiUrl}/ofertas/disponibles`)
       .subscribe((data) => {
         this.ofertas = data;
+        this.ofertasFiltradas = [...this.ofertas];
       });
+    this.cargarOfertas();
+    this.buscarOferta.valueChanges.subscribe((valor) => {
+      this.filtrarOfertas(valor ?? '');
+    });
   }
 
-  crearRubro() {
+  nuevoRubro() {
     const descripcion = prompt('Ingrese la descripción del nuevo rubro:');
     if (descripcion) {
       this.http
@@ -198,6 +270,46 @@ export class AdminControlComponent {
     }
   }
 
+  cargarAplicaciones() {
+    this.http
+      .get<
+        {
+          idaplicacion: number;
+          fecha: Date;
+          oferta: {
+            id: number;
+            nombreOferta: string;
+            descripcionOferta: string;
+            empresa: { nombre: string };
+          };
+          perfil: {
+            id: number;
+            nombre: string;
+            email: string;
+            documentoUrl: string;
+            fotoUrl: string;
+          };
+          documentoUrl: string | null;
+          estadoAplicaciones: boolean;
+        }[]
+      >(`${this.apiUrl}/aplicaciones`)
+      .subscribe({
+        next: (data) => {
+          this.aplicaciones = data.map(
+            (d) =>
+              ({
+                ...d,
+                id_aplicacion: (d as any).idaplicacion,
+                fechaAplicacion: (d as any).fecha,
+              }) as any,
+          );
+        },
+        error: (error) => {
+          console.error('Error al cargar las aplicaciones:', error);
+        },
+      });
+  }
+
   cargarRubros() {
     this.http
       .get<
@@ -206,6 +318,7 @@ export class AdminControlComponent {
       .subscribe({
         next: (data) => {
           this.rubros = data;
+          this.rubrosFiltradas = [...this.rubros];
         },
         error: (error) => {
           console.error('Error al cargar los rubros:', error);
@@ -256,7 +369,7 @@ export class AdminControlComponent {
     }
   }
 
-  NuevaEmpresa() {
+  nuevaEmpresa() {
     const dialogRef = this.dialog.open(ModalNuevaEmpresaComponent, {
       width: '750px',
       maxWidth: '95vw',
@@ -271,40 +384,58 @@ export class AdminControlComponent {
   }
 
   cargarEmpresas() {
-    this.http
-      .get<
-        {
-          nombre: string;
-          id_empresa: number;
-          cuit: number;
-          email: string;
-          direccion: string;
-          historiaEmpresa: string;
-          observaciones: string;
-          rubro: {
-            idRubro: number;
-            descripcionRubro: string;
-          };
-        }[]
-      >(`${this.apiUrl}/empresas`)
-      .subscribe({
-        next: (data) => {
-          this.empresas = data.map((empresa) => ({
-            nombre: empresa.nombre,
-            direccion: empresa.direccion,
-            historiaEmpresa: empresa.historiaEmpresa,
-            observaciones: empresa.observaciones,
-            email: empresa.email,
-            cuit: empresa.cuit,
-            id_empresa: empresa.id_empresa,
-            rubro: empresa.rubro,
-          }));
-        },
-        error: (error) => {
-          alert('Ocurrió un error al cargar las empresas');
-          this.empresas = []; // Limpia la lista de empresas en caso de error
-        },
-      });
+    this.http.get<any[]>(`${this.apiUrl}/empresas`).subscribe({
+      next: (data) => {
+        this.empresas = data.map((empresa) => ({
+          nombre: empresa.nombre,
+          direccion: empresa.direccion,
+          historiaEmpresa: empresa.historiaEmpresa,
+          observaciones: empresa.observaciones,
+          email: empresa.email,
+          cuit: empresa.cuit,
+          id_empresa: empresa.id_empresa,
+          rubro: empresa.rubro,
+          logo: empresa.logo,
+        }));
+        this.empresasFiltradas = [...this.empresas];
+      },
+    });
+  }
+
+  filtrarAplicaciones(texto: string): void {
+    texto = texto.toLowerCase().trim();
+
+    this.aplicacionesFiltradas = this.aplicaciones.filter(
+      (a) =>
+        a.oferta?.nombreOferta?.toLowerCase().includes(texto) ||
+        a.oferta?.empresa?.nombre?.toLowerCase().includes(texto) ||
+        a.perfil?.nombre?.toLowerCase().includes(texto),
+    );
+  }
+
+  filtrarEmpresas(texto: string): void {
+    texto = texto.toLowerCase().trim();
+    this.empresasFiltradas = this.empresas.filter(
+      (e) =>
+        e.nombre?.toLowerCase().includes(texto) ||
+        e.rubro?.descripcionRubro?.toLowerCase().includes(texto),
+    );
+  }
+
+  filtrarRubros(texto: string): void {
+    texto = texto.toLowerCase().trim();
+    this.rubrosFiltradas = this.rubros.filter((r) =>
+      r.descripcionRubro?.toLowerCase().includes(texto),
+    );
+  }
+
+  filtrarOfertas(texto: string): void {
+    texto = texto.toLowerCase().trim();
+    this.ofertasFiltradas = this.ofertas.filter(
+      (o) =>
+        o.nombreOferta?.toLowerCase().includes(texto) ||
+        o.empresa?.nombre?.toLowerCase().includes(texto),
+    );
   }
 
   updateEmpresa(empresa: {
@@ -347,7 +478,7 @@ export class AdminControlComponent {
     }
   }
 
-  NuevaOferta() {
+  nuevaOferta() {
     const dialogRef = this.dialog.open(ModalNuevaOfertaComponent, {
       width: '750px',
       maxWidth: '95vw',
@@ -385,6 +516,7 @@ export class AdminControlComponent {
             empresa: oferta.empresa,
             estadoOferta: oferta.estadoOferta,
           }));
+          this.ofertasFiltradas = [...this.ofertas];
         },
         error: (error) => {
           console.error('Error al cargar las ofertas:', error);
@@ -437,25 +569,24 @@ export class AdminControlComponent {
   getPaginatedDataOfertas() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
-    return this.ofertas.slice(startIndex, endIndex);
+    return this.ofertasFiltradas.slice(startIndex, endIndex);
   }
-  empresasPaginadas: any[] = [];
+
   getPaginatedDataEmpresas() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
-    return this.empresas.slice(startIndex, endIndex);
+    return this.empresasFiltradas.slice(startIndex, endIndex);
   }
 
   getPaginatedDataRubros() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
-    return this.rubros.slice(startIndex, endIndex);
+    return this.rubrosFiltradas.slice(startIndex, endIndex);
   }
   getPaginatedDataAplicaciones() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
-    const paginatedData = this.aplicaciones.slice(startIndex, endIndex);
-    return paginatedData;
+    return this.aplicacionesFiltradas.slice(startIndex, endIndex);
   }
 
   changePage(page: number) {

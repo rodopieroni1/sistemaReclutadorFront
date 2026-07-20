@@ -19,6 +19,12 @@
                 <mat-expansion-panel-header>
                     <mat-panel-title>Aplicaciones</mat-panel-title>
                 </mat-expansion-panel-header>
+                <div class="barra-ofertas-superior">
+                    <div class="buscador">
+                        <mat-icon>search</mat-icon>
+                        <input type="text" placeholder="Buscar Aplicaciones" [formControl]="buscarAplicaciones">
+                    </div>
+                </div>
                 <ul>
                     <li *ngFor="let aplicacion of getPaginatedDataAplicaciones()">
                         <div class="card-empresa">
@@ -57,17 +63,22 @@
                     <mat-panel-title>Rubros</mat-panel-title>
                 </mat-expansion-panel-header>
                 <div class="barra-ofertas-superior">
-                    <button mat-raised-button color="primary" (click)="crearRubro()">
+                    <div class="buscador">
+                        <mat-icon>search</mat-icon>
+                        <input type="text" placeholder="Buscar rubro" [formControl]="buscarRubro">
+                    </div>
+                    <button mat-raised-button color="primary" (click)="nuevoRubro()">
                         <mat-icon>add</mat-icon>
-                        Agregar Rubro</button>
+                        Agregar Rubro
+                    </button>
                 </div>
                 <ul>
                     <li *ngFor="let rubros of getPaginatedDataRubros()">
                         <div class="card-empresa">
                             <div class="oferta-empresa-header">
                                 <div class="oferta-empresa-info">
-                                    <strong>Descripción:</strong> {{ rubros?.descripcionRubro || 'Sin descripción'
-                                    }}<br />
+                                    <strong>📝 Descripción:</strong> {{ rubros?.descripcionRubro || 'Sin descripción' }}
+                                    <br />
                                 </div>
                                 <div class="botones-inferiores">
                                     <button mat-icon-button color="accent" (click)="actualizarRubro(rubros)">
@@ -96,9 +107,14 @@
                     <mat-panel-title>Empresas</mat-panel-title>
                 </mat-expansion-panel-header>
                 <div class="barra-ofertas-superior">
-                    <button mat-raised-button color="primary" (click)="NuevaEmpresa()">
+                    <div class="buscador">
+                        <mat-icon>search</mat-icon>
+                        <input type="text" placeholder="Buscar empresa" [formControl]="buscarEmpresa">
+                    </div>
+                    <button mat-raised-button color="primary" (click)="nuevaEmpresa()">
                         <mat-icon>add</mat-icon>
-                        Agregar Empresa</button>
+                        Agregar Empresa
+                    </button>
                 </div>
                 <ul>
                     <li *ngFor="let empresa of getPaginatedDataEmpresas()">
@@ -137,9 +153,14 @@
                     <mat-panel-title>Ofertas</mat-panel-title>
                 </mat-expansion-panel-header>
                 <div class="barra-ofertas-superior">
-                    <button mat-raised-button color="primary" (click)="NuevaOferta()">
+                    <div class="buscador">
+                        <mat-icon>search</mat-icon>
+                        <input type="text" placeholder="Buscar oferta" [formControl]="buscarOferta">
+                    </div>
+                    <button mat-raised-button color="primary" (click)="nuevaOferta()">
                         <mat-icon>add</mat-icon>
-                        Agregar Oferta</button>
+                        Agregar Oferta
+                    </button>
                 </div>
                 <ul>
                     <li *ngFor="let oferta of getPaginatedDataOfertas()">

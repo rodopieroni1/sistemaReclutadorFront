@@ -240,8 +240,47 @@ li {
 
 .barra-ofertas-superior {
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: 18px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+
+.buscador {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  flex: 1;
+  max-width: 380px;
+  height: 48px;
+
+  padding: 0 18px;
+
+  background: #fff;
+  border: 1px solid #e4e4e4;
+  border-radius: 30px;
+
+  transition: .25s;
+}
+
+.buscador:focus-within {
+  border-color: #f09b56;
+  box-shadow: 0 0 0 4px rgba(240, 155, 86, .15);
+}
+
+.buscador input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+}
+
+.buscador mat-icon {
+  color: #8c8c8c;
 }
 
 .botones-inferiores {

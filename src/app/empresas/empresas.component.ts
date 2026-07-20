@@ -77,29 +77,4 @@ export class EmpresasComponent implements OnInit {
     // Acá después podemos mostrar solamente las ofertas
     // de esa empresa.
   }
-  searchJobs(event: Event) {
-    event.preventDefault();
-    const termino = this.ofertaEmpresa.value?.trim();
-    if (!termino) {
-      this.resultados = [];
-      this.busquedaRealizada = false;
-      return;
-    }
-
-    let params = new HttpParams();
-    if (this.criterio === 'oferta') {
-      params = params.set('nombreOferta', termino);
-    } else if (this.criterio === 'empresa') {
-      params = params.set('descripcionEmpresa', termino);
-    } else if (this.criterio === 'rubro') {
-      params = params.set('descripcionRubro', termino);
-    }
-    this.http.get(`${this.urlApi}/ofertas`, { params }).subscribe(
-      (data: any) => {
-        this.resultados = data;
-        this.busquedaRealizada = true;
-      },
-      (error) => console.error('Error al buscar empleos:', error),
-    );
-  }
 }

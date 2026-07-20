@@ -23,10 +23,10 @@
 }
 
 .form-oferta.mejorado {
-  max-width: 750px;
-  /* más compacto */
+  max-width: 850px;
+  width: 100%;
   margin: auto;
-  padding: 1.5rem;
+  padding: 2rem;
 }
 
 .form-section {
@@ -90,4 +90,14 @@ mat-form-field {
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 1.8rem;
+}
+
+.modal-header {
+  padding: 20px 24px 0;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
 }
