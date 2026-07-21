@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
@@ -27,10 +27,7 @@ export class LoginComponent {
   [x: string]: any;
   email: string = '';
   password: string = '';
-  constructor(
-    private authService: AuthServiceService,
-    private router: Router
-  ) {}
+  constructor(private router: Router) {}
 
   login() {
     const auth = getAuth();
@@ -39,7 +36,7 @@ export class LoginComponent {
         const user = userCredential.user;
         sessionStorage.setItem(
           'firebaseUser',
-          JSON.stringify({ email: user.email })
+          JSON.stringify({ email: user.email }),
         );
         this.router.navigate(['/admincontrol']);
       })

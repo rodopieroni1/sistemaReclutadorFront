@@ -18,7 +18,7 @@
     </section>
     <section class="contenedor-empresas">
         <div class="empresa-card" *ngFor="let empresa of empresasFiltradas">
-            <!-- <img class="logoEmpresa" [src]="urlApi + '/uploads/empresas/' + empresa.logo" alt="Logo de la empresa">-->
+            <img class="logoEmpresa" [src]="urlApi + '/uploads/logos/' + empresa.logo" alt="Logo de la empresa">
             <h3>{{empresa.nombre}}</h3>
             <p class="rubro">
                 {{ empresa.rubro?.descripcionRubro }}

@@ -132,25 +132,33 @@ export class CuerpoComponent implements OnInit {
   }
 
   aplicar(idOferta: number, nombreOferta: string): void {
-    const idPerfil = sessionStorage.getItem('idPerfil');
-    const token = sessionStorage.getItem('token');
-
-    if (token) {
-      this.aplicacionService.procesarPostulacion(
-        Number(idOferta),
-        Number(idPerfil),
-        nombreOferta,
-        () => {
-          this.isBtnAplicar = true;
-        },
-      );
-    } else {
-      this.snackBar.open(
-        'No se encontró perfil de usuario en la sesión',
-        'Cerrar',
-        { duration: 5000 },
-      );
+    const idPerfil = Number(sessionStorage.getItem('idPerfil'));
+    if (!idPerfil) {
+      this.snackBar.open('No se encontró el perfil del usuario.', 'Cerrar', {
+        duration: 5000,
+      });
+      return;
     }
+
+    this.aplicacionService.aplicar(idOferta, idPerfil).subscribe({
+      next: (response: any) => {
+        const mensaje =
+          response?.mensaje ??
+          response?.message ??
+          'Aplicación enviada con éxito.';
+        this.snackBar.open(mensaje, 'Cerrar', { duration: 5000 });
+
+        this.isBtnAplicar = true;
+      },
+
+      error: () => {
+        this.snackBar.open(
+          'Hubo un problema al procesar la solicitud.',
+          'Cerrar',
+          { duration: 5000 },
+        );
+      },
+    });
   }
 
   verDetalle(oferta: any): void {
