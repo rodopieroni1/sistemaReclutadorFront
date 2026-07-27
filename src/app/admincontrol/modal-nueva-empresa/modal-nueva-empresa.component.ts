@@ -54,6 +54,7 @@ export class ModalNuevaEmpresaComponent implements OnInit {
   historiaEmpresa: string = '';
   observacionesEmpresa: string = '';
   emailEmpresa: string = '';
+  telefonoEmpresa: string = '';
   cuitEmpresa: number = 1;
   id_empresa: number = 1;
   miFormulario: FormGroup;
@@ -65,6 +66,7 @@ export class ModalNuevaEmpresaComponent implements OnInit {
     id_empresa: number;
     idRubro: number;
     emailEmpresa: string;
+    telefonoEmpresa: string;
     observacionesEmpresa: string;
     direccionEmpresa: string;
     historiaEmpresa: string;
@@ -74,6 +76,7 @@ export class ModalNuevaEmpresaComponent implements OnInit {
     id_empresa: 1,
     idRubro: 1,
     emailEmpresa: '',
+    telefonoEmpresa: '',
     observacionesEmpresa: '',
     direccionEmpresa: '',
     historiaEmpresa: '',
@@ -101,6 +104,7 @@ export class ModalNuevaEmpresaComponent implements OnInit {
       observacionesEmpresa: [''],
       emailEmpresa: ['', [Validators.required, Validators.email]],
       cuitEmpresa: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
+      telefonoEmpresa: ['', Validators.required],
       id_empresa: [''],
       idRubro: ['', Validators.required],
     });
@@ -141,6 +145,8 @@ export class ModalNuevaEmpresaComponent implements OnInit {
           this.data.empresa.cuit || this.data.empresa.cuitEmpresa || 0,
         emailEmpresa:
           this.data.empresa.email || this.data.empresa.emailEmpresa || '',
+        telefonoEmpresa:
+          this.data.empresa.telefono || this.data.empresa.telefonoEmpresa || '',
         observacionesEmpresa:
           this.data.empresa.observaciones ||
           this.data.empresa.observacionesEmpresa ||
@@ -160,28 +166,12 @@ export class ModalNuevaEmpresaComponent implements OnInit {
           null;
       }
     }
-    console.log('Logo:', this.imagenDesdeBD);
   }
 
   guardar() {
-    console.log('ENTRO A GUARDAR');
-    console.log(this.miFormulario.valid);
-    console.log(this.miFormulario.errors);
-
     Object.keys(this.miFormulario.controls).forEach((key) => {
       const control = this.miFormulario.get(key);
-
-      console.log(
-        key,
-        'valor:',
-        control?.value,
-        'valid:',
-        control?.valid,
-        'errores:',
-        control?.errors,
-      );
     });
-    console.log(this.miFormulario.value);
 
     if (this.miFormulario.invalid) {
       this.miFormulario.markAllAsTouched();
@@ -282,12 +272,11 @@ export class ModalNuevaEmpresaComponent implements OnInit {
     formData.append('historiaEmpresa', empresa.historiaEmpresa);
     formData.append('observaciones', empresa.observacionesEmpresa);
     formData.append('email', empresa.emailEmpresa);
+    formData.append('telefono', empresa.telefonoEmpresa);
     formData.append('cuit', empresa.cuitEmpresa);
     formData.append('idRubro', this.miFormulario.value.idRubro);
-    console.log('📸 Imagen seleccionada:', this.logoSeleccionado);
     if (this.logoSeleccionado) {
       formData.append('logo', this.logoSeleccionado);
-      console.log('📸 Imagen seleccionada2:', this.logoSeleccionado);
     }
 
     this.http
@@ -329,6 +318,9 @@ export class ModalNuevaEmpresaComponent implements OnInit {
       control.markAsUntouched();
     });
 
+    this.logoSeleccionado = null;
+    this.imagenPreview = null;
+    this.imagenDesdeBD = null;
     this.miFormulario.updateValueAndValidity();
   }
 

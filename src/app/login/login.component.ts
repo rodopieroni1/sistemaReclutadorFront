@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
@@ -27,7 +27,10 @@ export class LoginComponent {
   [x: string]: any;
   email: string = '';
   password: string = '';
-  constructor(private router: Router) {}
+  constructor(
+    private authService: AuthServiceService,
+    private router: Router,
+  ) {}
 
   login() {
     const auth = getAuth();

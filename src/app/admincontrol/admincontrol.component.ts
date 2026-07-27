@@ -259,12 +259,14 @@ export class AdminControlComponent {
           descripcionRubro: descripcion,
         })
         .subscribe({
-          next: () => {
-            alert('Rubro creado exitosamente');
+          next: (response: any) => {
+            alert(response.message || 'Rubro creado exitosamente');
             this.cargarRubros();
           },
-          error: () => {
-            alert('Error al crear el rubro');
+          error: (err) => {
+            const mensajeError =
+              err.error?.message || 'Error al crear el rubro';
+            alert(mensajeError);
           },
         });
     }
@@ -347,6 +349,7 @@ export class AdminControlComponent {
         });
     }
   }
+
   actualizarRubro(rubro: { idRubro: number; descripcionRubro: string }) {
     const nuevaDescripcion = prompt(
       'Editar descripción del rubro:',
@@ -358,12 +361,14 @@ export class AdminControlComponent {
           descripcionRubro: nuevaDescripcion,
         })
         .subscribe({
-          next: () => {
-            alert('Rubro actualizado');
+          next: (response: any) => {
+            alert(response.message || 'Rubro modificado exitosamente');
             this.cargarRubros();
           },
-          error: () => {
-            alert('Error al actualizar el rubro');
+          error: (err) => {
+            const mensajeError =
+              err.error?.message || 'Error al modificar el rubro';
+            alert(mensajeError);
           },
         });
     }
