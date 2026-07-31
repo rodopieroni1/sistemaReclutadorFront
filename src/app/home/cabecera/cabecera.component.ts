@@ -131,13 +131,20 @@ export class CabeceraComponent implements OnInit {
   }
 
   logout(): void {
-    sessionStorage.clear();
-    this.userProfileImage = '';
-    this.userName = '';
-    this.userLoginOn = false;
-    this.subs.forEach((sub) => sub.unsubscribe());
-    this.loginService.logout();
-    this.router.navigate(['/login-user']);
+    this.loginService.logout().subscribe({
+      next: () => {
+        this.userProfileImage = '';
+        this.userName = '';
+        this.userLoginOn = false;
+        this.subs.forEach((sub) => sub.unsubscribe());
+
+        this.router.navigate(['/login-user']);
+      },
+
+      error: (err) => {
+        console.error(err);
+      },
+    });
   }
 
   ngOnDestroy(): void {

@@ -11,6 +11,9 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ModalNuevaOfertaComponent } from './modal-nueva-oferta/modal-nueva-oferta.component';
 import { ModalNuevaEmpresaComponent } from './modal-nueva-empresa/modal-nueva-empresa.component';
 import { environment } from '../../environments/environment';
+import { Auth, signOut } from '@angular/fire/auth';
+import { inject } from '@angular/core';
+import { Router } from '@angular/router';
 
 interface Empresa {
   nombre: string;
@@ -151,6 +154,8 @@ export class AdminControlComponent {
   fotoOferta: string = '';
   buscarOferta = new FormControl('');
   ofertasFiltradas: Ofertas[] = [];
+  private router = inject(Router);
+  private auth = inject(Auth);
 
   private apiUrl = environment.local.urlApi;
   constructor(
@@ -570,6 +575,11 @@ export class AdminControlComponent {
     }
   }
 
+  logout() {
+    signOut(this.auth).then(() => {
+      this.router.navigate(['/login']);
+    });
+  }
   /////////////////////////Paginacion///////////////////////////////////////
   getPaginatedDataOfertas() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;

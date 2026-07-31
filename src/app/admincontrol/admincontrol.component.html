@@ -24,6 +24,10 @@
                         <mat-icon>search</mat-icon>
                         <input type="text" placeholder="Buscar Aplicaciones" [formControl]="buscarAplicaciones">
                     </div>
+                    <button mat-raised-button color="warn" (click)="logout()">
+                        <mat-icon>logout</mat-icon>
+                        Cerrar sesión
+                    </button>
                 </div>
                 <ul>
                     <li *ngFor="let aplicacion of getPaginatedDataAplicaciones()">
@@ -42,7 +46,9 @@
                                     <strong>Propuesta:</strong>
                                     {{ aplicacion.oferta?.descripcionOferta || 'No disponible'
                                     }}<br />
-                                    <a [href]="aplicacion.documentoUrl" download>📄 Descargar CV</a><br /><br />
+                                    <a [href]="aplicacion.perfil?.documentoUrl" download>
+                                        📄 Descargar CV
+                                    </a><br /><br />
                                 </div>
                             </div>
                         </div>
@@ -70,6 +76,10 @@
                     <button mat-raised-button color="primary" (click)="nuevoRubro()">
                         <mat-icon>add</mat-icon>
                         Agregar Rubro
+                    </button>
+                    <button mat-raised-button color="warn" (click)="logout()">
+                        <mat-icon>logout</mat-icon>
+                        Cerrar sesión
                     </button>
                 </div>
                 <ul>
@@ -114,6 +124,10 @@
                     <button mat-raised-button color="primary" (click)="nuevaEmpresa()">
                         <mat-icon>add</mat-icon>
                         Agregar Empresa
+                    </button>
+                    <button mat-raised-button color="warn" (click)="logout()">
+                        <mat-icon>logout</mat-icon>
+                        Cerrar sesión
                     </button>
                 </div>
                 <ul>
@@ -160,6 +174,10 @@
                     <button mat-raised-button color="primary" (click)="nuevaOferta()">
                         <mat-icon>add</mat-icon>
                         Agregar Oferta
+                    </button>
+                    <button mat-raised-button color="warn" (click)="logout()">
+                        <mat-icon>logout</mat-icon>
+                        Cerrar sesión
                     </button>
                 </div>
                 <ul>

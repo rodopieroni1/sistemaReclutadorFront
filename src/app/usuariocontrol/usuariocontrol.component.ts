@@ -175,8 +175,8 @@ export class UsuarioControlComponent {
     this.archivoSeleccionado = null;
 
     // Resetear los inputs de archivo manualmente
-    const fotoInput = document.getElementById('fotoInput') as HTMLInputElement;
-    const cvInput = document.getElementById('cvInput') as HTMLInputElement;
+    const fotoInput = document.getElementById('foto') as HTMLInputElement;
+    const cvInput = document.getElementById('cv') as HTMLInputElement;
     if (fotoInput) fotoInput.value = '';
     if (cvInput) cvInput.value = '';
   }
