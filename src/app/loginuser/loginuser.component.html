@@ -12,12 +12,13 @@
 
         <form [formGroup]="loginForm" (ngSubmit)="login()">
             <div class="form-group">
-                <label for="email">Nombre de Usuario</label>
-                <input formControlName="clave" type="email" id="email" (focus)="hideMessage()" autocomplete="off" />
-                <div *ngIf="email.invalid && (email.dirty || email.touched)" class="error">
-                    <div *ngIf="email.errors?.['required']">Email es obligatorio.</div>
-                    <div *ngIf="email.errors?.['minlength']">Debe tener al menos 4 caracteres.</div>
-                    <div *ngIf="email.errors?.['forbiddenName']">No puede ser "test".</div>
+                <label for="nombreUsuario">Nombre de Usuario</label>
+                <input formControlName="clave" type="text" id="nombreUsuario" (focus)="hideMessage()"
+                    autocomplete="off" />
+                <div *ngIf="nombreUsuario.invalid && (nombreUsuario.dirty || nombreUsuario.touched)" class="error">
+                    <div *ngIf="nombreUsuario.errors?.['required']">Nombre de usuario es obligatorio.</div>
+                    <div *ngIf="nombreUsuario.errors?.['minlength']">Debe tener al menos 4 caracteres.</div>
+                    <div *ngIf="nombreUsuario.errors?.['forbiddenName']">No puede ser "test".</div>
                 </div>
             </div>
 
@@ -35,7 +36,9 @@
 
         <div class="links">
             <a routerLink="/registro">¿No tienes cuenta?</a>
-            <a routerLink="/olvide-password">Recuperar Contraseña</a>
+            <a (click)="irAOlvidePassword()" class="olvide-link" style="cursor: pointer;">
+                ¿Olvidaste tu contraseña?
+            </a>
         </div>
 
         <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>

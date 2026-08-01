@@ -31,13 +31,13 @@ export class ResetPasswordComponent {
   form!: FormGroup;
   isLoading = false;
   errorMessage: any;
-
+  actualizado = false;
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
     private route: ActivatedRoute,
     private snack: MatSnackBar,
-    private router: Router
+    private router: Router,
   ) {
     // Primero se crea el form
     this.form = this.fb.group({
@@ -46,7 +46,7 @@ export class ResetPasswordComponent {
         [
           Validators.required,
           Validators.pattern(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,12}$/
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,12}$/,
           ),
         ],
       ],
@@ -56,10 +56,13 @@ export class ResetPasswordComponent {
     this.form.get('newPassword')?.valueChanges.subscribe((value) => {});
   }
 
-  resetear() {
+  ngOnInit() {
     this.form.get('newPassword')?.valueChanges.subscribe(() => {
       console.log('¿Formulario válido?:', this.form.valid);
     });
+  }
+
+  resetear() {
     const token = this.route.snapshot.queryParamMap.get('token');
     this.isLoading = true;
     this.http
@@ -70,11 +73,16 @@ export class ResetPasswordComponent {
       .subscribe({
         next: () => {
           this.isLoading = false;
+          this.actualizado = true;
+          this.form.disable();
           this.snack.open('Contraseña actualizada', 'Cerrar');
         },
         error: (err) => {
           this.isLoading = false;
-          this.snack.open('Error: ' + err.errorMessage.message, 'Cerrar');
+          const mensaje = err.error?.message || 'Ocurrió un error inesperado';
+          this.snack.open(mensaje, 'Cerrar', {
+            duration: 3000,
+          });
         },
       });
   }

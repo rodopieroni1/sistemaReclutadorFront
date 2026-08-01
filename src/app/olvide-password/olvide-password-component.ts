@@ -11,7 +11,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-olvide-password-component',
@@ -32,17 +33,33 @@ export class OlvidePasswordComponent {
   form: FormGroup;
   isLoading = false;
   errorMessage = '';
-
+  private apiUrl = environment.local.urlApi;
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
-    private snack: MatSnackBar
+    private snack: MatSnackBar,
+    private route: ActivatedRoute,
   ) {
     this.form = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      clave: [''],
+      email: [''],
     });
   }
 
+  ngOnInit(): void {
+    this.form = this.fb.group({
+      clave: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+    });
+
+    this.route.queryParams.subscribe((params) => {
+      if (params['usuario']) {
+        this.form.patchValue({
+          clave: params['usuario'],
+        });
+      }
+    });
+  }
   enviarSolicitud(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -53,14 +70,15 @@ export class OlvidePasswordComponent {
     this.errorMessage = '';
 
     this.http
-      .post('http://localhost:8080/perfiles/olvide-password', this.form.value)
+      .post<{
+        message: string;
+      }>(this.apiUrl + '/perfiles/olvide-password', this.form.value)
       .subscribe({
-        next: () => {
+        next: (res) => {
           this.isLoading = false;
-          this.snack.open(
-            'Revisá tu correo para restablecer la contraseña',
-            'Cerrar'
-          );
+          const successMessage =
+            res?.message || 'Solicitud enviada correctamente.';
+          this.snack.open(successMessage, 'Cerrar');
         },
         error: (err) => {
           this.isLoading = false;

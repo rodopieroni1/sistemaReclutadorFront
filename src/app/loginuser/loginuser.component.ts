@@ -9,7 +9,6 @@ import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { LoginService } from './auth/login.service';
 import { LoginRequest } from './auth/loginRequest';
-import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-loginuser',
@@ -54,7 +53,7 @@ export class LoginuserComponent implements OnInit {
     }
   }
 
-  get email() {
+  get nombreUsuario() {
     return this.loginForm.controls.clave;
   }
   get password() {
@@ -85,6 +84,12 @@ export class LoginuserComponent implements OnInit {
     }
   }
 
+  irAOlvidePassword() {
+    const nombreUsuario = this.loginForm.get('clave')?.value || '';
+    this.router.navigate(['/olvide-password'], {
+      queryParams: { usuario: nombreUsuario },
+    });
+  }
   hideMessage(): void {
     this.sessionExpired = false;
   }
