@@ -22,6 +22,7 @@ interface Empresa {
   observaciones: string;
   email: string;
   cuit: number;
+  telefono: string;
   id_empresa: number;
   rubro: {
     idRubro: number;
@@ -110,6 +111,7 @@ export class AdminControlComponent {
     observaciones: string;
     email: string;
     cuit: number;
+    telefono: string;
     id_empresa: number;
     rubro: {
       idRubro: number;
@@ -143,6 +145,7 @@ export class AdminControlComponent {
   historiaEmpresa: string = '';
   observaciones: string = '';
   emailEmpresa: string = '';
+  telefonoEmpresa: string = '';
   cuitEmpresa: number = 1;
   id_empresa: number = 1;
   buscarEmpresa = new FormControl('');
@@ -221,6 +224,7 @@ export class AdminControlComponent {
           direccion: string;
           historiaEmpresa: string;
           observaciones: string;
+          telefono: string;
           rubro: {
             idRubro: number;
             descripcionRubro: string;
@@ -403,6 +407,7 @@ export class AdminControlComponent {
           observaciones: empresa.observaciones,
           email: empresa.email,
           cuit: empresa.cuit,
+          telefono: empresa.telefono,
           id_empresa: empresa.id_empresa,
           rubro: empresa.rubro,
           logo: empresa.logo,
@@ -455,6 +460,7 @@ export class AdminControlComponent {
     email: string;
     direccion: string;
     historiaEmpresa: string;
+    telefono: string;
     observaciones: string;
   }) {
     const dialogRef = this.dialog.open(ModalNuevaEmpresaComponent, {

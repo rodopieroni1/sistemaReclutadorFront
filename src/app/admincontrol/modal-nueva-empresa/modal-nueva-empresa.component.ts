@@ -220,10 +220,23 @@ export class ModalNuevaEmpresaComponent implements OnInit {
             );
             formData.append('email', this.miFormulario.value.emailEmpresa);
             formData.append('cuit', this.miFormulario.value.cuitEmpresa);
+            formData.append(
+              'telefono',
+              this.miFormulario.value.telefonoEmpresa,
+            );
             formData.append('idRubro', this.miFormulario.value.idRubro);
             if (this.logoSeleccionado) {
               formData.append('logo', this.logoSeleccionado);
             }
+            console.log('Datos a enviar:', {
+              nombre: this.miFormulario.value.nombreEmpresa,
+              direccion: this.miFormulario.value.direccionEmpresa,
+              historiaEmpresa: this.miFormulario.value.historiaEmpresa,
+              observaciones: this.miFormulario.value.observacionesEmpresa,
+              email: this.miFormulario.value.emailEmpresa,
+              cuit: this.miFormulario.value.cuitEmpresa,
+              telefono: this.miFormulario.value.telefonoEmpresa,
+            });
             this.http
               .post(environment.local.urlApi + '/empresas/crear', formData, {
                 observe: 'response',
