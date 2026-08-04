@@ -1,152 +1,226 @@
-<div class="columna-imagen">
-    <h2 class="panel-title">
-        <span>Panel</span><span>de</span><span>Administradores</span>
-    </h2>
-</div>
-<div class="columna-contenido">
-    <mat-accordion class="responsive-accordion">
-        <!-- Aplicaciones -->
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>Aplicaciones</mat-panel-title>
-            </mat-expansion-panel-header>
-            <ul>
-                <li *ngFor="let aplicacion of getPaginatedDataAplicaciones()">
-                    <div class="oferta-empresa-header">
-                        <div class="oferta-empresa-info">
-                            <h4>
-                                {{ aplicacion.oferta?.empresa?.nombre || 'Empresa desconocida' }},
-                                {{ aplicacion.perfil?.nombre || 'Perfil no disponible' }}
-                            </h4><br />
-                            <strong>Fecha de aplicación:</strong> {{ aplicacion.fechaAplicacion || 'Sin fecha'
-                            }}<br />
-                            <strong>Propuesta:</strong> {{ aplicacion.oferta?.descripcionOferta || 'No disponible'
-                            }}<br />
-                            <strong>Activo:</strong> {{ aplicacion.estadoAplicaciones ? 'Sí' : 'No' }}<br />
-                            <a [href]="aplicacion.documentoUrl" download>📄 Descargar CV</a><br /><br />
-                        </div>
-                    </div>
-                </li>
-            </ul>
-            <div class="pagination">
-                <button mat-button (click)="changePage(currentPage - 1)"
-                    [disabled]="currentPage === 1">Anterior</button>
-                <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
-                <button mat-button (click)="changePage(currentPage + 1)"
-                    [disabled]="currentPage === getTotalPages()">Siguiente</button>
-            </div>
-        </mat-expansion-panel>
+<div class="layout-fijo">
+    <div class="columna-titulo">
 
-        <!-- Rubros -->
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>Rubros</mat-panel-title>
-            </mat-expansion-panel-header>
-            <div class="barra-ofertas-superior">
-                <button mat-raised-button color="primary" (click)="crearRubro()">Agregar Rubro</button>
-            </div>
-            <ul>
-                <li *ngFor="let rubros of getPaginatedDataRubros()">
-                    <div class="oferta-empresa-header">
-                        <div class="oferta-empresa-info">
-                            <strong>Descripción:</strong> {{ rubros?.descripcionRubro || 'Sin descripción' }}<br />
-                        </div>
-                        <div class="botones-inferiores">
-                            <button mat-icon-button color="accent" (click)="actualizarRubro(rubros)">
-                                <mat-icon>edit</mat-icon>
-                            </button>
-                            <button mat-icon-button color="warn" (click)="eliminarRubro(rubros)">
-                                <mat-icon>delete</mat-icon>
-                            </button>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-            <div class="pagination">
-                <button mat-button (click)="changePage(currentPage - 1)"
-                    [disabled]="currentPage === 1">Anterior</button>
-                <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
-                <button mat-button (click)="changePage(currentPage + 1)"
-                    [disabled]="currentPage === getTotalPages()">Siguiente</button>
-            </div>
-        </mat-expansion-panel>
+        <div class="contenedor-logo">
+            <img src="assets/logo.png" alt="Carina Di Fonzo">
+        </div>
 
-        <!-- Empresas -->
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>Empresas</mat-panel-title>
-            </mat-expansion-panel-header>
-            <div class="barra-ofertas-superior">
-                <button mat-raised-button color="primary" (click)="NuevaEmpresa()">Agregar Empresa</button>
-            </div>
-            <ul>
-                <li *ngFor="let empresa of getPaginatedDataEmpresas()">
-                    <div class="oferta-empresa-header">
-                        <div class="oferta-empresa-info">
-                            <h4>{{ empresa?.nombre || 'Sin nombre' }}</h4><br />
-                            <strong>Observaciones:</strong> {{ empresa?.observaciones || 'Sin observaciones'
-                            }}<br />
-                            <strong>Historia:</strong> {{ empresa?.historiaEmpresa || 'Sin historia' }}<br />
-                            <strong>Dirección:</strong> {{ empresa?.direccion || 'Sin dirección' }}<br />
-                        </div>
-                        <div class="botones-inferiores">
-                            <button mat-icon-button color="accent" (click)="updateEmpresa(empresa)">
-                                <mat-icon>edit</mat-icon>
-                            </button>
-                            <button mat-icon-button color="warn" (click)="deleteEmpresa(empresa)">
-                                <mat-icon>delete</mat-icon>
-                            </button>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-            <div class="pagination">
-                <button mat-button (click)="changePage(currentPage - 1)"
-                    [disabled]="currentPage === 1">Anterior</button>
-                <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
-                <button mat-button (click)="changePage(currentPage + 1)"
-                    [disabled]="currentPage === getTotalPages()">Siguiente</button>
-            </div>
-        </mat-expansion-panel>
+        <h2 class="panel-title">
+            <span>Panel</span>
+            <span>de</span>
+            <span>Administradores</span>
+        </h2>
 
-        <!-- Ofertas -->
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>Ofertas</mat-panel-title>
-            </mat-expansion-panel-header>
-            <div class="barra-ofertas-superior">
-                <button mat-raised-button color="primary" (click)="NuevaOferta()">Agregar Oferta</button>
-            </div>
-            <ul>
-                <li *ngFor="let oferta of getPaginatedDataOfertas()">
-                    <div class="oferta-empresa-header">
-                        <div class="oferta-empresa-info">
-                            <h4>{{ oferta?.nombreOferta || 'Sin título' }}</h4><br />
-                            <strong>Descripción:</strong> {{ oferta?.descripcionOferta || 'Sin descripción' }}<br />
-                            <strong>Empresa:</strong> {{ oferta?.empresa?.nombre || 'Empresa desconocida' }}<br />
-                            <strong>Estado:</strong>
-                            <span *ngIf="!oferta?.estadoOferta">✅ Activa</span>
-                            <span *ngIf="oferta?.estadoOferta">❌ Inactiva</span>
-                        </div>
-                        <div class="botones-inferiores">
-                            <button mat-icon-button color="accent" (click)="updateOferta(oferta)">
-                                <mat-icon>edit</mat-icon>
-                            </button>
-                            <button mat-icon-button color="warn" (click)="deleteOferta(oferta)">
-                                <mat-icon>delete</mat-icon>
-                            </button>
-                        </div>
+    </div>
+    <div class="columna-contenido">
+        <mat-accordion class="responsive-accordion">
+            <!-- Aplicaciones -->
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>Aplicaciones</mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="barra-ofertas-superior">
+                    <div class="buscador">
+                        <mat-icon>search</mat-icon>
+                        <input type="text" placeholder="Buscar Aplicaciones" [formControl]="buscarAplicaciones">
                     </div>
-                </li>
-            </ul>
-            <div class="pagination">
-                <button mat-button (click)="changePage(currentPage - 1)"
-                    [disabled]="currentPage === 1">Anterior</button>
-                <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
-                <button mat-button (click)="changePage(currentPage + 1)"
-                    [disabled]="currentPage === getTotalPages()">Siguiente</button>
-            </div>
-        </mat-expansion-panel>
+                    <button mat-raised-button color="warn" (click)="logout()">
+                        <mat-icon>logout</mat-icon>
+                        Cerrar sesión
+                    </button>
+                </div>
+                <ul>
+                    <li *ngFor="let aplicacion of getPaginatedDataAplicaciones()">
+                        <div class="card-empresa">
+                            <div class="oferta-empresa-header">
+                                <div class="oferta-empresa-info">
+                                    <h4>
+                                        {{ aplicacion.oferta?.empresa?.nombre || 'Empresa desconocida' }},
+                                        {{ aplicacion.perfil?.nombre || 'Perfil no disponible' }}
+                                    </h4><br />
+                                    <h5>
+                                        {{ aplicacion.oferta?.nombreOferta || '' }}
+                                    </h5><br />
+                                    <strong>Fecha de aplicación:</strong>
+                                    {{ aplicacion.fechaAplicacion || 'Sin fecha' }}<br />
+                                    <strong>Propuesta:</strong>
+                                    {{ aplicacion.oferta?.descripcionOferta || 'No disponible'
+                                    }}<br />
+                                    <a [href]="aplicacion.perfil?.documentoUrl" download>
+                                        📄 Descargar CV
+                                    </a><br /><br />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="pagination">
+                    <button mat-button (click)="changePage(currentPage - 1)"
+                        [disabled]="currentPage === 1">Anterior</button>
+                    <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
+                    <button mat-button (click)="changePage(currentPage + 1)"
+                        [disabled]="currentPage === getTotalPages()">Siguiente</button>
+                </div>
+            </mat-expansion-panel>
 
-    </mat-accordion>
+            <!-- Rubros -->
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>Rubros</mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="barra-ofertas-superior">
+                    <div class="buscador">
+                        <mat-icon>search</mat-icon>
+                        <input type="text" placeholder="Buscar rubro" [formControl]="buscarRubro">
+                    </div>
+                    <button mat-raised-button color="primary" (click)="nuevoRubro()">
+                        <mat-icon>add</mat-icon>
+                        Agregar Rubro
+                    </button>
+                    <button mat-raised-button color="warn" (click)="logout()">
+                        <mat-icon>logout</mat-icon>
+                        Cerrar sesión
+                    </button>
+                </div>
+                <ul>
+                    <li *ngFor="let rubros of getPaginatedDataRubros()">
+                        <div class="card-empresa">
+                            <div class="oferta-empresa-header">
+                                <div class="oferta-empresa-info">
+                                    <strong>📝 Descripción:</strong> {{ rubros?.descripcionRubro || 'Sin descripción' }}
+                                    <br />
+                                </div>
+                                <div class="botones-inferiores">
+                                    <button mat-icon-button color="accent" (click)="actualizarRubro(rubros)">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                    <button mat-icon-button color="warn" (click)="eliminarRubro(rubros)">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="pagination">
+                    <button mat-button (click)="changePage(currentPage - 1)"
+                        [disabled]="currentPage === 1">Anterior</button>
+                    <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
+                    <button mat-button (click)="changePage(currentPage + 1)"
+                        [disabled]="currentPage === getTotalPages()">Siguiente</button>
+                </div>
+            </mat-expansion-panel>
+
+            <!-- Empresas -->
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>Empresas</mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="barra-ofertas-superior">
+                    <div class="buscador">
+                        <mat-icon>search</mat-icon>
+                        <input type="text" placeholder="Buscar empresa" [formControl]="buscarEmpresa">
+                    </div>
+                    <button mat-raised-button color="primary" (click)="nuevaEmpresa()">
+                        <mat-icon>add</mat-icon>
+                        Agregar Empresa
+                    </button>
+                    <button mat-raised-button color="warn" (click)="logout()">
+                        <mat-icon>logout</mat-icon>
+                        Cerrar sesión
+                    </button>
+                </div>
+                <ul>
+                    <li *ngFor="let empresa of getPaginatedDataEmpresas()">
+                        <div class="card-empresa">
+                            <div class="oferta-empresa-header">
+                                <div class="oferta-empresa-info">
+                                    <h3>{{ empresa.nombre }}</h3>
+                                    <p><strong>📍 Dirección:</strong> {{ empresa.direccion }}</p>
+                                    <p><strong>📖 Historia:</strong> {{ empresa.historiaEmpresa }}</p>
+                                    <p><strong>📝 Observaciones:</strong> {{ empresa.observaciones }}</p>
+                                </div>
+                                <div class="botones-inferiores">
+                                    <button mat-icon-button color="accent" (click)="updateEmpresa(empresa)">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                    <button mat-icon-button color="warn" (click)="deleteEmpresa(empresa)">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="pagination">
+                    <button mat-button (click)="changePage(currentPage - 1)"
+                        [disabled]="currentPage === 1">Anterior</button>
+                    <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
+                    <button mat-button (click)="changePage(currentPage + 1)"
+                        [disabled]="currentPage === getTotalPages()">Siguiente</button>
+                </div>
+            </mat-expansion-panel>
+
+            <!-- Ofertas -->
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>Ofertas</mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="barra-ofertas-superior">
+                    <div class="buscador">
+                        <mat-icon>search</mat-icon>
+                        <input type="text" placeholder="Buscar oferta" [formControl]="buscarOferta">
+                    </div>
+                    <button mat-raised-button color="primary" (click)="nuevaOferta()">
+                        <mat-icon>add</mat-icon>
+                        Agregar Oferta
+                    </button>
+                    <button mat-raised-button color="warn" (click)="logout()">
+                        <mat-icon>logout</mat-icon>
+                        Cerrar sesión
+                    </button>
+                </div>
+                <ul>
+                    <li *ngFor="let oferta of getPaginatedDataOfertas()">
+                        <div class="card-empresa">
+                            <div class="oferta-empresa-header">
+                                <div class="oferta-empresa-info">
+                                    <h4>{{ oferta?.nombreOferta || 'Sin título' }}</h4><br />
+                                    <strong>Empresa:</strong> {{ oferta?.empresa?.nombre || 'Empresa desconocida'
+                                    }}<br />
+                                    <strong>Estado:</strong>
+                                    <span *ngIf="oferta?.estadoOferta">✅ Activa</span>
+                                    <span *ngIf="!oferta?.estadoOferta">❌Inactiva</span><br />
+                                </div>
+                                <div class="botones-inferiores">
+                                    <button mat-icon-button color="accent" (click)="updateOferta(oferta)">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                    <button mat-icon-button color="warn" (click)="deleteOferta(oferta)">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="pagination">
+                    <button mat-button (click)="changePage(currentPage - 1)"
+                        [disabled]="currentPage === 1">Anterior</button>
+                    <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
+                    <button mat-button (click)="changePage(currentPage + 1)"
+                        [disabled]="currentPage === getTotalPages()">Siguiente</button>
+                </div>
+            </mat-expansion-panel>
+
+        </mat-accordion>
+        <div class="imagen-mobile">
+            <img src="assets/logo.png" alt="Carina Di Fonzo">
+        </div>
+    </div>
+
+    <div class="columna-imagen">
+        <h2 class="panel-title-derecha">
+        </h2>
+    </div>
 </div>

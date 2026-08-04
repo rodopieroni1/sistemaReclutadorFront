@@ -29,7 +29,7 @@ export class LoginComponent {
   password: string = '';
   constructor(
     private authService: AuthServiceService,
-    private router: Router
+    private router: Router,
   ) {}
 
   login() {
@@ -39,7 +39,7 @@ export class LoginComponent {
         const user = userCredential.user;
         sessionStorage.setItem(
           'firebaseUser',
-          JSON.stringify({ email: user.email })
+          JSON.stringify({ email: user.email }),
         );
         this.router.navigate(['/admincontrol']);
       })

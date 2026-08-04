@@ -11,7 +11,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
-
+import { RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-cuerpo',
   standalone: true,
@@ -27,6 +29,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatIconModule,
     NgIf,
     NgFor,
+    RouterModule,
   ], // Importa Material Card y módulos necesarios
   templateUrl: './cuerpo.component.html',
   styleUrl: './cuerpo.component.css',
@@ -48,7 +51,8 @@ export class CuerpoComponent implements OnInit {
   itemsPerPage: number = 5; // Número de elementos por página
   searchNombreOferta = new FormControl('');
   searchDescripcionEmpresa = new FormControl('');
-  apiUrl = 'http://localhost:8080/ofertas/buscar';
+  urlApiTodas = environment.local.urlApi;
+  private apiUrl = this.urlApiTodas + '/ofertas/buscar';
   busquedaRealizada: boolean = false;
   resultados: any[] = [];
   ofertaEmpresa = new FormControl('');
@@ -57,17 +61,19 @@ export class CuerpoComponent implements OnInit {
     private http: HttpClient, // public dialogRef: MatDialogRef<ModalNuevaEmpresaComponent>
     private webSocketService: WebSocketService,
     private aplicacionService: AplicacionServiceService, // Inyecta el servicio aquí
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
-    this.webSocketService.connect('ws://localhost:8080/ws'); // URL del servidor WebSocket
+    this.webSocketService.connect('ws://localhost:8080/ws');
     if (this.webSocketService['socket']) {
       this.webSocketService['socket'].onmessage = (event) => {
-        const newImageUrl = event.data; // Recibir URL de nueva imagen
+        const newImageUrl = event.data;
+        console.log('Nueva URL de imagen recibida:', newImageUrl);
       };
     }
-    this.userLoginOn = !!sessionStorage.getItem('token'); // Verifica si hay token
+    this.userLoginOn = !!sessionStorage.getItem('token');
     this.http
       .get<
         {
@@ -77,7 +83,7 @@ export class CuerpoComponent implements OnInit {
           fotoOferta: string;
           empresa: { nombre: string };
         }[]
-      >('http://localhost:8080/ofertas/todas')
+      >(this.urlApiTodas + '/ofertas/todas')
       .subscribe({
         next: (data) => {
           this.ofertas = data.map((oferta) => ({
@@ -117,7 +123,7 @@ export class CuerpoComponent implements OnInit {
         this.busquedaRealizada = true;
         console.log('Resultados:', this.resultados);
       },
-      (error) => console.error('Error al buscar empleos:', error)
+      (error) => console.error('Error al buscar empleos:', error),
     );
   }
 
@@ -126,52 +132,43 @@ export class CuerpoComponent implements OnInit {
   }
 
   aplicar(idOferta: number, nombreOferta: string): void {
-    const idPerfil = sessionStorage.getItem('idPerfil'); // Recupera el ID del usuario logueado
-    const token = sessionStorage.getItem('token'); // Suponiendo que tienes el idPerfil en la sesión
-    if (token) {
-      this.aplicacionService
-        .aplicar(Number(idOferta), Number(idPerfil))
-        .subscribe({
-          next: (response) => {
-            const data = response as { perfil?: any; oferta?: any };
-            // Verificar si perfil y oferta son nulos o indefinidos en la respuesta
-            if (data.perfil || data.oferta) {
-              this.snackBar.open(
-                `Acabas de aplicar para la oferta: ${nombreOferta}`,
-                'Cerrar',
-                { duration: 6000 }
-              );
-            } else {
-              this.snackBar.open(
-                `Ya aplicaste para Oferta: ${nombreOferta}`,
-                'Cerrar',
-                {
-                  duration: 4000,
-                }
-              );
-            }
-            this.isBtnAplicar = true;
-          },
-          error: (error) => {
-            this.snackBar.open(
-              'Tu sesión expiró. Volvé a iniciar sesión.',
-              'Cerrar',
-              {
-                duration: 5000,
-              }
-            );
-          },
-        });
-    } else {
-      this.snackBar.open(
-        'No se encontró perfil de usuario en la sesión',
-        'Cerrar',
-        {
-          duration: 5000,
-        }
-      );
+    const idPerfil = Number(sessionStorage.getItem('idPerfil'));
+    if (!idPerfil) {
+      this.snackBar.open('No se encontró el perfil del usuario.', 'Cerrar', {
+        duration: 5000,
+      });
+      return;
     }
+
+    this.aplicacionService.aplicar(idOferta, idPerfil).subscribe({
+      next: (response: any) => {
+        const mensaje =
+          response?.mensaje ??
+          response?.message ??
+          'Aplicación enviada con éxito.';
+        this.snackBar.open(mensaje, 'Cerrar', { duration: 5000 });
+
+        this.isBtnAplicar = true;
+      },
+
+      error: () => {
+        this.snackBar.open(
+          'Hubo un problema al procesar la solicitud.',
+          'Cerrar',
+          { duration: 5000 },
+        );
+      },
+    });
   }
+
+  verDetalle(oferta: any): void {
+    console.log('Datos que vienen de la fila de Mis Aplicaciones:', oferta);
+
+    this.router.navigate(['/detalle-oferta'], {
+      state: { oferta: oferta },
+    });
+  }
+
   /////////////////////////Paginacion///////////////////////////////////////
   getPaginatedDataOfertas() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;

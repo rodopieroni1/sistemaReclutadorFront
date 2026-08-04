@@ -29,6 +29,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { switchMap, catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { MatDividerModule } from '@angular/material/divider';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-modal-nueva-oferta',
@@ -46,6 +48,7 @@ import { of } from 'rxjs';
     MatExpansionModule,
     MatSelectModule,
     MatOptionModule,
+    MatDividerModule,
   ],
   templateUrl: './modal-nueva-oferta.component.html',
   styleUrl: './modal-nueva-oferta.component.css',
@@ -80,14 +83,14 @@ export class ModalNuevaOfertaComponent implements OnInit {
   archivoSeleccionado: File | null = null; // Archivo subido
   imagenPreview: string | null = null;
   isSubmitting = false;
-  uploadUrl = 'http://localhost:8080/api/uploads/';
+  uploadUrl = environment.local.urlApi;
 
   constructor(
     private http: HttpClient,
     public dialogRef: MatDialogRef<ModalNuevaOfertaComponent>,
     private snackBar: MatSnackBar,
     private fb: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: { accion: string; oferta?: any }
+    @Inject(MAT_DIALOG_DATA) public data: { accion: string; oferta?: any },
   ) {
     this.miFormulario = this.fb.group({
       descripcionOferta: ['', Validators.required],
@@ -102,59 +105,47 @@ export class ModalNuevaOfertaComponent implements OnInit {
 
   ngOnInit(): void {
     this.obtenerEmpresas();
+
     if (this.data.oferta) {
       this.http
         .get<any>(
-          `http://localhost:8080/ofertas/existeId/${this.data.oferta.idOferta}`
+          `${environment.local.urlApi}/ofertas/existeId/${this.data.oferta.idOferta}`,
         )
         .subscribe({
           next: (response) => {
             this.miFormulario.patchValue({
-              descripcionOferta:
-                response.descripcionOferta ??
-                this.miFormulario.value.descripcionOferta,
+              descripcionOferta: response.descripcionOferta || '',
               nombreOferta: response.nombreOferta || '',
               idEmpresa: response.empresa?.id_empresa || '',
               estadoOferta: response.estadoOferta,
+              fotoOferta: response.fotoOferta || '',
             });
-            console.log(
-              '📝 Descripción cargada en el formulario:',
-              this.miFormulario.get('descripcionOferta')?.value
-            );
 
-            if (response.fotoOferta) {
-              this.archivoSeleccionado = new File(
-                [response.fotoOferta],
-                response.fotoOferta, // Nombre del archivo
-                { type: 'image/jpeg' } // Ajusta el tipo si es diferente
-              );
-            }
+            // Nombre de la imagen guardado en la BD
             this.imagenDesdeBD = response.fotoOferta;
-            console.log('this.imagenDesdeBD ', this.imagenDesdeBD);
-            this.miFormulario.patchValue({
-              fotoOferta: response.fotoOferta,
-            });
-            const fotoActual = this.miFormulario.get('fotoOferta')?.value;
-            if (fotoActual) {
-              this.imagenPreview = fotoActual
-                ? 'assets/uploads/fotos/' + fotoActual
-                : '';
+
+            // Mostrar la imagen
+            if (this.imagenDesdeBD) {
+              this.imagenPreview = `${environment.local.urlApi}/uploads/ofertas/${this.imagenDesdeBD}`;
             }
+
+            // Muy importante: NO crear un File con el nombre
+            this.archivoSeleccionado = null;
+
+            console.log('Imagen desde BD:', this.imagenDesdeBD);
           },
           error: (err) => {
             this.snackBar.open(
               'Error al cargar la oferta para modificar.',
-              err,
-              {
-                duration: 3000,
-              }
+              'Cerrar',
+              { duration: 3000 },
             );
           },
         });
     }
   }
   obtenerEmpresas(): void {
-    this.http.get<any[]>('http://localhost:8080/empresas').subscribe({
+    this.http.get<any[]>(environment.local.urlApi + '/empresas').subscribe({
       next: (data: any[]) => {
         this.empresas = data; // Asegúrate de asignar los datos correctamente
       },
@@ -181,10 +172,10 @@ export class ModalNuevaOfertaComponent implements OnInit {
     if (this.accion === 'crear') {
       this.http
         .get<any>(
-          `http://localhost:8080/empresas/existeId/${datosOferta.idEmpresa}`,
+          `${environment.local.urlApi}/empresas/existeId/${datosOferta.idEmpresa}`,
           {
             headers: { 'Content-Type': 'application/json' },
-          }
+          },
         )
         .pipe(
           switchMap((empresa) => {
@@ -205,9 +196,9 @@ export class ModalNuevaOfertaComponent implements OnInit {
             }
 
             return this.http.post<HttpResponse<any>>(
-              'http://localhost:8080/ofertas/crear',
+              `${environment.local.urlApi}/ofertas/crear`,
               oferta,
-              { observe: 'response' }
+              { observe: 'response' },
             );
           }),
           tap((response) => {
@@ -225,21 +216,24 @@ export class ModalNuevaOfertaComponent implements OnInit {
             this.snackBar.open(
               'Error al crear la oferta o al obtener empresa.',
               'Cerrar',
-              { duration: 3000 }
+              { duration: 3000 },
             );
             return of(null);
-          })
+          }),
         )
         .subscribe();
     } else {
       ////AQUI EMPIEZA EL MODIFICAR
       const idEmpresa = this.miFormulario.value.idEmpresa;
       this.http
-        .get<any>(`http://localhost:8080/empresas/existeId/${idEmpresa}`, {
-          headers: {
-            'Content-Type': 'application/json',
+        .get<any>(
+          `${environment.local.urlApi}/empresas/existeId/${idEmpresa}`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
           },
-        })
+        )
         .subscribe({
           next: (response) => {
             const oferta = {
@@ -252,25 +246,24 @@ export class ModalNuevaOfertaComponent implements OnInit {
               fotoOferta: this.archivoSeleccionado?.name,
             };
             if (this.miFormulario.value.descripcionOferta === '') {
-              this.snackBar.open('Agrege valores a la oferta 1.', 'Cerrar', {
+              this.snackBar.open('Agrege valores a la oferta.', 'Cerrar', {
                 duration: 3000,
               });
               return;
             }
             if (!response || !response.id_empresa) {
-              this.snackBar.open('Agrege valores a la oferta 2.', 'Cerrar', {
+              this.snackBar.open('Agrege valores a la oferta.', 'Cerrar', {
                 duration: 3000,
               });
               return;
             }
-
             this.cargarUpdate(oferta, response);
           },
           error: () => {
             this.snackBar.open(
               'Error al obtener información de la empresa.',
               'Cerrar',
-              { duration: 3000 }
+              { duration: 3000 },
             );
           },
         });
@@ -279,46 +272,60 @@ export class ModalNuevaOfertaComponent implements OnInit {
   cargarUpdate(oferta: any, response: any) {
     const idOferta =
       this.miFormulario.value.idOferta || this.data.oferta.idOferta;
-    const fotoOfertaFinal = response.fotoOferta;
-    const idEmpresa = oferta.empresa.id_empresa;
-    if (!idEmpresa) {
-      this.snackBar.open('Error: idEmpresa está vacío.', 'Cerrar', {
+    const fotoCalculada =
+      this.miFormulario.value.fotoOferta || this.imagenDesdeBD;
+    const idEmpresaNum = oferta.empresa?.id_empresa || oferta.idEmpresa;
+    if (!idEmpresaNum) {
+      this.snackBar.open('Error: El ID de la empresa está vacío.', 'Cerrar', {
         duration: 3000,
       });
       return;
     }
-    oferta = {
-      descripcionOferta: oferta.descripcionOferta,
-      estadoOferta: oferta.estadoOferta,
-      fotoOferta: oferta.fotoOferta || fotoOfertaFinal, // Usa la foto existente si no se sube una nueva
-      empresa: {
-        id_empresa: idEmpresa, // Usar el valor del backend
-      },
-      idOferta: idOferta,
-      nombreOferta: oferta.nombreOferta,
-    };
+
+    const ofertaPayload = new FormData();
+    ofertaPayload.append('descripcionOferta', oferta.descripcionOferta);
+    ofertaPayload.append('estadoOferta', String(oferta.estadoOferta));
+    ofertaPayload.append('fotoOferta', fotoCalculada || '');
+    ofertaPayload.append('nombreOferta', oferta.nombreOferta);
+    ofertaPayload.append('idEmpresa', idEmpresaNum.toString());
+    ofertaPayload.append('idOferta', idOferta.toString());
+
+    if (this.archivoSeleccionado && this.archivoSeleccionado.size > 0) {
+      ofertaPayload.append(
+        'fotoArchivo',
+        this.archivoSeleccionado,
+        this.archivoSeleccionado.name,
+      );
+    }
+
     this.http
-      .put(`http://localhost:8080/ofertas/actualizar/${idOferta}`, oferta, {
-        headers: { 'Content-Type': 'application/json' },
-        observe: 'response',
-      })
+      .put(
+        `${environment.local.urlApi}/ofertas/actualizar/${idOferta}`,
+        ofertaPayload,
+        {
+          observe: 'response',
+        },
+      )
       .subscribe({
-        next: (response) => {
-          if (response.status === 201 || response.status === 200) {
+        next: (res) => {
+          if (res.status === 201 || res.status === 200) {
+            console.log('Oferta actualizada con éxito:', res.body);
+
             this.snackBar.open(
               'Oferta actualizada satisfactoriamente',
               'Cerrar',
-              { duration: 3000 }
+              { duration: 3000 },
             );
             this.datosActualizadosOferta.emit();
             this.dialogRef.close();
           }
         },
-        error: () => {
+        error: (err) => {
+          console.error('Error al actualizar en el servidor:', err);
           this.snackBar.open(
-            'Error al actualizar la Oferta. Inténtelo nuevamenteee.',
+            'Error al actualizar la Oferta. Inténtelo nuevamente.',
             'Cerrar',
-            { duration: 3000 }
+            { duration: 3000 },
           );
         },
       });
@@ -328,7 +335,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
     if (this.imagenPreview) {
       return this.imagenPreview;
     } else if (this.imagenDesdeBD) {
-      return 'http://localhost:8080/uploads/fotos/' + this.imagenDesdeBD;
+      return `${environment.local.urlApi}/uploads/ofertas/${this.imagenDesdeBD}`;
     }
     return '';
   }

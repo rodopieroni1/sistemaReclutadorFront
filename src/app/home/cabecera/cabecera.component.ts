@@ -3,18 +3,21 @@ import { CommonModule } from '@angular/common';
 import { LoginService } from '../../loginuser/auth/login.service';
 import { User } from '../../loginuser/auth/user';
 import { environment } from '../../../environments/environment';
-import { UserServiceService } from '../../loginuser/user-service.service';
+import { UserServiceService } from '../../perfil/user-service.service';
 import { NavigationServiceService } from '../../navigation-service.service';
-import { NavegacionComponent } from './navegacion/navegacion.component';
+import { RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-cabecera',
   standalone: true,
-  imports: [NavegacionComponent, CommonModule],
+  imports: [CommonModule, RouterModule, CommonModule],
   templateUrl: './cabecera.component.html',
   styleUrl: './cabecera.component.css',
 })
 export class CabeceraComponent implements OnInit {
+  [x: string]: any;
   isMenuOpen: boolean = false;
   userLoginOn: boolean = false;
   userProfileImage: string = '';
@@ -22,11 +25,15 @@ export class CabeceraComponent implements OnInit {
   user?: User;
   userName: string = '';
   mostrarCabecera: boolean = true;
+  menuAbierto = false;
+  private subs: Subscription[] = [];
+
   constructor(
     private userServiceService: UserServiceService,
     private loginService: LoginService,
     private cdRef: ChangeDetectorRef,
-    private navigationService: NavigationServiceService
+    private navigationService: NavigationServiceService,
+    private router: Router,
   ) {
     this.userServiceService.getUsers(environment.local.userId).subscribe({
       next: (userData) => {
@@ -57,5 +64,90 @@ export class CabeceraComponent implements OnInit {
     this.navigationService.previousUrl$.subscribe((url) => {
       this.mostrarCabecera = url !== '/admincontrol';
     });
+  }
+
+  irAOfertas(): void {
+    if (this.router.url.startsWith('/home')) {
+      const seccion = document.getElementById('propuestas');
+
+      if (seccion) {
+        seccion.scrollIntoView({
+          behavior: 'smooth',
+        });
+      }
+    } else {
+      this.router.navigate(['/home']).then(() => {
+        setTimeout(() => {
+          const seccion = document.getElementById('propuestas');
+
+          if (seccion) {
+            seccion.scrollIntoView({
+              behavior: 'smooth',
+            });
+          }
+        }, 100);
+      });
+    }
+  }
+
+  irAContactos(): void {
+    if (this.router.url.startsWith('/home')) {
+      const seccion = document.getElementById('contactos');
+
+      if (seccion) {
+        seccion.scrollIntoView({
+          behavior: 'smooth',
+        });
+      }
+    } else {
+      this.router.navigate(['/home']).then(() => {
+        setTimeout(() => {
+          const seccion = document.getElementById('contactos');
+
+          if (seccion) {
+            seccion.scrollIntoView({
+              behavior: 'smooth',
+            });
+          }
+        }, 100);
+      });
+    }
+  }
+
+  editarPerfil(): void {
+    if (this.userLoginOn) {
+      this.router.navigate(['/editar-perfil']);
+    } else {
+      this.router.navigate(['/login-user']);
+    }
+  }
+
+  misAplicaciones(): void {
+    if (this.userLoginOn) {
+      this.router.navigate(['/mis-aplicaciones']);
+    } else {
+      this.router.navigate(['/login-user']);
+    }
+  }
+
+  logout(): void {
+    this.loginService.logout().subscribe({
+      next: () => {
+        this.userProfileImage = '';
+        this.userName = '';
+        this.userLoginOn = false;
+        this.subs.forEach((sub) => sub.unsubscribe());
+
+        this.router.navigate(['/login-user']);
+      },
+
+      error: (err) => {
+        console.error(err);
+      },
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach((sub) => sub.unsubscribe());
   }
 }

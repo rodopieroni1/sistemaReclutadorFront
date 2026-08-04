@@ -1,85 +1,106 @@
-<h2>Agregar Empresa</h2>
+<div class="modal-header">
+    <h2 *ngIf="accion === 'crear'">Agregar Empresa</h2>
+    <h2 *ngIf="accion === 'actualizar'">Modificar Empresa</h2>
+</div>
+<mat-dialog-content>
+    <form [formGroup]="miFormulario" (ngSubmit)="guardar()" id="formEmpresa" class="form-empresa mejorado">
+        <input type="hidden" formControlName="id_empresa">
+        <hr class="mat-divider">
+        <section class="form-section">
+            <h3>Información de la Empresa</h3>
+            <mat-form-field appearance="fill" class="full-width">
+                <mat-label>Nombre de la Empresa</mat-label>
+                <input matInput placeholder="Ingrese el nombre de la empresa" formControlName="nombreEmpresa">
+                <mat-error
+                    *ngIf="miFormulario.get('nombreEmpresa')?.invalid && miFormulario.get('nombreEmpresa')?.touched">
+                    El nombre es obligatorio.
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="full-width">
+                <mat-label>Historia</mat-label>
+                <textarea matInput rows="8" placeholder="Describa la historia de la empresa"
+                    formControlName="historiaEmpresa">
+                </textarea>
+            </mat-form-field>
+        </section>
+        <hr class="mat-divider">
+        <section class="form-section doble-columna">
+            <mat-form-field appearance="fill">
+                <mat-label>Dirección</mat-label>
+                <input matInput placeholder="Dirección" formControlName="direccionEmpresa">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>CUIT</mat-label>
+                <input matInput placeholder="Solo números" formControlName="cuitEmpresa">
+                <mat-error *ngIf="miFormulario.get('cuitEmpresa')?.hasError('required')">
+                    El CUIT es obligatorio.
+                </mat-error>
+                <mat-error *ngIf="miFormulario.get('cuitEmpresa')?.hasError('pattern')">
+                    El CUIT debe contener únicamente números sin guiones.
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Email</mat-label>
+                <input matInput placeholder="Correo electrónico" formControlName="emailEmpresa">
+                <mat-error *ngIf="miFormulario.get('emailEmpresa')?.hasError('required')">
+                    El correo electrónico es obligatorio.
+                </mat-error>
+                <mat-error *ngIf="miFormulario.get('emailEmpresa')?.hasError('email')">
+                    El formato del correo no es válido (ej: falta el "&#64;" o el dominio).
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Telefono</mat-label>
+                <input matInput placeholder="Número de teléfono" formControlName="telefonoEmpresa">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Rubro</mat-label>
+                <mat-select formControlName="idRubro">
+                    <mat-option *ngFor="let rubro of rubros" [value]="rubro.idRubro">
+                        {{ rubro.descripcionRubro }}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="miFormulario.get('idRubro')?.hasError('required')">
+                    El rubro es obligatorio.
+                </mat-error>
+            </mat-form-field>
+        </section>
+        <hr class="mat-divider">
+        <section class="form-section">
+            <div class="file-upload-container">
+                <input type="file" #inputLogo accept="image/*" (change)="onLogoSeleccionado($event)" hidden>
+                <button mat-raised-button color="primary" type="button" (click)="inputLogo.click()">
+                    Seleccionar Logo
+                </button>
+                <div class="preview-container">
+                    <!-- Preview de imagen nueva -->
+                    <img *ngIf="imagenPreview" [src]="imagenPreview" alt="Vista previa logo" class="preview-img">
+                    <!-- Logo existente de BD -->
+                    <img *ngIf="!imagenPreview && imagenDesdeBD" [src]="uploadUrl + '/uploads/logos/' + imagenDesdeBD"
+                        alt="Logo actual" class="preview-img">
+                    <!-- Sin imagen -->
+                    <div *ngIf="!imagenPreview && !imagenDesdeBD" class="sin-logo">
+                        Sin logo
+                    </div>
+                </div>
 
-<form [formGroup]="miFormulario">
-    <h3>Empresa</h3>
-    <!-- Campo oculto: id_empresa -->
-    <mat-form-field appearance="fill" class="inputModalID">
-        <input matInput placeholder="id" class="inputModal" formControlName="id_empresa" name="id_empresa" />
-    </mat-form-field>
-
-    <mat-form-field appearance="fill" class="inputModal">
-        <mat-label>Nombre de Empresa</mat-label>
-        <input matInput class="inputModal" placeholder="nombre de la empresa" formControlName="nombreEmpresa"
-            name="nombreEmpresa" required />
-        <mat-error *ngIf="miFormulario.get('nombreEmpresa')?.invalid && miFormulario.get('nombreEmpresa')?.touched">
-            El nombre es obligatorio.
-        </mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="fill" class="inputModal">
-        <mat-label>Direccion: </mat-label>
-        <input matInput class="inputModal" placeholder="Direccion" formControlName="direccionEmpresa"
-            name="direccionEmpresa" required />
-        <mat-error
-            *ngIf="miFormulario.get('direccionEmpresa')?.invalid && miFormulario.get('direccionEmpresa')?.touched">
-            La direccion es obligatorio.
-        </mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="fill" class="inputModal">
-        <mat-label>Historia: </mat-label>
-        <input matInput class="inputModal" placeholder="Historias de esta empresa" formControlName="historiaEmpresa"
-            name="historiaEmpresa" />
-        <mat-error *ngIf="miFormulario.get('historiaEmpresa')?.invalid && miFormulario.get('historiaEmpresa')?.touched">
-            Contar la Historia es obligatorio.
-        </mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="fill" class="inputModal">
-        <mat-label>CUIT: </mat-label>
-        <input matInput class="inputModal" placeholder="Solo Nùmeros" formControlName="cuitEmpresa" name="cuitEmpresa"
-            required />
-        <mat-error *ngIf="miFormulario.get('cuitEmpresa')?.invalid && miFormulario.get('cuitEmpresa')?.touched">
-            Erroer al ingresar Cuit.
-        </mat-error>
-    </mat-form-field>
-
-    <!-- Campo: Rubro -->
-    <mat-form-field>
-        <mat-label>Seleccione Rubro</mat-label>
-        <mat-select formControlName="idRubro">
-            <mat-option *ngFor="let rubro of rubros" [value]="rubro.idRubro">
-                {{ rubro.descripcionRubro }}
-            </mat-option>
-        </mat-select>
-        <mat-error *ngIf="miFormulario.get('idRubro')?.invalid && miFormulario.get('idRubro')?.touched">
-            Error al ingresar Rubro.
-        </mat-error>
-    </mat-form-field>
-
-    <!-- Mostrar descripción afuera del select -->
-    <span *ngIf="rubroSeleccionado">
-        Rubro: {{ rubroSeleccionado.descripcionRubro }}
-    </span>
-
-
-    <mat-form-field appearance="fill" class="inputModal">
-        <mat-label>Email: </mat-label>
-        <input matInput class="inputModal" placeholder="email" formControlName="emailEmpresa" name="emailEmpresa"
-            required />
-        <mat-error *ngIf="miFormulario.get('emailEmpresa')?.invalid && miFormulario.get('emailEmpresa')?.touched">
-            Error al ingresar el mail.
-        </mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="fill" class="inputModal">
-        <mat-label>Observaciones(Si fuera necesario): </mat-label>
-        <input matInput class="inputModal" placeholder="Observaciones" formControlName="observacionesEmpresa"
-            name="observacionesEmpresa" />
-    </mat-form-field>
-
-    <div class="modal-buttons">
-        <button mat-button (click)="cerrar()">Cancelar</button>
-        <button mat-raised-button color="primary" id="guardar" (click)="guardar()">Guardar</button>
-    </div>
-</form>
+            </div>
+        </section>
+        <hr class="mat-divider">
+        <section class="form-section">
+            <mat-form-field appearance="fill" class="full-width">
+                <mat-label>Observaciones</mat-label>
+                <textarea matInput rows="5" placeholder="Observaciones" formControlName="observacionesEmpresa">
+                </textarea>
+            </mat-form-field>
+        </section>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button (click)="cerrar()">
+        Cancelar / Cerrar
+    </button>
+    <button mat-raised-button color="primary" type="submit" form="formEmpresa">
+        Guardar
+    </button>
+</mat-dialog-actions>

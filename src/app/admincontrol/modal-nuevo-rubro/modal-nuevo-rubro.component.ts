@@ -23,6 +23,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 import { MatFormField, MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-modal-nuevo-rubro',
@@ -47,13 +48,14 @@ export class ModalNuevoRubroComponent implements OnInit {
 
   accion: string | undefined;
   miFormulario!: FormGroup;
+  apiUrl: string = environment.local.urlApi;
 
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
     private snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<ModalNuevoRubroComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { accion: string; rubro?: any }
+    @Inject(MAT_DIALOG_DATA) public data: { accion: string; rubro?: any },
   ) {
     this.accion = data.accion as 'crear' | 'actualizar';
     this.rubro = data.rubro || { descripcionRubro: '' };
@@ -82,7 +84,7 @@ export class ModalNuevoRubroComponent implements OnInit {
     const rubroData = this.miFormulario.value;
 
     if (this.accion === 'crear') {
-      this.http.post('http://localhost:8080/rubros', rubroData).subscribe({
+      this.http.post(`${this.apiUrl}/rubros`, rubroData).subscribe({
         next: () => {
           this.snackBar.open('Rubro creado correctamente.', 'Cerrar', {
             duration: 3000,
@@ -98,7 +100,7 @@ export class ModalNuevoRubroComponent implements OnInit {
       });
     } else {
       this.http
-        .put(`http://localhost:8080/rubros/${this.rubro.idRubro}`, rubroData)
+        .put(`${this.apiUrl}/rubros/${this.rubro.idRubro}`, rubroData)
         .subscribe({
           next: () => {
             this.snackBar.open('Rubro actualizado correctamente.', 'Cerrar', {

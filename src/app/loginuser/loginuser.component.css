@@ -1,28 +1,213 @@
-mat-card {
-  width: 400px;
-  padding: 20px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-}
-
-.auth-container {
+.login-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: 
-    linear-gradient(rgba(240, 163, 118, 0.85), rgba(255,255,255,0.85)),
-    url('/assets/postu1.jpg') no-repeat center center;
-  background-size: cover;
+  min-height: 100vh;
+  background-color: #ffab62;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    left: -50px;
+    width: 200%;
+    height: 200%;
+    background: url('/assets/waves.svg') no-repeat center center;
+    background-size: cover;
+    opacity: 0.2;
+    z-index: 0;
+  }
 }
 
-.full-width {
+.login-card {
+  position: relative;
+  z-index: 1;
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   width: 100%;
-  margin-bottom: 15px;
-} 
-.alert-warning {
-  background-color: #fff3cd;
-  color: #856404;
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 15px;
+  max-width: 400px;
+  text-align: center;
+
+  h2 {
+    margin-bottom: 1rem;
+    color: #333;
+  }
+
+  .avatar {
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid #f08080;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+    text-align: left;
+
+    label {
+      display: block;
+      margin-bottom: 0.3rem;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.6rem;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .error {
+      color: #d9534f;
+      font-size: 0.85rem;
+      margin-top: 0.3rem;
+    }
+  }
+}
+
+button {
+  background-color: #f29b4b; 
+  color: black;              
+  border: 2px solid black;  
+  padding: 0.8rem 1.8rem;
+  border-radius: 0.6rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background-color: #eba780; 
+    transform: scale(1.03);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+  .links {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    a {
+      color: #f08080;
+      text-decoration: none;
+      font-size: 0.9rem;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .error-message {
+    margin-top: 1rem;
+    color: #d9534f;
+    font-weight: bold;
+  }
+
+  @media (max-width: 768px) {
+  body {
+    background-color: #ffab62 !important; /* fondo institucional */
+  }
+
+  .login-wrapper {
+    background-color: transparent !important;
+  } 
+
+.login-card {
+  position: relative;
+  z-index: 1;
+background-color: transparent;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+
+  .avatar {
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid #f08080;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+    text-align: left;
+
+    label {
+      display: block;
+      margin-bottom: 0.3rem;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.6rem;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .error {
+      color: #ffffff;
+      font-size: 0.85rem;
+      margin-top: 0.3rem;
+    }
+  }
+  button {
+  background-color: #f29b4b; 
+  color: black;              
+  border: 2px solid black;  
+  padding: 0.8rem 1.8rem;
+  border-radius: 0.6rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background-color: #eba780; 
+    transform: scale(1.03);
+  }
+}
+}
+
 }

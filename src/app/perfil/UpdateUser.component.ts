@@ -2,12 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
-import { UserServiceService } from '../loginuser/user-service.service';
-import {
-  HttpClient,
-  HttpErrorResponse,
-  HttpHeaders,
-} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
+import { UserServiceService } from '../perfil/user-service.service';
 
 interface Usuario {
   dni: string;
@@ -28,6 +25,7 @@ interface Usuario {
 })
 export class UpdateUserComponent implements OnInit {
   [x: string]: any;
+  urlApi = environment.local.urlApi;
   usuario: Usuario = {
     dni: '',
     nombre: '',
@@ -43,13 +41,13 @@ export class UpdateUserComponent implements OnInit {
   constructor(
     private usuarioService: UserServiceService,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
   ) {}
 
   ngOnInit(): void {
     const id = Number(sessionStorage.getItem('idPerfil')); // o extraído desde el token
     if (id) {
-      this.http.get<Usuario>(`http://localhost:8080/perfiles/${id}`).subscribe({
+      this.http.get<Usuario>(`${this.urlApi}/perfiles/${id}`).subscribe({
         next: (data: Usuario) => {
           this.usuario = {
             dni: data.dni ?? '',
@@ -60,7 +58,6 @@ export class UpdateUserComponent implements OnInit {
             documentoUrl: data.documentoUrl,
             fotoUrl: data.fotoUrl,
           };
-          console.log('USUARIO', this.usuario);
         },
         error: (err) => {
           console.error('Error al cargar perfil:', err);
@@ -81,14 +78,22 @@ export class UpdateUserComponent implements OnInit {
 
   actualizarUsuario(event: Event) {
     event.preventDefault();
+    const errores = this.usuarioService.validarUsuario(
+      this.usuario,
+      this.foto,
+      this.cv,
+    );
+    if (errores.length > 0) {
+      alert(errores.join('\n'));
+      return;
+    }
     const formData = new FormData();
     for (const key in this.usuario) {
       formData.append(key, (this.usuario as any)[key]);
     }
     if (this.foto) formData.append('foto', this.foto);
-    if (this.cv) formData.append('cv', this.cv);
+    if (this.cv) formData.append('uploadcv', this.cv);
     const id = Number(sessionStorage.getItem('idPerfil'));
-    console.log('ID del usuario:', id);
     this.usuarioService.updateUsuario(id, formData).subscribe({
       next: () => {
         alert('Usuario actualizado correctamente');

@@ -8,21 +8,25 @@ import {
 } from '@angular/fire/auth';
 import { browserSessionPersistence, setPersistence } from 'firebase/auth';
 import { lastValueFrom, Observable } from 'rxjs';
+import { environment } from '../environments/environment';
 @Injectable({
   providedIn: 'root',
 })
 export class AuthServiceService {
-  private backendUrl = 'http://localhost:8080/login';
-
-  constructor(private auth: Auth, private http: HttpClient) {}
+  private apiUrl = environment.local.urlApi;
+  private backendUrl = environment.local.urlApi + '/login';
+  constructor(
+    private auth: Auth,
+    private http: HttpClient,
+  ) {}
 
   checkEmailAndDni(
     email: string,
-    dni: string
+    dni: string,
   ): Observable<{ emailExists: boolean; dniExists: boolean }> {
     return this.http.post<{ emailExists: boolean; dniExists: boolean }>(
-      'http://localhost:8080/perfiles/verificar',
-      { email, dni }
+      this.apiUrl + '/perfiles/verificar',
+      { email, dni },
     );
   }
 
@@ -42,7 +46,7 @@ export class AuthServiceService {
     return lastValueFrom(
       this.http.post<void>(this.backendUrl, user, {
         headers: { 'Content-Type': 'application/json' },
-      })
+      }),
     );
   }
 

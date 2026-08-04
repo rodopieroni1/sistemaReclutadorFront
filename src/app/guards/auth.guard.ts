@@ -5,13 +5,14 @@ import { Router } from '@angular/router';
 import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 
 export const AuthGuard: CanActivateFn = async () => {
+  console.log('ENTRÓ AL AUTHGUARD');
   const router = inject(Router);
   const auth = inject(Auth);
 
   const user = await new Promise((resolve) => {
     onAuthStateChanged(auth, resolve);
   });
-
+  console.log('usuario' + user);
   if (!user) {
     router.navigate(['/login']);
     return false;

@@ -21,11 +21,18 @@
                 </form>
             </div>
             <div *ngIf="!userLoginOn">
-                <h2 class="titulo"><br>Para aplicar en alguna oferta, debes registarte</h2>
+                <div class="warning-box">
+                    <span class="material-icons">warning</span>
+                    <div>
+                        <strong>Importante</strong><br>
+                        Para aplicar en alguna oferta, debes registarte
+                    </div>
+                </div>
+
             </div>
         </header>
     </section>
-    <section class="propuestas">
+    <section class="propuestas" id="propuestas">
         <h2>Propuestas</h2>
         <div *ngIf="busquedaRealizada; else mostrarTodo" class="card-list">
             <mat-card *ngFor="let oferta of resultados" class="card">
@@ -36,7 +43,8 @@
                     </mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
-                    <img mat-card img [src]="'assets/uploads/fotos/' + oferta.fotoOferta" alt="Imagen de la oferta">
+                    <img mat-card img [src]="urlApiTodas + '/uploads/ofertas/' + oferta.fotoOferta"
+                        alt="Imagen de la oferta">
                 </mat-card-content>
                 <mat-card-footer>
                     <div *ngIf="userLoginOn" class="btnAplicar">
@@ -57,12 +65,18 @@
                         </mat-card-subtitle>
                     </mat-card-header>
                     <mat-card-content>
-                        <img mat-card img [src]="'assets/uploads/fotos/' + oferta.fotoOferta" alt="Imagen de la oferta">
+                        <img mat-card img [src]="urlApiTodas+'/uploads/ofertas/' + oferta.fotoOferta"
+                            alt="Imagen de la oferta">
                     </mat-card-content>
                     <mat-card-footer>
                         <div *ngIf="userLoginOn" class="btnAplicar">
                             <button class="btn btn-primary"
                                 (click)="aplicar(oferta.idOferta, oferta.nombreOferta)">Aplicar</button>
+                            &nbsp;
+                            <button mat-raised-button color="accent" (click)="verDetalle(oferta)">
+                                Ver más
+                            </button>
+
                         </div>
                     </mat-card-footer>
                 </mat-card>

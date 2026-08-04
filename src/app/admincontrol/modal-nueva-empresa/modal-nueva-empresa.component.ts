@@ -28,6 +28,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { MatSelectModule } from '@angular/material/select';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-modal-nueva-empresa',
@@ -53,9 +54,11 @@ export class ModalNuevaEmpresaComponent implements OnInit {
   historiaEmpresa: string = '';
   observacionesEmpresa: string = '';
   emailEmpresa: string = '';
+  telefonoEmpresa: string = '';
   cuitEmpresa: number = 1;
   id_empresa: number = 1;
   miFormulario: FormGroup;
+  logoSeleccionado: File | null = null;
   @Output() datosActualizadosEmpresa = new EventEmitter<void>(); // Evento para notificar cambios
   @Input() empresa: {
     nombreEmpresa: string;
@@ -63,6 +66,7 @@ export class ModalNuevaEmpresaComponent implements OnInit {
     id_empresa: number;
     idRubro: number;
     emailEmpresa: string;
+    telefonoEmpresa: string;
     observacionesEmpresa: string;
     direccionEmpresa: string;
     historiaEmpresa: string;
@@ -72,23 +76,26 @@ export class ModalNuevaEmpresaComponent implements OnInit {
     id_empresa: 1,
     idRubro: 1,
     emailEmpresa: '',
+    telefonoEmpresa: '',
     observacionesEmpresa: '',
     direccionEmpresa: '',
     historiaEmpresa: '',
   };
   rubroSeleccionado: any = null;
-  rubros: any[] = []; // Lista de rubros
-  // Agregar propiedad para la acción (crear o actualizar)
+  rubros: any[] = [];
   accion: string | undefined;
-  mostrarIdHidden: boolean = true; // Inicialmente oculto
+  mostrarIdHidden: boolean = true;
+  imagenPreview: string | null = null;
+  isSubmitting = false;
+  imagenDesdeBD: string | null = null;
+  uploadUrl = environment.local.urlApi;
+
   constructor(
     private http: HttpClient,
     private snackBar: MatSnackBar,
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<ModalNuevaEmpresaComponent>,
-    private route: ActivatedRoute,
-
-    @Inject(MAT_DIALOG_DATA) public data: { accion: string; empresa?: any }
+    @Inject(MAT_DIALOG_DATA) public data: { accion: string; empresa?: any },
   ) {
     this.miFormulario = this.fb.group({
       nombreEmpresa: ['', Validators.required],
@@ -97,44 +104,79 @@ export class ModalNuevaEmpresaComponent implements OnInit {
       observacionesEmpresa: [''],
       emailEmpresa: ['', [Validators.required, Validators.email]],
       cuitEmpresa: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
-      id_empresa: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
-      idRubro: ['', Validators.required], // ← nuevo campo agregado
+      telefonoEmpresa: ['', Validators.required],
+      id_empresa: [''],
+      idRubro: ['', Validators.required],
     });
-    this.accion = data.accion; // Recibe la acción (crear o actualizar)
-    this.empresa = data.empresa || null; // Recibe la empresa si es actualización
+    this.accion = data.accion;
+    this.empresa = data.empresa || null;
   }
 
   ngOnInit() {
-    if (this.empresa && Object.keys(this.empresa).length > 0) {
-      this.miFormulario.patchValue({
-        nombreEmpresa: this.data.empresa?.nombre || '',
-        cuitEmpresa: this.data.empresa?.cuit || 0,
-        emailEmpresa: this.data.empresa?.email || '',
-        observacionesEmpresa: this.data.empresa?.observaciones || '',
-        direccionEmpresa: this.data.empresa?.direccion || '',
-        historiaEmpresa: this.data.empresa?.historiaEmpresa || '',
-        id_empresa: this.data.empresa?.id_empresa || 0,
-        idRubro: ['', Validators.required], // ← nuevo campo agregado
-      });
-    }
-
-    // Cargar rubros normalmente
-    this.http.get<any[]>('http://localhost:8080/rubro').subscribe({
-      next: (data) => (this.rubros = data),
+    this.http.get<any[]>(environment.local.urlApi + '/rubro').subscribe({
+      next: (data) => {
+        this.rubros = data;
+        this.asignarDatosFormulario();
+      },
       error: () =>
         this.snackBar.open('Error al cargar rubros', 'Cerrar', {
           duration: 3000,
         }),
     });
-
-    // Reaccionar al cambio de rubro
-    this.miFormulario.get('idRubro')?.valueChanges.subscribe((id: number) => {
-      this.rubroSeleccionado =
-        this.rubros.find((r) => r.idRubro === id) || null;
+    this.miFormulario.get('idRubro')?.valueChanges.subscribe((id) => {
+      if (id) {
+        this.rubroSeleccionado =
+          this.rubros.find((r) => Number(r.idRubro) === Number(id)) || null;
+      }
     });
   }
 
+  asignarDatosFormulario() {
+    this.miFormulario.reset();
+    if (this.data && this.data.empresa) {
+      this.imagenDesdeBD = this.data.empresa.logo || null;
+      const rubroIdRaw =
+        this.data.empresa.idRubro || this.data.empresa.rubro?.idRubro;
+      const rubroId = rubroIdRaw ? Number(rubroIdRaw) : '';
+      this.miFormulario.patchValue({
+        nombreEmpresa:
+          this.data.empresa.nombre || this.data.empresa.nombreEmpresa || '',
+        cuitEmpresa:
+          this.data.empresa.cuit || this.data.empresa.cuitEmpresa || 0,
+        emailEmpresa:
+          this.data.empresa.email || this.data.empresa.emailEmpresa || '',
+        telefonoEmpresa:
+          this.data.empresa.telefono || this.data.empresa.telefonoEmpresa || '',
+        observacionesEmpresa:
+          this.data.empresa.observaciones ||
+          this.data.empresa.observacionesEmpresa ||
+          '',
+        direccionEmpresa:
+          this.data.empresa.direccion ||
+          this.data.empresa.direccionEmpresa ||
+          '',
+        historiaEmpresa:
+          this.data.empresa.historiaEmpresa || this.data.empresa.historia || '',
+        id_empresa: this.data.empresa.id_empresa || this.data.empresa.id || 0,
+        idRubro: rubroId,
+      });
+      if (rubroId && this.rubros.length > 0) {
+        this.rubroSeleccionado =
+          this.rubros.find((r) => Number(r.idRubro) === Number(rubroId)) ||
+          null;
+      }
+    }
+  }
+
   guardar() {
+    Object.keys(this.miFormulario.controls).forEach((key) => {
+      const control = this.miFormulario.get(key);
+    });
+
+    if (this.miFormulario.invalid) {
+      this.miFormulario.markAllAsTouched();
+      return;
+    }
     if (this.accion === 'crear') {
       if (
         this.miFormulario.value.nombreEmpresa === '' ||
@@ -150,7 +192,7 @@ export class ModalNuevaEmpresaComponent implements OnInit {
       }
       this.http
         .get<boolean>(
-          `http://localhost:8080/empresas/existe/${this.miFormulario.value.cuitEmpresa}`
+          `${environment.local.urlApi}/empresas/existe/${this.miFormulario.value.cuitEmpresa}`,
         )
         .subscribe({
           next: (existe: boolean) => {
@@ -158,15 +200,45 @@ export class ModalNuevaEmpresaComponent implements OnInit {
               this.snackBar.open(
                 'El CUIT ingresado ya existe. Por favor, utiliza otro.',
                 'Cerrar',
-                { duration: 3000 }
+                { duration: 3000 },
               );
               return;
             }
-            console.log('this.miFormulario.value:  ', this.miFormulario.value);
-            const empresa = this.miFormulario.value;
+            const formData = new FormData();
+            formData.append('nombre', this.miFormulario.value.nombreEmpresa);
+            formData.append(
+              'direccion',
+              this.miFormulario.value.direccionEmpresa,
+            );
+            formData.append(
+              'historiaEmpresa',
+              this.miFormulario.value.historiaEmpresa,
+            );
+            formData.append(
+              'observaciones',
+              this.miFormulario.value.observacionesEmpresa,
+            );
+            formData.append('email', this.miFormulario.value.emailEmpresa);
+            formData.append('cuit', this.miFormulario.value.cuitEmpresa);
+            formData.append(
+              'telefono',
+              this.miFormulario.value.telefonoEmpresa,
+            );
+            formData.append('idRubro', this.miFormulario.value.idRubro);
+            if (this.logoSeleccionado) {
+              formData.append('logo', this.logoSeleccionado);
+            }
+            console.log('Datos a enviar:', {
+              nombre: this.miFormulario.value.nombreEmpresa,
+              direccion: this.miFormulario.value.direccionEmpresa,
+              historiaEmpresa: this.miFormulario.value.historiaEmpresa,
+              observaciones: this.miFormulario.value.observacionesEmpresa,
+              email: this.miFormulario.value.emailEmpresa,
+              cuit: this.miFormulario.value.cuitEmpresa,
+              telefono: this.miFormulario.value.telefonoEmpresa,
+            });
             this.http
-              .post('http://localhost:8080/empresas/crear', empresa, {
-                headers: { 'Content-Type': 'application/json' },
+              .post(environment.local.urlApi + '/empresas/crear', formData, {
                 observe: 'response',
               })
               .subscribe({
@@ -175,18 +247,16 @@ export class ModalNuevaEmpresaComponent implements OnInit {
                     this.snackBar.open(
                       'Empresa creada satisfactoriamente',
                       'Cerrar',
-                      { duration: 3000 }
+                      { duration: 3000 },
                     );
                     this.datosActualizadosEmpresa.emit();
-                    this.miFormulario.reset();
+                    this.limpiarFormulario();
                   }
                 },
-                error: () => {
-                  this.snackBar.open(
-                    'Error al crear la empresa. Inténtelo nuevamente.',
-                    'Cerrar',
-                    { duration: 3000 }
-                  );
+                error: (err) => {
+                  const mensaje =
+                    err?.error?.message || 'Error al crear la empresa';
+                  this.snackBar.open(mensaje, 'Cerrar', { duration: 3000 });
                 },
               });
           },
@@ -194,12 +264,11 @@ export class ModalNuevaEmpresaComponent implements OnInit {
             this.snackBar.open(
               'Error al verificar el CUIT. Inténtelo nuevamente.',
               'Cerrar',
-              { duration: 3000 }
+              { duration: 3000 },
             );
           },
         });
     } else {
-      console.log('this.miFormulario.value', this.miFormulario.value);
       this.cargarUpdate(this.miFormulario.value);
       this.dialogRef.close();
     }
@@ -210,24 +279,26 @@ export class ModalNuevaEmpresaComponent implements OnInit {
   }
 
   cargarUpdate(empresa: any) {
-    // Usar patchValue para asignar los datos al formulario
-    this.miFormulario.patchValue({
-      nombreEmpresa: empresa.nombreEmpresa,
-      cuitEmpresa: empresa.cuitEmpresa,
-      emailEmpresa: empresa.emailEmpresa,
-      observacionesEmpresa: empresa.observacionesEmpresa,
-      direccionEmpresa: empresa.direccionEmpresa,
-      historiaEmpresa: empresa.historiaEmpresa,
-      id_empresa: empresa.id_empresa,
-    });
+    const formData = new FormData();
+    formData.append('nombre', empresa.nombreEmpresa);
+    formData.append('direccion', empresa.direccionEmpresa);
+    formData.append('historiaEmpresa', empresa.historiaEmpresa);
+    formData.append('observaciones', empresa.observacionesEmpresa);
+    formData.append('email', empresa.emailEmpresa);
+    formData.append('telefono', empresa.telefonoEmpresa);
+    formData.append('cuit', empresa.cuitEmpresa);
+    formData.append('idRubro', this.miFormulario.value.idRubro);
+    if (this.logoSeleccionado) {
+      formData.append('logo', this.logoSeleccionado);
+    }
+
     this.http
       .put(
-        `http://localhost:8080/empresas/actualizar/${empresa.id_empresa}`,
-        empresa,
+        `${environment.local.urlApi}/empresas/actualizar/${empresa.id_empresa}`,
+        formData,
         {
-          headers: { 'Content-Type': 'application/json' },
           observe: 'response',
-        }
+        },
       )
       .subscribe({
         next: (response) => {
@@ -235,19 +306,48 @@ export class ModalNuevaEmpresaComponent implements OnInit {
             this.snackBar.open(
               'Empresa actualizada satisfactoriamente',
               'Cerrar',
-              { duration: 3000 }
+              { duration: 3000 },
             );
             this.datosActualizadosEmpresa.emit();
-            this.miFormulario.reset();
+            this.limpiarFormulario();
           }
         },
         error: () => {
           this.snackBar.open(
             'Error al actualizar la empresa. Inténtelo nuevamente.',
             'Cerrar',
-            { duration: 3000 }
+            { duration: 3000 },
           );
         },
       });
+  }
+
+  limpiarFormulario() {
+    this.miFormulario.reset();
+
+    Object.values(this.miFormulario.controls).forEach((control) => {
+      control.setErrors(null);
+      control.markAsPristine();
+      control.markAsUntouched();
+    });
+
+    this.logoSeleccionado = null;
+    this.imagenPreview = null;
+    this.imagenDesdeBD = null;
+    this.miFormulario.updateValueAndValidity();
+  }
+
+  onLogoSeleccionado(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+    this.logoSeleccionado = input.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagenPreview = reader.result as string;
+    };
+    reader.readAsDataURL(this.logoSeleccionado);
+    console.log('Logo seleccionado:', this.logoSeleccionado.name);
   }
 }

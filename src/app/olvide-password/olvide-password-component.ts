@@ -1,65 +1,90 @@
-import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute } from '@angular/router';
-import { MatExpansionModule } from '@angular/material/expansion';
+import {
+  FormBuilder,
+  Validators,
+  ReactiveFormsModule,
+  FormGroup,
+} from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatCardContent } from '@angular/material/card';
-import { MatCardTitle } from '@angular/material/card';
-import { MatCard } from '@angular/material/card';
-import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-olvide-password-component',
+  standalone: true,
   imports: [
-    MatProgressSpinnerModule,
     CommonModule,
-    MatExpansionModule,
+    ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    ReactiveFormsModule,
-    MatCardContent,
-    MatCardTitle,
-    MatCard,
+    MatSnackBarModule,
+    MatProgressSpinnerModule,
+    RouterModule,
   ],
   templateUrl: './olvide-password-component.html',
-  styleUrl: './olvide-password-component.css',
+  styleUrls: ['./olvide-password-component.css'],
 })
 export class OlvidePasswordComponent {
-  form;
+  form: FormGroup;
   isLoading = false;
-
+  errorMessage = '';
+  private apiUrl = environment.local.urlApi;
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
     private snack: MatSnackBar,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {
     this.form = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      clave: [''],
+      email: [''],
     });
   }
 
-  enviarSolicitud() {
+  ngOnInit(): void {
+    this.form = this.fb.group({
+      clave: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+    });
+
+    this.route.queryParams.subscribe((params) => {
+      if (params['usuario']) {
+        this.form.patchValue({
+          clave: params['usuario'],
+        });
+      }
+    });
+  }
+  enviarSolicitud(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
     this.isLoading = true;
+    this.errorMessage = '';
 
     this.http
-      .post('http://localhost:8080/perfiles/olvide-password', this.form.value)
+      .post<{
+        message: string;
+      }>(this.apiUrl + '/perfiles/olvide-password', this.form.value)
       .subscribe({
-        next: () => {
+        next: (res) => {
           this.isLoading = false;
-          this.snack.open(
-            'Revisá tu correo para restablecer la contraseña',
-            'Cerrar'
-          );
+          const successMessage =
+            res?.message || 'Solicitud enviada correctamente.';
+          this.snack.open(successMessage, 'Cerrar');
         },
         error: (err) => {
           this.isLoading = false;
-          this.snack.open('Error: ' + err.error.message, 'Cerrar');
+          this.errorMessage =
+            err?.error?.message || 'Error al enviar el enlace.';
+          this.snack.open('Error: ' + this.errorMessage, 'Cerrar');
         },
       });
   }

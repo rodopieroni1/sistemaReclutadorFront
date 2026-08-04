@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { environment } from '../../environments/environment';
 @Component({
   selector: 'app-usuariocontrol',
   standalone: true, // Indica que este componente es independiente
@@ -27,8 +28,12 @@ export class UsuarioControlComponent {
   datosActualizadosOferta: any;
   confirmarPassword: string = '';
   isSubmitting = false;
+  apiUrl = environment.local.urlApi;
 
-  constructor(private http: HttpClient, private snackBar: MatSnackBar) {}
+  constructor(
+    private http: HttpClient,
+    private snackBar: MatSnackBar,
+  ) {}
 
   seleccionarArchivo(event: any, tipo: string): void {
     const archivo = event.target.files[0];
@@ -54,19 +59,33 @@ export class UsuarioControlComponent {
       !this.fotoSeleccionada ||
       !this.archivoSeleccionado
     ) {
-      alert('Por favor, completa todos los campos.');
+      this.snackBar.open('Por favor, completa todos los campos.', 'Cerrar', {
+        duration: 4000,
+      });
+
       this.isSubmitting = false;
       return;
     }
     if (this.fotoSeleccionada.size > 5 * 1024 * 1024) {
-      alert(
-        'El archivo de la foto es demasiado grande. Máximo permitido: 5 MB'
+      this.snackBar.open(
+        'El archivo de la foto es demasiado grande. Máximo permitido: 5 MB',
+        'Cerrar',
+        {
+          duration: 4000,
+        },
       );
+
       this.isSubmitting = false;
       return;
     }
     if (this.archivoSeleccionado.size > 5 * 1024 * 1024) {
-      alert('El archivo del CV es demasiado grande. Máximo permitido: 5 MB');
+      this.snackBar.open(
+        'El archivo del CV es demasiado grande. Máximo permitido: 5 MB',
+        'Cerrar',
+        {
+          duration: 4000,
+        },
+      );
       this.isSubmitting = false;
       return;
     }
@@ -74,15 +93,26 @@ export class UsuarioControlComponent {
     const password = this.nuevoUsuario.password;
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{6,}$/;
     if (!passwordRegex.test(password)) {
-      alert(
-        'La contraseña debe tener al menos 6 caracteres e incluir letras y números.'
+      this.snackBar.open(
+        'La contraseña debe tener al menos 6 caracteres e incluir letras y números.',
+        'Cerrar',
+        {
+          duration: 4000,
+        },
       );
+
       this.isSubmitting = false;
       return;
     }
 
     if (this.nuevoUsuario.password !== this.confirmarPassword) {
-      alert('Las contraseñas no coinciden. Por favor, vuelve a ingresarlas.');
+      this.snackBar.open(
+        'Las contraseñas no coinciden. Por favor, vuelve a ingresarlas.',
+        'Cerrar',
+        {
+          duration: 4000,
+        },
+      );
       this.isSubmitting = false;
       return;
     }
@@ -106,7 +136,7 @@ export class UsuarioControlComponent {
 
     // Realizar la solicitud HTTP POST
     this.http
-      .post('http://localhost:8080/perfiles', formData, {
+      .post(this.apiUrl + '/perfiles', formData, {
         observe: 'response', // Observa toda la respuesta HTTP
       })
       .subscribe({
@@ -146,8 +176,8 @@ export class UsuarioControlComponent {
     this.archivoSeleccionado = null;
 
     // Resetear los inputs de archivo manualmente
-    const fotoInput = document.getElementById('fotoInput') as HTMLInputElement;
-    const cvInput = document.getElementById('cvInput') as HTMLInputElement;
+    const fotoInput = document.getElementById('foto') as HTMLInputElement;
+    const cvInput = document.getElementById('cv') as HTMLInputElement;
     if (fotoInput) fotoInput.value = '';
     if (cvInput) cvInput.value = '';
   }

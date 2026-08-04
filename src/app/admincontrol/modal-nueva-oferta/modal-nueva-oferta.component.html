@@ -1,82 +1,71 @@
 <div class="modal-header">
-    <!-- Mostrar "Agregar Oferta" si accion es igual a 'crear' -->
     <h2 *ngIf="accion === 'crear'">Agregar Oferta</h2>
-
-    <!-- Mostrar "Modificar Oferta" si accion es igual a 'modificar' -->
     <h2 *ngIf="accion === 'actualizar'">Modificar Oferta</h2>
 </div>
-
-<form [formGroup]="miFormulario" (ngSubmit)="guardar()">
-    <h3>Oferta</h3>
-    <mat-form-field appearance="fill" class="inputModal">
-        <mat-label>Titulo</mat-label>
-        <input matInput class="inputModal" placeholder="Ingrese un titulo a la oferta" formControlName="nombreOferta"
-            name="nombreOferta" required />
-        <mat-error *ngIf="miFormulario.get('nombreOferta')?.invalid && miFormulario.get('nombreOferta')?.touched">
-            el titulo es obligatoria.
-        </mat-error>
-    </mat-form-field>
-    <!-- Campo: Descripción Oferta -->
-    <mat-form-field appearance="fill" class="inputModal">
-        <mat-label>Descripción de la Oferta</mat-label>
-        <textarea matInput class="inputModal" placeholder="Ingrese la descripción" formControlName="descripcionOferta"
-            name="descripcionOferta" required></textarea>
-        <mat-error
-            *ngIf="miFormulario.get('descripcionOferta')?.invalid && miFormulario.get('descripcionOferta')?.touched">
-            La descripción es obligatoria.
-        </mat-error>
-    </mat-form-field>
-    <!-- Campo: Estado de la Oferta -->
-    <mat-form-field>
-        <mat-label>Estado de la Oferta</mat-label>
-        <mat-select formControlName="estadoOferta">
-            <!-- Si la oferta está activa, mostrar 'Activa' primero -->
-            <ng-container *ngIf="miFormulario.value.estadoOferta; else inactivaPrimero">
-                <mat-option [value]="true">❌ Inactiva</mat-option>
-                <mat-option [value]="false">✅ Activa</mat-option>
-            </ng-container>
-            <!-- Si la oferta está inactiva, mostrar 'Inactiva' primero -->
-            <ng-template #inactivaPrimero>
-                <mat-option [value]="false">✅ Activa</mat-option>
-                <mat-option [value]="true">❌ Inactiva</mat-option>
-            </ng-template>
-        </mat-select>
-    </mat-form-field>
-    <!-- Campo: Empresa -->
-    <mat-form-field>
-        <mat-label>Seleccione Empresa</mat-label>
-        <mat-select formControlName="idEmpresa">
-            <mat-option *ngFor="let empresa of empresas" [value]="empresa.id_empresa">
-                {{ empresa.nombre }}
-            </mat-option>
-            <span *ngIf="miFormulario.value.id_empresa">
-                Empresa: {{ miFormulario.value.id_empresa }}
-            </span>
-        </mat-select>
-    </mat-form-field>
-    <!-- Campo: Foto Oferta -->
-    <div class="file-upload-container">
-        <mat-label for="fotoOferta"></mat-label>
-        <!-- Botón para seleccionar y subir la imagen -->
-        <div class="file-upload-container">
-
-            <!-- Input oculto -->
-            <input type="file" #inputFile accept="image/*" (change)="onArchivoSeleccionado($event)" hidden>
-
-            <!-- Botón para abrir el selector de archivos -->
-            <button color="primary" type="button" (click)="inputFile.click()">
-                Seleccionar y Subir Imagen
-            </button>
-            <!-- Previsualización de la imagen -->
-            <img *ngIf="imagenPreview" [src]="imagenPreview" alt="Previsualización"
-                style="max-width: 200px; margin-top: 10px;" />
-            <img *ngIf="!imagenPreview && imagenDesdeBD" [src]="'assets/uploads/fotos/' + imagenDesdeBD"
-                alt="Imagen actual" style="max-width: 200px; margin-top: 10px;" />
-        </div>
-    </div>
-    <!-- Botones -->
-    <div class="modal-buttons">
-        <button type="button" mat-button (click)="cerrar()">Cancelar</button>
-        <button type="button" mat-raised-button color="primary" (click)="guardar()">Guardar</button>
-    </div>
-</form>
+<mat-dialog-content>
+    <form [formGroup]="miFormulario" (ngSubmit)="guardar()" id="formOferta" class="form-oferta mejorado">
+        <mat-divider></mat-divider>
+        <section class="form-section">
+            <h3>Información de la Oferta</h3>
+            <!-- Título -->
+            <mat-form-field appearance="fill" class="inputModal full-width">
+                <mat-label>Título de la Oferta</mat-label>
+                <input matInput placeholder="Ingrese un título para la oferta" formControlName="nombreOferta" required>
+                <mat-error
+                    *ngIf="miFormulario.get('nombreOferta')?.invalid && miFormulario.get('nombreOferta')?.touched">
+                    El título es obligatorio.
+                </mat-error>
+            </mat-form-field>
+            <!-- Descripción amplia -->
+            <mat-form-field appearance="fill" class="inputModal full-width grande">
+                <mat-label>Descripción de la Oferta</mat-label>
+                <textarea matInput placeholder="Ingrese la descripción completa aquí..."
+                    formControlName="descripcionOferta" rows="12" required></textarea>
+                <mat-hint align="start">Puedes usar viñetas con "-" para listar puntos</mat-hint>
+                <mat-error
+                    *ngIf="miFormulario.get('descripcionOferta')?.invalid && miFormulario.get('descripcionOferta')?.touched">
+                    La descripción es obligatoria.
+                </mat-error>
+            </mat-form-field>
+        </section>
+        <mat-divider></mat-divider>
+        <section class="form-section doble-columna">
+            <!-- Estado -->
+            <mat-form-field appearance="fill">
+                <mat-label>Estado de la Oferta</mat-label>
+                <mat-select formControlName="estadoOferta">
+                    <mat-option [value]="true">✅ Activa</mat-option>
+                    <mat-option [value]="false">❌ Inactiva</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <!-- Empresa -->
+            <mat-form-field appearance="fill">
+                <mat-label>Empresa</mat-label>
+                <mat-select formControlName="idEmpresa">
+                    <mat-option *ngFor="let empresa of empresas" [value]="empresa.id_empresa">
+                        {{ empresa.nombre }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </section>
+        <mat-divider></mat-divider>
+        <section class="form-section">
+            <h3>Imagen de la Oferta</h3>
+            <div class="file-upload-container">
+                <input type="file" #inputFile accept="image/*" (change)="onArchivoSeleccionado($event)" hidden>
+                <button mat-raised-button color="primary" type="button" (click)="inputFile.click()">
+                    Seleccionar / Subir Imagen
+                </button>
+                <div class="preview-container">
+                    <img *ngIf="imagenPreview" [src]="imagenPreview" alt="Previsualización" class="preview-img" />
+                    <img *ngIf="!imagenPreview && imagenDesdeBD" [src]="uploadUrl + '/uploads/logos/' + imagenDesdeBD"
+                        alt="Imagen actual" class="preview-img" />
+                </div>
+            </div>
+        </section>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button type="button" mat-button (click)="cerrar()">Cancelar / Cerrar</button>
+    <button type="submit" mat-raised-button color="primary" form="formOferta">Guardar</button>
+</mat-dialog-actions>
