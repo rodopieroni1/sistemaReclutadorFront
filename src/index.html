@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 
 <head>
   <meta charset="utf-8">
@@ -7,17 +7,34 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- ==========================================
+     1. PRECONEXIONES DE GOOGLE FONTS (ÚNICAS)
+     ========================================== */ -->
+  <link rel="preconnect" href="https://googleapis.com">
+  <link rel="preconnect" href="https://gstatic.com" crossorigin>
+
+  <!-- ==========================================
+     2. HOJAS DE ESTILOS DE FUENTES E ÍCONOS
+     ========================================== */ -->
+  <!-- Íconos de Angular Material -->
+  <link href="https://googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- Enlace de Google Fonts optimizado con las opciones geométricas redondeadas -->
+  <link href="https://googleapis.com" rel="stylesheet">
+
+
+  <!-- Combinación optimizada de fuentes: Inter, Montserrat y Poppins en un solo viaje al servidor -->
+  <link
+    href="https://googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@500;700&family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
 <body class="mat-typography">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <app-root></app-root>
+
+  <!-- JavaScript de Bootstrap (Carga al final para no bloquear el diseño) -->
+  <script src="https://jsdelivr.net"></script>
 </body>
 
 </html>

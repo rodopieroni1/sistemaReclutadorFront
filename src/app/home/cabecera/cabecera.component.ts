@@ -17,6 +17,7 @@ import { Subscription } from 'rxjs';
   styleUrl: './cabecera.component.css',
 })
 export class CabeceraComponent implements OnInit {
+  dropdownAbierto = false;
   [x: string]: any;
   isMenuOpen: boolean = false;
   userLoginOn: boolean = false;
