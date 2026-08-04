@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { environment } from '../../environments/environment';
 @Component({
   selector: 'app-usuariocontrol',
   standalone: true, // Indica que este componente es independiente
@@ -27,7 +28,7 @@ export class UsuarioControlComponent {
   datosActualizadosOferta: any;
   confirmarPassword: string = '';
   isSubmitting = false;
-  apiUrl = 'http://localhost:8080';
+  apiUrl = environment.local.urlApi;
 
   constructor(
     private http: HttpClient,

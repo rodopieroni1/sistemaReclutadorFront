@@ -52,7 +52,7 @@ export class CuerpoComponent implements OnInit {
   searchNombreOferta = new FormControl('');
   searchDescripcionEmpresa = new FormControl('');
   urlApiTodas = environment.local.urlApi;
-  private apiUrl = 'http://localhost:8080/ofertas/buscar';
+  private apiUrl = this.urlApiTodas + '/ofertas/buscar';
   busquedaRealizada: boolean = false;
   resultados: any[] = [];
   ofertaEmpresa = new FormControl('');

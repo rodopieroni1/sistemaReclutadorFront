@@ -13,8 +13,8 @@ import { environment } from '../environments/environment';
   providedIn: 'root',
 })
 export class AuthServiceService {
-  private backendUrl = 'http://localhost:8080/login';
   private apiUrl = environment.local.urlApi;
+  private backendUrl = environment.local.urlApi + '/login';
   constructor(
     private auth: Auth,
     private http: HttpClient,
