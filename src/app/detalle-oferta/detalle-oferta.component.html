@@ -1,3 +1,5 @@
+<app-cabecera></app-cabecera>
+
 <div class="detalle-container" *ngIf="oferta">
     <!-- Header (Ahora solo con los textos del título y empresa) -->
     <div class="detalle-header">
@@ -19,9 +21,11 @@
                         (click)="aplicar(oferta.idOferta, oferta.nombreOferta)">
                         Aplicar ahora
                     </button>
-                    <button mat-stroked-button style="border: 1px solid #f57c00; color: #f57c00;" (click)="volver()">
-                        Volver
-                    </button>
+                    <div class="botones">
+                        <button mat-fab class="btn-volver-flotante" routerLink="/home">
+                            <mat-icon>arrow_back</mat-icon>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="contacto-info">

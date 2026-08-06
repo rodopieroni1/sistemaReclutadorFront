@@ -111,7 +111,7 @@ button {
     color: #f57c00 !important;
     background-color: transparent !important;
     border-radius: 5px !important;
-    padding: 0 16px !important;
+    padding: 10px 10px 10px 16px !important;
     height: 36px !important;
     line-height: 36px !important;
     font-family: 'Poppins', sans-serif !important;
@@ -135,4 +135,49 @@ button {
 
 .header-postulaciones h1 {
     text-align: left;
+}
+
+h1 {
+    margin: 0;
+    font-weight: 600;
+    color: #333;
+}
+
+.btn-volver-flotante {
+    display: flex;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: rgb(102, 90, 90);
+    color: #f09b56;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .18);
+    z-index: 9999;
+}
+
+.btn-volver-flotante:hover {
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    .btn-volver-flotante {
+        display: flex;
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+
+        background: rgb(102, 90, 90);
+        color: #f09b56;
+        z-index: 9999;
+    }
+
+    .btn-volver-flotante:hover {
+        transform: scale(1.1);
+    }
 }

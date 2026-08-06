@@ -1,8 +1,15 @@
+<app-cabecera></app-cabecera>
 <div class="auth-container">
-    <div class="container">
-        <h1>Actualizar Datos del Usuario</h1>
+    <div class="scroll-area">
+        <div class="container">
+            <h1>Actualizar Datos del Usuario</h1>
+            <div class="botones">
+                <button mat-fab class="btn-volver-flotante" routerLink="/home">
+                    <mat-icon>arrow_back</mat-icon>
+                </button>
+            </div>
+        </div>
         <form (submit)="actualizarUsuario($event)">
-
             <label for="dni">DNI:</label>
             <input type="text" id="dni" [(ngModel)]="usuario.dni" name="dni" required>
 
@@ -25,7 +32,6 @@
             <input type="file" id="cv" (change)="seleccionarArchivo($event, 'cv')" accept=".pdf,.doc,.docx">
 
             <button type="submit">Guardar Cambios</button>
-            <a routerLink="/home">← Volver al Home</a>
         </form>
     </div>
 </div>

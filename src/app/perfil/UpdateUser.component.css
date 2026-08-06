@@ -2,21 +2,47 @@
   min-height: 100vh;
   background:
     linear-gradient(rgba(240, 163, 118, 0.85), rgba(255, 255, 255, 0.85)),
-    url('/assets/postulante2.jpg') no-repeat center center;
+    url('/assets/postulante2.jpg') no-repeat center center fixed;
   background-size: cover;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 40px 20px;
+}
+
+.scroll-area {
+  max-height: 90vh;
+  /* límite de altura */
+  overflow-y: auto;
+  /* activa scroll interno */
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .container {
   max-width: 480px;
   width: 100%;
+  max-height: 95vh;
+  /* límite de altura visible */
+  overflow-y: auto;
+  /* scroll interno */
   background: white;
   padding: 24px;
   border-radius: 12px;
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
+}
+
+.scroll-area::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scroll-area::-webkit-scrollbar-thumb {
+  background-color: #f09b56;
+  border-radius: 4px;
+}
+
+.scroll-area::-webkit-scrollbar-track {
+  background-color: #f5f5f5;
 }
 
 h1 {
@@ -54,25 +80,49 @@ input[type="file"] {
   border: none;
 }
 
-button {
-  background-color: #28a745;
-  color: white;
-  padding: 10px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.botones {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-button:hover {
-  background-color: #218838;
+.btn-volver-flotante {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  background: rgb(102, 90, 90) !important;
+  color: #f09b56 !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .20);
+  z-index: 99999;
 }
 
-a {
-  text-align: center;
-  margin-top: 10px;
-  font-size: 0.85rem;
-  color: #555;
-  text-decoration: none;
+.btn-volver-flotante mat-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  font-size: 24px;
+}
+
+.btn-volver-flotante,
+.btn-volver-flotante:focus,
+.btn-volver-flotante:focus-visible,
+.btn-volver-flotante:active {
+  border: none !important;
+  outline: none !important;
 }

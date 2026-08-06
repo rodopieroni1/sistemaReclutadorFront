@@ -238,8 +238,31 @@ ul.mi-menu-desplegable {
   .header-superior {
     height: auto;
     flex-direction: column;
-    padding: 15px;
-    gap: 15px;
+  }
+
+  .marca {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    padding-left: 20px;
+  }
+
+  .logo a {
+    align-items: left;
+  }
+
+  .logoIcono {
+    height: 55px;
+    width: auto;
+  }
+
+  .logoLetras {
+    display: flex;
+    align-items: left;
+    width: 120px;
+    max-width: 80%;
+    margin-top: 35px;
   }
 
   .social-menu {

@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router'; // 👈 IMPORTANTE
 import { NavigationService } from '../navigation.service.ts.service';
 import { environment } from '../../environments/environment';
+import { CabeceraComponent } from '../home/cabecera/cabecera.component';
 @Component({
   selector: 'app-detalle-oferta',
   standalone: true,
@@ -20,6 +21,7 @@ import { environment } from '../../environments/environment';
     MatIcon,
     MatIconModule,
     RouterModule,
+    CabeceraComponent,
   ],
   templateUrl: './detalle-oferta.component.html',
   styleUrl: './detalle-oferta.component.css',
@@ -43,10 +45,6 @@ export class DetalleOfertaComponent {
       if (ofertaGuardada) {
         this.oferta = JSON.parse(ofertaGuardada);
       }
-    }
-
-    if (!this.oferta) {
-      this.volver();
     }
   }
 
@@ -81,7 +79,9 @@ export class DetalleOfertaComponent {
 
     this.aplicacionService.aplicar(idOferta, idPerfil).subscribe({
       next: (response: any) => {
-        const message = response?.message ?? (typeof response === 'string' ? response : 'Aplicación procesada.');
+        const message =
+          response?.message ??
+          (typeof response === 'string' ? response : 'Aplicación procesada.');
         this.snackBar.open(message, 'Cerrar', { duration: 5000 });
 
         this.isBtnAplicar = true;
@@ -95,11 +95,5 @@ export class DetalleOfertaComponent {
         );
       },
     });
-  }
-
-  volver(): void {
-    const destino = this.navigationService.getPreviousUrl();
-    console.log('Navegando a:', destino);
-    this.router.navigate([destino]);
   }
 }

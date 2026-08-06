@@ -33,7 +33,7 @@
         </header>
     </section>
     <section class="propuestas" id="propuestas">
-        <h2>Propuestas</h2>
+        <h2>Ofertas Activas</h2>
         <div *ngIf="busquedaRealizada; else mostrarTodo" class="card-list">
             <mat-card *ngFor="let oferta of resultados" class="card">
                 <mat-card-header>
@@ -84,8 +84,17 @@
         </ng-template>
     </section>
     <div class="pagination">
-        <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
-        <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
-        <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === getTotalPages()">Siguiente</button>
+        <button mat-fab color="primary" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">
+            <mat-icon>chevron_left</mat-icon>
+        </button>
+
+        <span class="page-info">
+            &nbsp;&nbsp;{{ currentPage }} &nbsp; / &nbsp;{{ getTotalPages() }} &nbsp;&nbsp;
+        </span>
+
+        <button mat-fab color="primary" (click)="changePage(currentPage + 1)"
+            [disabled]="currentPage === getTotalPages()">
+            <mat-icon>chevron_right</mat-icon>
+        </button>
     </div>
 </body>

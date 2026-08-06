@@ -5,6 +5,8 @@ import { RouterModule, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { UserServiceService } from '../perfil/user-service.service';
+import { CabeceraComponent } from '../home/cabecera/cabecera.component';
+import { MatIcon } from '@angular/material/icon';
 
 interface Usuario {
   dni: string;
@@ -19,7 +21,13 @@ interface Usuario {
 @Component({
   selector: 'app-update-user',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    CabeceraComponent,
+    MatIcon,
+  ],
   templateUrl: './UpdateUser.component.html',
   styleUrls: ['./UpdateUser.component.css'],
 })

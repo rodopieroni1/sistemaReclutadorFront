@@ -125,10 +125,21 @@ mat-select {
 
 mat-card-content {
   flex-grow: 1;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow: hidden;
 }
 
 mat-card-footer {
   margin-top: auto;
+}
+
+mat-card {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
 .btnAplicar {
@@ -143,6 +154,21 @@ mat-card-footer {
   font-family: "Shippori Mincho", serif;
   font-weight: 400;
   font-style: normal;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
+  margin: 40px 0;
+}
+
+.page-info {
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  color: #e8873c;
+  font-weight: 500;
 }
 
 /* ==========================================
@@ -183,5 +209,90 @@ mat-card-footer {
   .input-expandido,
   button[mat-raised-button] {
     width: 100%;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    margin: 40px 0;
+  }
+
+  .page-info {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    color: #e8873c;
+    font-weight: 500;
+  }
+
+  button[mat-fab] {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
+    transition: all 0.25s ease;
+  }
+
+  button[mat-fab]:hover:not(:disabled) {
+    transform: scale(1.08);
+    background-color: #f09b56;
+  }
+
+  button[mat-fab]:disabled {
+    background-color: #ddd;
+    color: #999;
+    box-shadow: none;
+  }
+
+  .page-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    background: #f09b56;
+    color: white;
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    box-shadow: 0 3px 8px rgba(0, 0, 0, .18);
+    transition: all .25s ease;
+  }
+
+  .page-btn:hover:not(:disabled) {
+    transform: scale(1.08);
+    background: #e8873c;
+  }
+
+  .page-btn:disabled {
+    background: #ddd;
+    color: #999;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .pagination span {
+    font-family: 'Roboto', sans-serif;
+    font-size: 15px;
+    color: #e8873c;
+  }
+
+  .btnAplicar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: nowrap;
+  }
+
+  .btnAplicar button {
+    flex: 1;
+    max-width: 120px;
   }
 }

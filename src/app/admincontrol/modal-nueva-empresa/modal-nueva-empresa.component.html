@@ -5,9 +5,7 @@
 <mat-dialog-content>
     <form [formGroup]="miFormulario" (ngSubmit)="guardar()" id="formEmpresa" class="form-empresa mejorado">
         <input type="hidden" formControlName="id_empresa">
-        <hr class="mat-divider">
         <section class="form-section">
-            <h3>Información de la Empresa</h3>
             <mat-form-field appearance="fill" class="full-width">
                 <mat-label>Nombre de la Empresa</mat-label>
                 <input matInput placeholder="Ingrese el nombre de la empresa" formControlName="nombreEmpresa">
@@ -23,7 +21,6 @@
                 </textarea>
             </mat-form-field>
         </section>
-        <hr class="mat-divider">
         <section class="form-section doble-columna">
             <mat-form-field appearance="fill">
                 <mat-label>Dirección</mat-label>
@@ -65,7 +62,6 @@
                 </mat-error>
             </mat-form-field>
         </section>
-        <hr class="mat-divider">
         <section class="form-section">
             <div class="file-upload-container">
                 <input type="file" #inputLogo accept="image/*" (change)="onLogoSeleccionado($event)" hidden>
@@ -86,7 +82,6 @@
 
             </div>
         </section>
-        <hr class="mat-divider">
         <section class="form-section">
             <mat-form-field appearance="fill" class="full-width">
                 <mat-label>Observaciones</mat-label>
