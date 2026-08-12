@@ -5,10 +5,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { environment } from '../../environments/environment';
+import { MatIcon } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-usuariocontrol',
   standalone: true, // Indica que este componente es independiente
-  imports: [FormsModule], // Agrega FormsModule aquí
+  imports: [FormsModule, MatIcon, RouterLink], // Agrega FormsModule y MatIcon aquí
   templateUrl: './usuariocontrol.component.html',
   styleUrls: ['./usuariocontrol.component.css'],
 })

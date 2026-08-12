@@ -4,10 +4,7 @@
 </div>
 <mat-dialog-content>
     <form [formGroup]="miFormulario" (ngSubmit)="guardar()" id="formOferta" class="form-oferta mejorado">
-        <mat-divider></mat-divider>
         <section class="form-section">
-            <h3>Información de la Oferta</h3>
-            <!-- Título -->
             <mat-form-field appearance="fill" class="inputModal full-width">
                 <mat-label>Título de la Oferta</mat-label>
                 <input matInput placeholder="Ingrese un título para la oferta" formControlName="nombreOferta" required>
@@ -28,7 +25,6 @@
                 </mat-error>
             </mat-form-field>
         </section>
-        <mat-divider></mat-divider>
         <section class="form-section doble-columna">
             <!-- Estado -->
             <mat-form-field appearance="fill">
@@ -48,7 +44,6 @@
                 </mat-select>
             </mat-form-field>
         </section>
-        <mat-divider></mat-divider>
         <section class="form-section">
             <h3>Imagen de la Oferta</h3>
             <div class="file-upload-container">

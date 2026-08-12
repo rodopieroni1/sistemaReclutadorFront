@@ -8,57 +8,74 @@
                 <img class="logoTexto" src="assets/logoLetras.png">
             </a>
         </div>
+
         <div class="acciones">
+            <!-- 1. Menú de Redes Sociales y Login/Registro -->
             <nav class="social-menu">
-                <a href="https://www.facebook.com/carina.difonzo.3" target="_blank" rel="noopener">
+                <a href="https://facebook.com" target="_blank" rel="noopener">
                     <img src="../../../assets/facebook-icon.png" alt="Facebook">
                 </a>
-                <a href="https://www.instagram.com/carina.difonzo/" target="_blank" rel="noopener">
+                <a href="https://instagram.com" target="_blank" rel="noopener">
                     <img src="../../../assets/instagram-icon.png" alt="Instagram">
                 </a>
-                <a href="https://www.linkedin.com/company/carina-di-fonzo-organizaci-n-&-empleo/" target="_blank"
-                    rel="noopener">
+                <a href="https://linkedin.com" target="_blank" rel="noopener">
                     <img src="../../../assets/linkedin-icon.png" alt="LinkedIn">
                 </a>
-                <!-- LOGIN / REGISTRO visibles SIEMPRE -->
+
                 <ng-container *ngIf="!userLoginOn">
                     <a class="nav-link d-inline" [routerLink]="'/login-user'">Iniciar Sesión</a>
                     <a class="nav-link d-inline" [routerLink]="'/usuariocontrol'">Registrarse</a>
                 </ng-container>
-                <!-- PERFIL cuando está logueado -->
-                <div *ngIf="userLoginOn" class="perfil dropdown">
-                    <a class="d-flex align-items-center dropdown-toggle" href="#" id="perfilDropdownHeader"
-                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            </nav>
+
+            <div class="contenedor-usuario-ancla" style="position: relative;">
+                <!-- 🟢 Cambiado: Eliminamos la clase 'dropdown' de este div -->
+                <div *ngIf="userLoginOn" class="perfil">
+                    <a class="d-flex flex-column align-items-center" href="javascript:void(0)"
+                        style="text-decoration: none; color: inherit; cursor: pointer; gap: 4px;"
+                        (click)="dropdownAbierto = !dropdownAbierto">
                         <img [src]="userProfileImage" class="perfil-img rounded-circle">
-                        <span class="ms-2">{{ userName }}</span>
+                        <span class="ms-0"
+                            style="font-family: 'Comfortaa', sans-serif; font-weight: 700; font-size: 13px;">
+                            {{ userName }}
+                        </span>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li class="dropdown-header text-center">
+
+                    <!-- 🟢 CLAVE: Reemplazamos 'dropdown-menu' por 'mi-menu-desplegable' -->
+                    <ul class="mi-menu-desplegable" *ngIf="dropdownAbierto">
+                        <li class="mi-menu-header text-center">
                             <strong>{{ userName }}</strong>
                         </li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item" (click)="editarPerfil()">Editar Perfil</a></li>
-                        <li><a class="dropdown-item" (click)="misAplicaciones()">Mis Aplicaciones</a></li>
-                        <li><a class="dropdown-item text-danger" (click)="logout()">Cerrar Sesión</a></li>
+                        <!-- 🟢 CLAVE: Reemplazamos 'dropdown-item' por 'mi-item-menu' -->
+                        <li><a class="mi-item-menu" (click)="editarPerfil(); dropdownAbierto = false">Editar Perfil</a>
+                        </li>
+                        <li><a class="mi-item-menu" (click)="misAplicaciones(); dropdownAbierto = false">Mis
+                                Aplicaciones</a></li>
+                        <li><a class="mi-item-menu text-danger" (click)="logout(); dropdownAbierto = false">Cerrar
+                                Sesión</a></li>
                     </ul>
                 </div>
+            </div>
 
-            </nav>
+
         </div>
     </div>
-    <!-- FILA INFERIOR -->
 
+    <!-- FILA INFERIOR: MENÚ PRINCIPAL -->
     <nav class="menu-principal">
-
-        <a routerLink="/home">Inicio</a>
-
-        <a (click)="irAOfertas()">Buscar ofertas</a>
-
-        <a routerLink="/empresas">Empresas</a>
-
-        <a (click)="irAContactos()">Contacto</a>
-
+        <a routerLink="/home"><mat-icon>home</mat-icon>Inicio</a>
+        <a (click)="irAOfertas()"><mat-icon>work</mat-icon>Ofertas</a>
+        <a routerLink="/empresas"><mat-icon>business</mat-icon>Empresas</a>
+        <a (click)="irAContactos()"><mat-icon>contact_phone</mat-icon>Contacto</a>
     </nav>
+    <nav class="menu-principal-media">
+        <a routerLink="/home"><mat-icon>home</mat-icon></a>
+        <a (click)="irAOfertas()"><mat-icon>work</mat-icon></a>
+        <a routerLink="/empresas"><mat-icon>business</mat-icon></a>
+        <a (click)="irAContactos()"><mat-icon>contact_phone</mat-icon></a>
+    </nav>
+
 </header>

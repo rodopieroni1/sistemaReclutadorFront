@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MisAplicacionesServiceService } from './mis-aplicaciones-service.service';
 import { Router, RouterModule } from '@angular/router';
+import { MatIcon } from '@angular/material/icon';
+import { CabeceraComponent } from '../home/cabecera/cabecera.component';
 
 @Component({
   selector: 'app-mis-aplicaciones',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, MatIcon, CabeceraComponent],
   templateUrl: './mis-aplicaciones.component.html',
   styleUrl: './mis-aplicaciones.component.css',
 })

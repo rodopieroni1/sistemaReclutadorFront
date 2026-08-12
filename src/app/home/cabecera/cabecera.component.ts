@@ -8,15 +8,18 @@ import { NavigationServiceService } from '../../navigation-service.service';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { MatIcon } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-cabecera',
   standalone: true,
-  imports: [CommonModule, RouterModule, CommonModule],
+  imports: [CommonModule, RouterModule, CommonModule, MatIcon, MatIconModule],
   templateUrl: './cabecera.component.html',
   styleUrl: './cabecera.component.css',
 })
 export class CabeceraComponent implements OnInit {
+  dropdownAbierto = false;
   [x: string]: any;
   isMenuOpen: boolean = false;
   userLoginOn: boolean = false;

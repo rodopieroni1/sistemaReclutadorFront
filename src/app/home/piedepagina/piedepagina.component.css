@@ -8,7 +8,6 @@
   max-width: 1400px;
   margin: auto;
   padding: 45px 40px;
-
   display: grid;
   grid-template-columns: 2fr 1fr 1.4fr 1fr;
   gap: 40px;
@@ -37,28 +36,41 @@
   transform: translateX(5px);
 }
 
-.marca-footer img {
+/* Marca */
+
+.marca-footer {
+  align-items: center;
+  text-align: center;
+}
+
+.img-logo {
   width: 220px;
   margin-bottom: 15px;
 }
 
 .marca-footer p {
+  max-width: 320px;
   color: #cfcfcf;
   line-height: 1.6;
 }
+
+/* Contacto */
 
 .footer-columna p {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #d5d5d5;
   margin-bottom: 15px;
+  color: #d5d5d5;
 }
 
-.footer-columna mat-icon {
+.footer-columna mat-icon,
+.footer-columna .material-icons {
   color: #f4a460;
   font-size: 20px;
 }
+
+/* Redes */
 
 .footer-redes {
   display: flex;
@@ -69,12 +81,10 @@
   width: 45px;
   height: 45px;
   display: flex;
-  align-items: center;
   justify-content: center;
-
+  align-items: center;
   border: 1px solid rgba(255, 255, 255, .25);
   border-radius: 50%;
-
   transition: .3s;
 }
 
@@ -89,22 +99,23 @@
   height: 22px;
 }
 
+/* Copyright */
+
 .footer-copy {
-  text-align: center;
   padding: 20px;
+  text-align: center;
   border-top: 1px solid rgba(255, 255, 255, .1);
   color: #bfbfbf;
   font-size: .9rem;
 }
 
-@media(max-width:900px) {
+/* Responsive */
+
+@media (max-width: 900px) {
 
   .footer-contenedor {
-
     grid-template-columns: 1fr;
-
     text-align: center;
-
   }
 
   .footer-columna {
@@ -114,9 +125,4 @@
   .footer-columna p {
     justify-content: center;
   }
-
-  .marca-footer img {
-    width: 190px;
-  }
-
 }

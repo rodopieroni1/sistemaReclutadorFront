@@ -1,3 +1,17 @@
+.modal-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 20px 24px 0;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
 .form-empresa.mejorado {
   max-width: 750px;
   margin: auto;
@@ -43,16 +57,6 @@ textarea {
   object-fit: cover;
   border-radius: 6px;
   border: 1px solid #aaa;
-}
-
-.modal-header {
-  padding: 20px 24px 0;
-}
-
-.modal-header h2 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 600;
 }
 
 @media (max-width:768px) {

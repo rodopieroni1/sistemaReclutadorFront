@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { User } from 'firebase/auth';
-import { catchError, Observable, throwError, of } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, throwError, of } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -9,6 +9,9 @@ import { environment } from '../../environments/environment';
 })
 export class UserServiceService {
   [x: string]: any;
+  private usuarioPerfilSubject = new BehaviorSubject<any>(null);
+  usuarioPerfil$ = this.usuarioPerfilSubject.asObservable();
+
   constructor(private http: HttpClient) {}
 
   getUsers(id: number): Observable<User> {
@@ -94,5 +97,9 @@ export class UserServiceService {
     return throwError(
       () => new Error('Algo Fallo por favor intente nuevamente'),
     );
+  }
+
+  notificarCambioPerfil(usuarioActualizado: any) {
+    this.usuarioPerfilSubject.next(usuarioActualizado);
   }
 }

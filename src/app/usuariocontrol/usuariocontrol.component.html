@@ -1,40 +1,112 @@
 <div class="auth-container">
-    <div class="container">
-        <h1>Registrar Usuario</h1>
-        <form #formUsuario="ngForm" (ngSubmit)="crearUsuario($event)">
-
-            <label for="dni">DNI:</label>
-            <input type="text" id="dni" name="dni" [(ngModel)]="nuevoUsuario.dni" required>
-
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" name="nombre" [(ngModel)]="nuevoUsuario.nombre" required>
-
-            <label for="direccion">Dirección:</label>
-            <input type="text" id="direccion" name="direccion" [(ngModel)]="nuevoUsuario.direccion" required>
-
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" [(ngModel)]="nuevoUsuario.email" required>
-
-            <!-- Columna 3 y 4: Acceso -->
-            <label for="clave">Usuario:</label>
-            <input type="text" id="clave" name="clave" [(ngModel)]="nuevoUsuario.clave" required>
-
-            <label for="contraseña">Contraseña:</label>
-            <input type="password" id="contraseña" name="contraseña" [(ngModel)]="nuevoUsuario.password" required>
-
-            <label for="confirmarPassword">Reingrese Contraseña:</label>
-            <input type="password" name="confirmarPassword" [(ngModel)]="confirmarPassword"
-                placeholder="Confirmar contraseña" required>
-
-            <!-- Columna 5: Archivos y acciones -->
-            <label for="foto">Foto de perfil:</label>
-            <input type="file" id="foto" (change)="seleccionarArchivo($event, 'foto')" accept="image/*">
-
-            <label for="cv">Documento (.pdf,.doc,.docx):</label>
-            <input type="file" id="cv" (change)="seleccionarArchivo($event, 'cv')" accept=".pdf,.doc,.docx">
-
-            <button type="submit" [disabled]="isSubmitting">Crear Usuario</button>
-            <a href="/login-user">← Volver al inicio de sesión</a>
-        </form>
+    <div class="botones">
+        <button mat-fab class="btn-volver-flotante" routerLink="/login-user">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
     </div>
+    <div class="header">
+        <div class="avatar">
+            <mat-icon>person_add</mat-icon>
+        </div>
+        <h1>Crear Cuenta</h1>
+        <p>Complete sus datos para registrarse</p>
+    </div>
+
+    <!-- El formulario envuelve toda el área de scroll y campos -->
+    <form #formUsuario="ngForm" (ngSubmit)="crearUsuario($event)" class="scroll-area">
+        <div class="container">
+
+            <div class="section-title">
+                <mat-icon>badge</mat-icon>
+                <span>Datos Personales</span>
+            </div>
+
+            <div class="campo">
+                <label>DNI</label>
+                <div class="input-icon">
+                    <mat-icon>badge</mat-icon>
+                    <input placeholder="dni" type="text" [(ngModel)]="nuevoUsuario.dni" name="dni" required>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label>Nombre Completo</label>
+                <div class="input-icon">
+                    <mat-icon>person</mat-icon>
+                    <input placeholder="nombre" type="text" [(ngModel)]="nuevoUsuario.nombre" name="nombre" required>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label>Dirección</label>
+                <div class="input-icon">
+                    <mat-icon>home</mat-icon>
+                    <input placeholder="dirección" type="text" [(ngModel)]="nuevoUsuario.direccion" name="direccion"
+                        required>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label>Correo electrónico</label>
+                <div class="input-icon">
+                    <mat-icon>mail</mat-icon>
+                    <input placeholder="email" type="email" [(ngModel)]="nuevoUsuario.email" name="email" required>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label>Usuario</label>
+                <div class="input-icon">
+                    <mat-icon>account_circle</mat-icon>
+                    <input placeholder="usuario" type="text" [(ngModel)]="nuevoUsuario.clave" name="clave" required>
+                </div>
+            </div>
+
+            <div class="section-title">
+                <mat-icon>lock</mat-icon>
+                <span>Seguridad</span>
+            </div>
+
+            <div class="campo">
+                <label>Contraseña</label>
+                <div class="input-icon">
+                    <mat-icon>lock</mat-icon>
+                    <input placeholder="contraseña" type="password" [(ngModel)]="nuevoUsuario.password"
+                        name="contraseña" required>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label>Confirmar contraseña</label>
+                <div class="input-icon">
+                    <mat-icon>verified_user</mat-icon>
+                    <input placeholder="confirmar contraseña" type="password" [(ngModel)]="confirmarPassword"
+                        name="confirmarPassword" required>
+                </div>
+            </div>
+
+            <div class="section-title">
+                <mat-icon>folder</mat-icon>
+                <span>Archivos</span>
+            </div>
+
+            <div class="upload-box">
+                <label>Foto de perfil</label>
+                <input placeholder="seleccionar foto" type="file" (change)="seleccionarArchivo($event,'foto')"
+                    accept="image/*">
+            </div>
+
+            <div class="upload-box">
+                <label>Currículum Vitae</label>
+                <input placeholder="seleccionar CV" type="file" (change)="seleccionarArchivo($event,'cv')"
+                    accept=".pdf,.doc,.docx">
+            </div>
+
+            <!-- Si quieres que el botón se deshabilite si el formulario es inválido, puedes agregar: [disabled]="isSubmitting || !formUsuario.valid" -->
+            <button class="btn-guardar" type="submit" [disabled]="isSubmitting">
+                <mat-icon>person_add</mat-icon>
+                Crear Usuario
+            </button>
+        </div>
+    </form>
 </div>
