@@ -38,20 +38,19 @@
   }
 
   .avatar {
-    width: 140px;
-    height: 140px;
-    margin: 0 auto 1.5rem;
-    border-radius: 50%;
+    width: 150px;
+    height: 110px;
+    margin: 0 auto 1rem;
     overflow: hidden;
-    border: 4px solid #f08080;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
   }
+
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: transparent;
+  }
+
 
   .form-group {
     margin-bottom: 1rem;
@@ -80,9 +79,9 @@
 }
 
 button {
-  background-color: #f29b4b; 
-  color: black;              
-  border: 2px solid black;  
+  background-color: #f29b4b;
+  color: black;
+  border: 2px solid black;
   padding: 0.8rem 1.8rem;
   border-radius: 0.6rem;
   font-size: 1.1rem;
@@ -92,7 +91,7 @@ button {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 
   &:hover {
-    background-color: #eba780; 
+    background-color: #eba780;
     transform: scale(1.03);
   }
 
@@ -108,64 +107,52 @@ button {
   }
 }
 
-  .links {
-    margin-top: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+.links {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 
-    a {
-      color: #f08080;
-      text-decoration: none;
-      font-size: 0.9rem;
+  a {
+    color: #f08080;
+    text-decoration: none;
+    font-size: 0.9rem;
 
-      &:hover {
-        text-decoration: underline;
-      }
+    &:hover {
+      text-decoration: underline;
     }
   }
+}
 
-  .error-message {
-    margin-top: 1rem;
-    color: #d9534f;
-    font-weight: bold;
-  }
+.error-message {
+  margin-top: 1rem;
+  color: #d9534f;
+  font-weight: bold;
+}
 
-  @media (max-width: 768px) {
+@media (max-width: 768px) {
   body {
-    background-color: #ffab62 !important; /* fondo institucional */
+    background-color: #ffab62 !important;
+    /* fondo institucional */
   }
 
   .login-wrapper {
     background-color: transparent !important;
-  } 
-
-.login-card {
-  position: relative;
-  z-index: 1;
-background-color: transparent;
-  padding: 2rem;
-  border-radius: 1rem;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
-  text-align: center;
-
-  .avatar {
-    width: 140px;
-    height: 140px;
-    margin: 0 auto 1.5rem;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 4px solid #f08080;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
   }
+
+  .login-card {
+    position: relative;
+    z-index: 1;
+    background-color: transparent;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+
+
 
   .form-group {
     margin-bottom: 1rem;
@@ -191,23 +178,22 @@ background-color: transparent;
       margin-top: 0.3rem;
     }
   }
+
   button {
-  background-color: #f29b4b; 
-  color: black;              
-  border: 2px solid black;  
-  padding: 0.8rem 1.8rem;
-  border-radius: 0.6rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: #f29b4b;
+    color: black;
+    border: 2px solid black;
+    padding: 0.8rem 1.8rem;
+    border-radius: 0.6rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 
-  &:hover {
-    background-color: #eba780; 
-    transform: scale(1.03);
+    &:hover {
+      background-color: #eba780;
+      transform: scale(1.03);
+    }
   }
-}
-}
-
 }

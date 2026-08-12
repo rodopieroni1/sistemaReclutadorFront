@@ -123,6 +123,10 @@ header {
 }
 
 .menu-principal a {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
   font-family: 'Comfortaa', sans-serif;
   font-size: 13px;
   font-weight: 700;
@@ -134,6 +138,8 @@ header {
   transition: all .25s ease;
   cursor: pointer;
 }
+
+
 
 .menu-principal a:hover {
   color: #9A4F00;
@@ -154,6 +160,10 @@ header {
 
 .menu-principal a:hover::after {
   width: 100%;
+}
+
+.menu-principal-media {
+  display: none;
 }
 
 /* ==========================================
@@ -235,6 +245,60 @@ ul.mi-menu-desplegable {
    6. MENU RESPONSIVO (MÓVILES)
    ========================================== */
 @media (max-width: 768px) {
+  .menu-principal-media {
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    border-top: 1px solid rgba(0, 0, 0, .10);
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .menu-principal-media a {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Comfortaa', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: #222;
+    text-decoration: none;
+    position: relative;
+    transition: all .25s ease;
+    cursor: pointer;
+  }
+
+
+
+  .menu-principal-media a:hover {
+    color: #9A4F00;
+    transform: scale(1.03);
+  }
+
+  .menu-principal-media a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 0;
+    height: 2.5px;
+    border-radius: 4px;
+    background: #9A4F00;
+    transition: width 0.25s ease;
+  }
+
+  .menu-principal-media a:hover::after {
+    width: 100%;
+  }
+
+  .menu-principal {
+    display: none;
+  }
+
   .header-superior {
     height: auto;
     flex-direction: column;
@@ -246,10 +310,6 @@ ul.mi-menu-desplegable {
     align-items: center;
     width: 100%;
     padding-left: 20px;
-  }
-
-  .logo a {
-    align-items: left;
   }
 
   .logoIcono {

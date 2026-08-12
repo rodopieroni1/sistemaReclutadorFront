@@ -80,7 +80,18 @@ export class UpdateUserComponent implements OnInit {
     const file = input.files?.[0];
 
     if (file) {
-      tipo === 'foto' ? (this.foto = file) : (this.cv = file);
+      if (tipo === 'foto') {
+        this.foto = file;
+
+        // Crear una previsualización local inmediata de la imagen
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.usuario.fotoUrl = reader.result as string; // Esto actualiza el <img [src]> en tiempo real
+        };
+        reader.readAsDataURL(file);
+      } else {
+        this.cv = file;
+      }
     }
   }
 
@@ -95,17 +106,34 @@ export class UpdateUserComponent implements OnInit {
       alert(errores.join('\n'));
       return;
     }
+
     const formData = new FormData();
     for (const key in this.usuario) {
-      formData.append(key, (this.usuario as any)[key]);
+      // Evitamos enviar la fotoUrl vieja o en base64 corrupta como texto al backend
+      if (key !== 'fotoUrl') {
+        formData.append(key, (this.usuario as any)[key]);
+      }
     }
+
     if (this.foto) formData.append('foto', this.foto);
     if (this.cv) formData.append('uploadcv', this.cv);
+
     const id = Number(sessionStorage.getItem('idPerfil'));
     this.usuarioService.updateUsuario(id, formData).subscribe({
-      next: () => {
+      next: (respuesta: any) => {
         alert('Usuario actualizado correctamente');
-        this.router.navigate(['/editar-perfil']);
+
+        // Si tu backend te devuelve la nueva URL de la imagen en la respuesta, úsala.
+        // Si no te la devuelve, le añadimos un parámetro aleatorio (?v=fecha) a la URL actual para limpiar la caché del navegador:
+        if (this.usuario.fotoUrl && !this.usuario.fotoUrl.startsWith('data:')) {
+          const timestamp = new Date().getTime();
+          const separador = this.usuario.fotoUrl.includes('?') ? '&' : '?';
+          this.usuario.fotoUrl = `${this.usuario.fotoUrl.split('?')[0]}${separador}v=${timestamp}`;
+        }
+
+        this.usuarioService.notificarCambioPerfil(this.usuario);
+        this.foto = null;
+        this.cv = null;
       },
       error: (err) => {
         console.error('Error al actualizar usuario:', err);

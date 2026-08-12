@@ -1,37 +1,89 @@
-<app-cabecera></app-cabecera>
 <div class="auth-container">
+    <div class="botones">
+        <button mat-fab class="btn-volver-flotante" routerLink="/home">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+    </div>
     <div class="scroll-area">
         <div class="container">
-            <h1>Actualizar Datos del Usuario</h1>
-            <div class="botones">
-                <button mat-fab class="btn-volver-flotante" routerLink="/home">
-                    <mat-icon>arrow_back</mat-icon>
-                </button>
+            <div class="header">
+                <div class="avatar">
+                    <img *ngIf="usuario.fotoUrl" [src]="usuario.fotoUrl" alt="Foto">
+                    <mat-icon *ngIf="!usuario.fotoUrl">
+                        person
+                    </mat-icon>
+                </div>
+                <h1>Mi Perfil</h1>
+                <p>Actualiza tu información personal</p>
             </div>
+            <form (submit)="actualizarUsuario($event)">
+                <div class="section-title">
+                    <mat-icon>badge</mat-icon>
+                    <span>Datos Personales</span>
+                </div>
+                <div class="campo">
+                    <label>DNI</label>
+                    <div class="input-icon">
+                        <mat-icon>badge</mat-icon>
+                        <input placeholder="DNI" type="text" [(ngModel)]="usuario.dni" name="dni" required>
+                    </div>
+                </div>
+
+                <div class="campo">
+                    <label>Nombre Completo</label>
+                    <div class="input-icon">
+                        <mat-icon>person</mat-icon>
+                        <input placeholder="Nombre Completo" type="text" [(ngModel)]="usuario.nombre" name="nombre"
+                            required>
+                    </div>
+                </div>
+                <div class="campo">
+                    <label>Dirección</label>
+                    <div class="input-icon">
+                        <mat-icon>home</mat-icon>
+                        <input placeholder="Dirección" type="text" [(ngModel)]="usuario.direccion" name="direccion"
+                            required>
+                    </div>
+                </div>
+
+                <div class="campo">
+                    <label>Correo electrónico</label>
+                    <div class="input-icon">
+                        <mat-icon>mail</mat-icon>
+                        <input placeholder="Correo electrónico" type="email" [(ngModel)]="usuario.email" name="email"
+                            required>
+                    </div>
+                </div>
+
+                <div class="campo">
+                    <label>Usuario</label>
+                    <div class="input-icon">
+                        <mat-icon>account_circle</mat-icon>
+                        <input placeholder="Usuario" type="text" [(ngModel)]="usuario.clave" name="clave" required>
+                    </div>
+                </div>
+
+                <div class="section-title archivos">
+                    <mat-icon>folder</mat-icon>
+                    <span>Archivos</span>
+                </div>
+
+                <div class="upload-box">
+                    <label>Foto de Perfil</label>
+                    <input placeholder="Seleccionar foto de perfil" type="file"
+                        (change)="seleccionarArchivo($event,'foto')" accept="image/*">
+
+                </div>
+                <div class="upload-box">
+                    <label>Currículum Vitae</label>
+                    <input placeholder="Seleccionar currículum vitae" type="file"
+                        (change)="seleccionarArchivo($event,'cv')" accept=".pdf,.doc,.docx">
+                </div>
+                <button class="btn-guardar" type="submit">
+                    <mat-icon>save</mat-icon>
+                    Guardar Cambios
+                </button>
+            </form>
         </div>
-        <form (submit)="actualizarUsuario($event)">
-            <label for="dni">DNI:</label>
-            <input type="text" id="dni" [(ngModel)]="usuario.dni" name="dni" required>
-
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" [(ngModel)]="usuario.nombre" name="nombre" required>
-
-            <label for="direccion">Dirección:</label>
-            <input type="text" id="direccion" [(ngModel)]="usuario.direccion" name="direccion" required>
-
-            <label for="email">Email:</label>
-            <input type="email" id="email" [(ngModel)]="usuario.email" name="email" required>
-
-            <label for="clave">Usuario:</label>
-            <input type="text" id="clave" [(ngModel)]="usuario.clave" name="clave" required>
-
-            <label for="foto">Nueva Foto (opcional):</label>
-            <input type="file" id="foto" (change)="seleccionarArchivo($event, 'foto')" accept="image/*">
-
-            <label for="cv">Nuevo CV (opcional):</label>
-            <input type="file" id="cv" (change)="seleccionarArchivo($event, 'cv')" accept=".pdf,.doc,.docx">
-
-            <button type="submit">Guardar Cambios</button>
-        </form>
     </div>
 </div>

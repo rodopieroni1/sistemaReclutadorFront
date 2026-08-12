@@ -42,7 +42,7 @@ export class RegisterComponent {
       return;
     }
 
-   this.authService
+    this.authService
       .checkEmailAndDni(this.email, this.dni)
       .subscribe((response) => {
         if (response.emailExists) {
@@ -62,5 +62,4 @@ export class RegisterComponent {
         }
       });
   }
-  
 }

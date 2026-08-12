@@ -66,9 +66,16 @@
 
     <!-- FILA INFERIOR: MENÚ PRINCIPAL -->
     <nav class="menu-principal">
-        <a routerLink="/home">Inicio</a>
-        <a (click)="irAOfertas()">Buscar ofertas</a>
-        <a routerLink="/empresas">Empresas</a>
-        <a (click)="irAContactos()">Contacto</a>
+        <a routerLink="/home"><mat-icon>home</mat-icon>Inicio</a>
+        <a (click)="irAOfertas()"><mat-icon>work</mat-icon>Ofertas</a>
+        <a routerLink="/empresas"><mat-icon>business</mat-icon>Empresas</a>
+        <a (click)="irAContactos()"><mat-icon>contact_phone</mat-icon>Contacto</a>
     </nav>
+    <nav class="menu-principal-media">
+        <a routerLink="/home"><mat-icon>home</mat-icon></a>
+        <a (click)="irAOfertas()"><mat-icon>work</mat-icon></a>
+        <a routerLink="/empresas"><mat-icon>business</mat-icon></a>
+        <a (click)="irAContactos()"><mat-icon>contact_phone</mat-icon></a>
+    </nav>
+
 </header>

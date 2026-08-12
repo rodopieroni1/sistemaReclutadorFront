@@ -40,7 +40,7 @@ body {
   text-align: center;
 
   /* --- DISTANCIA CORTA CON LA CABECERA (3-4 milímetros) --- */
-  margin-top: 4px;
+  margin-top: 1px;
   width: 100%;
   max-width: 100%;
 }
@@ -184,7 +184,7 @@ mat-card {
     background: linear-gradient(rgba(235, 231, 231, 0), rgba(241, 238, 238, 0.5)),
       url('trabajadorPortada.avif') center/cover no-repeat;
     height: 380px;
-    margin-top: 4px;
+    margin-top: 1px;
     /* Pegado inmediato también en móvil */
     width: 100%;
   }
