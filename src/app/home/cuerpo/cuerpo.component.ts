@@ -66,7 +66,7 @@ export class CuerpoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.webSocketService.connect('ws://localhost:8080/ws');
+    this.webSocketService.connect('/ws');
     if (this.webSocketService['socket']) {
       this.webSocketService['socket'].onmessage = (event) => {
         const newImageUrl = event.data;
