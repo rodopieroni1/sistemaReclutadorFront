@@ -13,7 +13,7 @@ export const environment = {
 
   local: {
     urlHost: '/api/',
-    urlApi: '/api/',
+    urlApi: '/api',
     userId: 1,
   },
 
