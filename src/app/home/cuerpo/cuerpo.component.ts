@@ -52,7 +52,6 @@ export class CuerpoComponent implements OnInit {
   searchNombreOferta = new FormControl('');
   searchDescripcionEmpresa = new FormControl('');
   urlApiTodas = environment.local.urlApi;
-  private apiUrl = this.urlApiTodas + '/ofertas/buscar';
   busquedaRealizada: boolean = false;
   resultados: any[] = [];
   ofertaEmpresa = new FormControl('');
@@ -83,7 +82,7 @@ export class CuerpoComponent implements OnInit {
           fotoOferta: string;
           empresa: { nombre: string };
         }[]
-      >(this.urlApiTodas + '/ofertas/todas')
+      >(this.urlApiTodas + '/ofertas/todas/activas')
       .subscribe({
         next: (data) => {
           this.ofertas = data.map((oferta) => ({
@@ -117,14 +116,16 @@ export class CuerpoComponent implements OnInit {
     } else if (this.criterio === 'rubro') {
       params = params.set('descripcionRubro', termino);
     }
-    this.http.get(`${this.apiUrl}`, { params }).subscribe(
-      (data: any) => {
-        this.resultados = data;
-        this.busquedaRealizada = true;
-        console.log('Resultados:', this.resultados);
-      },
-      (error) => console.error('Error al buscar empleos:', error),
-    );
+    this.http
+      .get(`${this.urlApiTodas}` + `/ofertas/todas/activas`, { params })
+      .subscribe(
+        (data: any) => {
+          this.resultados = data;
+          this.busquedaRealizada = true;
+          console.log('Resultados:', this.resultados);
+        },
+        (error) => console.error('Error al buscar empleos:', error),
+      );
   }
 
   ngOnDestroy(): void {
