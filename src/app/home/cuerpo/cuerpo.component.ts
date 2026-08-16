@@ -73,61 +73,68 @@ export class CuerpoComponent implements OnInit {
       };
     }
     this.userLoginOn = !!sessionStorage.getItem('token');
+    this.cargarOfertasActivas();
+  }
+
+  searchJobs(event: Event) {
+    event.preventDefault();
+    const termino = this.ofertaEmpresa.value?.trim().toLowerCase();
+    if (!termino) {
+      this.currentPage = 1;
+      this.cargarOfertasActivas();
+      return;
+    }
+    this.currentPage = 1;
     this.http
-      .get<
-        {
-          idOferta: number;
-          nombreOferta: string;
-          descripcionOferta: string;
-          fotoOferta: string;
-          empresa: { nombre: string };
-        }[]
-      >(this.urlApiTodas + '/ofertas/todas/activas')
+      .get<any[]>(this.urlApiTodas + '/ofertas/todas/activas')
       .subscribe({
         next: (data) => {
-          this.ofertas = data.map((oferta) => ({
-            idOferta: oferta.idOferta,
-            nombreOferta: oferta.nombreOferta,
-            descripcionOferta: oferta.descripcionOferta,
-            fotoOferta: oferta.fotoOferta,
-            empresa: oferta.empresa,
-          }));
+          let ofertasFiltradas = data;
+
+          if (this.criterio === 'oferta') {
+            ofertasFiltradas = data.filter((oferta) =>
+              oferta.nombreOferta?.toLowerCase().includes(termino),
+            );
+          }
+
+          if (this.criterio === 'empresa') {
+            ofertasFiltradas = data.filter((oferta) =>
+              oferta.empresa?.nombre?.toLowerCase().includes(termino),
+            );
+          }
+
+          if (this.criterio === 'rubro') {
+            ofertasFiltradas = data.filter((oferta) =>
+              oferta.empresa?.rubro?.descripcionRubro
+                ?.toLowerCase()
+                .includes(termino),
+            );
+          }
+
+          this.ofertas = ofertasFiltradas;
+
+          console.log('Criterio:', this.criterio);
+          console.log('Término:', termino);
+          console.log('Ofertas encontradas:', this.ofertas);
+        },
+        error: (error) => {
+          console.error('Error al buscar empleos:', error);
+        },
+      });
+  }
+
+  cargarOfertasActivas(): void {
+    this.http
+      .get<any[]>(this.urlApiTodas + '/ofertas/todas/activas')
+      .subscribe({
+        next: (data) => {
+          this.ofertas = data;
         },
         error: (error) => {
           console.error('Error al cargar las ofertas:', error);
         },
       });
   }
-
-  searchJobs(event: Event) {
-    event.preventDefault();
-    const termino = this.ofertaEmpresa.value?.trim();
-    if (!termino) {
-      this.resultados = [];
-      this.busquedaRealizada = false;
-      return;
-    }
-
-    let params = new HttpParams();
-    if (this.criterio === 'oferta') {
-      params = params.set('nombreOferta', termino);
-    } else if (this.criterio === 'empresa') {
-      params = params.set('descripcionEmpresa', termino);
-    } else if (this.criterio === 'rubro') {
-      params = params.set('descripcionRubro', termino);
-    }
-    this.http
-      .get(`${this.urlApiTodas}` + `/ofertas/todas/activas`, { params })
-      .subscribe(
-        (data: any) => {
-          this.resultados = data;
-          this.busquedaRealizada = true;
-          console.log('Resultados:', this.resultados);
-        },
-        (error) => console.error('Error al buscar empleos:', error),
-      );
-  }
-
   ngOnDestroy(): void {
     this.webSocketService.disconnect(); // Desconectar al destruir el componente
   }
