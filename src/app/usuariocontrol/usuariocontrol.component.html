@@ -92,13 +92,15 @@
 
             <div class="upload-box">
                 <label>Foto de perfil</label>
-                <input placeholder="seleccionar foto" type="file" (change)="seleccionarArchivo($event,'foto')"
+                <!-- Agregamos id="foto" -->
+                <input id="foto" placeholder="seleccionar foto" type="file" (change)="seleccionarArchivo($event,'foto')"
                     accept="image/*">
             </div>
 
             <div class="upload-box">
                 <label>Currículum Vitae</label>
-                <input placeholder="seleccionar CV" type="file" (change)="seleccionarArchivo($event,'cv')"
+                <!-- Agregamos id="cv" -->
+                <input id="cv" placeholder="seleccionar CV" type="file" (change)="seleccionarArchivo($event,'cv')"
                     accept=".pdf,.doc,.docx">
             </div>
 

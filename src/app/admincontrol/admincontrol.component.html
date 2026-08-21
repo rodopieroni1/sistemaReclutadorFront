@@ -57,9 +57,13 @@
                 <div class="pagination">
                     <button mat-button (click)="changePage(currentPage - 1)"
                         [disabled]="currentPage === 1">Anterior</button>
-                    <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
+                    <span>
+                        Página {{ currentPage }} de {{ getTotalPages(aplicacionesFiltradas.length) }}
+                    </span>
                     <button mat-button (click)="changePage(currentPage + 1)"
-                        [disabled]="currentPage === getTotalPages()">Siguiente</button>
+                        [disabled]="currentPage === getTotalPages(aplicacionesFiltradas.length)">
+                        Siguiente
+                    </button>
                 </div>
             </mat-expansion-panel>
 
@@ -105,9 +109,14 @@
                 <div class="pagination">
                     <button mat-button (click)="changePage(currentPage - 1)"
                         [disabled]="currentPage === 1">Anterior</button>
-                    <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
+                    <span>
+                        Página {{ currentPage }} de {{ getTotalPages(rubrosFiltradas.length) }}
+                    </span>
+
                     <button mat-button (click)="changePage(currentPage + 1)"
-                        [disabled]="currentPage === getTotalPages()">Siguiente</button>
+                        [disabled]="currentPage === getTotalPages(rubrosFiltradas.length)">
+                        Siguiente
+                    </button>
                 </div>
             </mat-expansion-panel>
 
@@ -153,11 +162,19 @@
                     </li>
                 </ul>
                 <div class="pagination">
-                    <button mat-button (click)="changePage(currentPage - 1)"
-                        [disabled]="currentPage === 1">Anterior</button>
-                    <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
+                    <button mat-button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">
+                        Anterior
+                    </button>
+
+                    <span>
+                        Página {{ currentPage }} de
+                        {{ getTotalPages(empresasFiltradas.length) }}
+                    </span>
+
                     <button mat-button (click)="changePage(currentPage + 1)"
-                        [disabled]="currentPage === getTotalPages()">Siguiente</button>
+                        [disabled]="currentPage === getTotalPages(empresasFiltradas.length)">
+                        Siguiente
+                    </button>
                 </div>
             </mat-expansion-panel>
 
@@ -205,11 +222,19 @@
                     </li>
                 </ul>
                 <div class="pagination">
-                    <button mat-button (click)="changePage(currentPage - 1)"
-                        [disabled]="currentPage === 1">Anterior</button>
-                    <span>Página {{ currentPage }} de {{ getTotalPages() }}</span>
+                    <button mat-button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">
+                        Anterior
+                    </button>
+
+                    <span>
+                        Página {{ currentPage }} de
+                        {{ getTotalPages(ofertasFiltradas.length) }}
+                    </span>
+
                     <button mat-button (click)="changePage(currentPage + 1)"
-                        [disabled]="currentPage === getTotalPages()">Siguiente</button>
+                        [disabled]="currentPage === getTotalPages(ofertasFiltradas.length)">
+                        Siguiente
+                    </button>
                 </div>
             </mat-expansion-panel>
 

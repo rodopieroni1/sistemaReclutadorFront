@@ -611,11 +611,12 @@ export class AdminControlComponent {
   }
 
   changePage(page: number) {
-    if (page >= 1 && page <= this.getTotalPages()) {
+    if (page >= 1) {
       this.currentPage = page;
     }
   }
-  getTotalPages() {
-    return Math.ceil(this.ofertas.length / this.itemsPerPage);
+
+  getTotalPages(totalItems: number) {
+    return Math.max(1, Math.ceil(totalItems / this.itemsPerPage));
   }
 }

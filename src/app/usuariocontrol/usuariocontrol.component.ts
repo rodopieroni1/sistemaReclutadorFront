@@ -147,10 +147,7 @@ export class UsuarioControlComponent {
             this.snackBar.open('Usuario creado satisfactoriamente', 'Cerrar', {
               duration: 6000,
             });
-            // Notificar al componente padre que se deben recargar los datos
             this.limpiarFormulario();
-            this.isSubmitting = false; // Restablecer el estado de envío
-            this.formUsuario.reset(); // Resetea valores y estado de validación
           }
         },
         error: (response) => {
