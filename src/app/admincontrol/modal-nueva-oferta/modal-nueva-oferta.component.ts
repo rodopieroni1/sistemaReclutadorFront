@@ -162,112 +162,85 @@ export class ModalNuevaOfertaComponent implements OnInit {
       this.miFormulario.value.idEmpresa === '' ||
       this.miFormulario.value.estadoOferta === ''
     ) {
-      this.snackBar.open('Debe completar este campos.', 'Cerrar', {
+      this.snackBar.open('Debe completar estos campos.', 'Cerrar', {
         duration: 3000,
       });
       return;
     }
-    //const datosOferta = this.miFormulario.value;
+
     const datosOferta = this.miFormulario.getRawValue();
-    if (this.accion === 'crear') {
-      this.http
-        .get<any>(
-          `${environment.local.urlApi}/empresas/existeId/${datosOferta.idEmpresa}`,
-          {
-            headers: { 'Content-Type': 'application/json' },
-          },
-        )
-        .pipe(
-          switchMap((empresa) => {
-            const oferta = {
-              descripcionOferta: datosOferta.descripcionOferta,
-              nombreOferta: datosOferta.nombreOferta,
-              estadoOferta: datosOferta.estadoOferta,
-              empresa: { id_empresa: empresa.id_empresa },
-              fotoOferta: this.archivoSeleccionado?.name,
-              idOferta: datosOferta.idOferta || 0,
-            };
 
-            if (!oferta.descripcionOferta) {
-              this.snackBar.open('Agregue valores a la oferta.', 'Cerrar', {
-                duration: 3000,
-              });
-              return of(null); // corta el flujo
-            }
+    // 1. Validar la existencia de la Empresa
+    this.http
+      .get<any>(
+        `${environment.local.urlApi}/empresas/existeId/${datosOferta.idEmpresa}`,
+      )
+      .pipe(
+        switchMap((empresa) => {
+          if (!datosOferta.descripcionOferta) {
+            this.snackBar.open('Agregue valores a la oferta.', 'Cerrar', {
+              duration: 3000,
+            });
+            return of(null);
+          }
 
+          // 2. Armar el FormData con los campos del backend
+          const formData = new FormData();
+          formData.append('nombreOferta', datosOferta.nombreOferta);
+          formData.append('descripcionOferta', datosOferta.descripcionOferta);
+          formData.append('estadoOferta', String(datosOferta.estadoOferta));
+          formData.append('idEmpresa', String(empresa.id_empresa));
+
+          // Enviar el nombre como String si existe
+          if (this.archivoSeleccionado?.name) {
+            formData.append('fotoOferta', this.archivoSeleccionado.name);
+          }
+
+          // Enviar el archivo físico binario
+          if (this.archivoSeleccionado) {
+            formData.append('fotoArchivo', this.archivoSeleccionado);
+          }
+
+          // 3. Ejecutar POST para crear o PUT para actualizar según la acción
+          if (this.accion === 'crear') {
             return this.http.post<HttpResponse<any>>(
               `${environment.local.urlApi}/ofertas/crear`,
-              oferta,
+              formData,
               { observe: 'response' },
             );
-          }),
-          tap((response) => {
-            if (
-              response &&
-              (response.status === 201 || response.status === 200)
-            ) {
-              this.snackBar.open('Oferta creada satisfactoriamente', 'Cerrar', {
-                duration: 3000,
-              });
-              this.dialogRef.close({ ofertaCreada: true });
-            }
-          }),
-          catchError((error) => {
-            this.snackBar.open(
-              'Error al crear la oferta o al obtener empresa.',
-              'Cerrar',
-              { duration: 3000 },
+          } else {
+            const idOferta = datosOferta.idOferta || this.oferta?.idOferta;
+            return this.http.put<HttpResponse<any>>(
+              `${environment.local.urlApi}/ofertas/actualizar/${idOferta}`,
+              formData,
+              { observe: 'response' },
             );
-            return of(null);
-          }),
-        )
-        .subscribe();
-    } else {
-      ////AQUI EMPIEZA EL MODIFICAR
-      const idEmpresa = this.miFormulario.value.idEmpresa;
-      this.http
-        .get<any>(
-          `${environment.local.urlApi}/empresas/existeId/${idEmpresa}`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          },
-        )
-        .subscribe({
-          next: (response) => {
-            const oferta = {
-              descripcionOferta: this.miFormulario.value.descripcionOferta,
-              nombreOferta: this.miFormulario.value.nombreOferta,
-              estadoOferta: this.miFormulario.value.estadoOferta,
-              empresa: {
-                id_empresa: this.miFormulario.value.idEmpresa,
-              },
-              fotoOferta: this.archivoSeleccionado?.name,
-            };
-            if (this.miFormulario.value.descripcionOferta === '') {
-              this.snackBar.open('Agrege valores a la oferta.', 'Cerrar', {
-                duration: 3000,
-              });
-              return;
-            }
-            if (!response || !response.id_empresa) {
-              this.snackBar.open('Agrege valores a la oferta.', 'Cerrar', {
-                duration: 3000,
-              });
-              return;
-            }
-            this.cargarUpdate(oferta, response);
-          },
-          error: () => {
-            this.snackBar.open(
-              'Error al obtener información de la empresa.',
-              'Cerrar',
-              { duration: 3000 },
-            );
-          },
-        });
-    }
+          }
+        }),
+        tap((response) => {
+          if (
+            response &&
+            (response.status === 201 || response.status === 200)
+          ) {
+            const mensaje =
+              this.accion === 'crear'
+                ? 'Oferta creada satisfactoriamente'
+                : 'Oferta actualizada satisfactoriamente';
+
+            this.snackBar.open(mensaje, 'Cerrar', { duration: 3000 });
+            this.dialogRef.close({ ofertaCreada: true });
+          }
+        }),
+        catchError((error) => {
+          this.snackBar.open(
+            'Error al procesar la oferta o al obtener empresa.',
+            'Cerrar',
+            { duration: 3000 },
+          );
+          return of(null);
+        }),
+      )
+      .subscribe();
   }
   cargarUpdate(oferta: any, response: any) {
     const idOferta =
