@@ -398,9 +398,12 @@ export class AdminControlComponent {
   }
 
   cargarEmpresas() {
-    this.http.get<any[]>(`${this.apiUrl}/empresas`).subscribe({
-      next: (data) => {
-        this.empresas = data.map((empresa) => ({
+    this.http.get<any>(`${this.apiUrl}/empresas`).subscribe({
+      next: (response) => {
+        // Extraemos la lista desde la propiedad 'data' del objeto que responde el backend
+        const listaEmpresas = response.data || [];
+
+        this.empresas = listaEmpresas.map((empresa: any) => ({
           nombre: empresa.nombre,
           direccion: empresa.direccion,
           historiaEmpresa: empresa.historiaEmpresa,
@@ -412,7 +415,11 @@ export class AdminControlComponent {
           rubro: empresa.rubro,
           logo: empresa.logo,
         }));
+
         this.empresasFiltradas = [...this.empresas];
+      },
+      error: (error) => {
+        console.error('Error al cargar empresas', error);
       },
     });
   }

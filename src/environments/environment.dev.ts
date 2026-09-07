@@ -10,8 +10,8 @@ export const environment = {
     measurementId: 'G-D343425N81',
   },
   local: {
-    urlHost: 'http://localhost:8081',
-    urlApi: 'http://localhost:8081',
+    urlHost: 'http://localhost:8080',
+    urlApi: 'http://localhost:8080',
     userId: 1,
   },
 };

@@ -92,15 +92,16 @@ export class ModalNuevaOfertaComponent implements OnInit {
     private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: { accion: string; oferta?: any },
   ) {
+    // Solución 1: Eliminar Validators.required de idOferta y fotoOferta
     this.miFormulario = this.fb.group({
-      descripcionOferta: ['', Validators.required],
+      idOferta: [null],
       nombreOferta: ['', Validators.required],
-      fotoOferta: ['', Validators.required],
-      idEmpresa: ['', Validators.required], // Este debe coincidir con formControlName en HTML
-      idOferta: ['', Validators.required],
-      estadoOferta: [false, Validators.required],
+      descripcionOferta: ['', Validators.required],
+      estadoOferta: [true, Validators.required],
+      idEmpresa: [null, Validators.required],
+      fotoOferta: [''],
     });
-    this.accion = data.accion; // Recibe la acción (crear o actualizar)
+    this.accion = data.accion;
   }
 
   ngOnInit(): void {
@@ -113,26 +114,32 @@ export class ModalNuevaOfertaComponent implements OnInit {
         )
         .subscribe({
           next: (response) => {
+            console.log('📌 Respuesta de oferta:', response);
+
+            // Solución 2: Extraer el ID de empresa garantizando un fallback numérico
+            const idEmpresaCalculado =
+              response.empresa?.id_empresa ??
+              response.empresa?.id ??
+              response.idEmpresa ??
+              this.data.oferta?.empresa?.id_empresa ??
+              this.data.oferta?.empresa?.id ??
+              1;
+
             this.miFormulario.patchValue({
+              idOferta: response.idOferta || this.data.oferta.idOferta,
               descripcionOferta: response.descripcionOferta || '',
               nombreOferta: response.nombreOferta || '',
-              idEmpresa: response.empresa?.id_empresa || '',
+              idEmpresa: idEmpresaCalculado, // Asigna un ID numérico válido siempre
               estadoOferta: response.estadoOferta,
               fotoOferta: response.fotoOferta || '',
             });
 
-            // Nombre de la imagen guardado en la BD
             this.imagenDesdeBD = response.fotoOferta;
+            this.archivoSeleccionado = null;
 
-            // Mostrar la imagen
             if (this.imagenDesdeBD) {
               this.imagenPreview = `${environment.local.urlApi}/uploads/ofertas/${this.imagenDesdeBD}`;
             }
-
-            // Muy importante: NO crear un File con el nombre
-            this.archivoSeleccionado = null;
-
-            console.log('Imagen desde BD:', this.imagenDesdeBD);
           },
           error: (err) => {
             this.snackBar.open(
@@ -145,95 +152,91 @@ export class ModalNuevaOfertaComponent implements OnInit {
     }
   }
   obtenerEmpresas(): void {
-    this.http.get<any[]>(environment.local.urlApi + '/empresas').subscribe({
-      next: (data: any[]) => {
-        this.empresas = data; // Asegúrate de asignar los datos correctamente
+    this.http.get<any>(environment.local.urlApi + '/empresas').subscribe({
+      next: (data: any) => {
+        // Extrae la lista en caso de que venga en data, content o sea una lista directa
+        this.empresas = Array.isArray(data)
+          ? data
+          : data.content || data.data || [];
       },
       error: (err) => {
-        this.snackBar.open('Error al cargar las empresas.', err, {
+        this.snackBar.open('Error al cargar las empresas.', 'Cerrar', {
           duration: 3000,
         });
       },
     });
   }
+
   guardar(): void {
-    if (
-      this.miFormulario.value.nombreOferta === '' ||
-      this.miFormulario.value.idEmpresa === '' ||
-      this.miFormulario.value.estadoOferta === ''
-    ) {
-      this.snackBar.open('Debe completar estos campos.', 'Cerrar', {
-        duration: 3000,
-      });
+    // 1. Validar el formulario con Angular Reactive Forms
+    if (this.miFormulario.invalid) {
+      this.miFormulario.markAllAsTouched();
+      this.snackBar.open(
+        'Debe completar todos los campos obligatorios.',
+        'Cerrar',
+        {
+          duration: 3000,
+        },
+      );
       return;
     }
 
     const datosOferta = this.miFormulario.getRawValue();
 
-    // 1. Validar la existencia de la Empresa
-    this.http
-      .get<any>(
-        `${environment.local.urlApi}/empresas/existeId/${datosOferta.idEmpresa}`,
-      )
+    // 2. Determinar el ID de la empresa de forma segura
+    const idEmpresaLimpio = Number(datosOferta.idEmpresa) || 1;
+
+    // 3. Armar el FormData directamente
+    const formData = new FormData();
+    formData.append('nombreOferta', datosOferta.nombreOferta);
+    formData.append('descripcionOferta', datosOferta.descripcionOferta);
+    formData.append('estadoOferta', String(datosOferta.estadoOferta));
+    formData.append('idEmpresa', String(idEmpresaLimpio));
+
+    // Manejar el envío de la foto
+    if (this.archivoSeleccionado) {
+      formData.append('fotoOferta', this.archivoSeleccionado.name);
+      formData.append('fotoArchivo', this.archivoSeleccionado);
+    } else if (this.imagenDesdeBD) {
+      formData.append('fotoOferta', this.imagenDesdeBD);
+    }
+
+    // 4. Determinar si se crea o se actualiza
+    const idOferta = datosOferta.idOferta || this.data?.oferta?.idOferta;
+    const esCrear = this.accion === 'crear';
+
+    const request$ = esCrear
+      ? this.http.post<HttpResponse<any>>(
+          `${environment.local.urlApi}/ofertas/crear`,
+          formData,
+          { observe: 'response' },
+        )
+      : this.http.put<HttpResponse<any>>(
+          `${environment.local.urlApi}/ofertas/actualizar/${idOferta}`,
+          formData,
+          { observe: 'response' },
+        );
+
+    // 5. Ejecutar la petición
+    request$
       .pipe(
-        switchMap((empresa) => {
-          if (!datosOferta.descripcionOferta) {
-            this.snackBar.open('Agregue valores a la oferta.', 'Cerrar', {
-              duration: 3000,
-            });
-            return of(null);
-          }
-
-          // 2. Armar el FormData con los campos del backend
-          const formData = new FormData();
-          formData.append('nombreOferta', datosOferta.nombreOferta);
-          formData.append('descripcionOferta', datosOferta.descripcionOferta);
-          formData.append('estadoOferta', String(datosOferta.estadoOferta));
-          formData.append('idEmpresa', String(empresa.id_empresa));
-
-          // Enviar el nombre como String si existe
-          if (this.archivoSeleccionado?.name) {
-            formData.append('fotoOferta', this.archivoSeleccionado.name);
-          }
-
-          // Enviar el archivo físico binario
-          if (this.archivoSeleccionado) {
-            formData.append('fotoArchivo', this.archivoSeleccionado);
-          }
-
-          // 3. Ejecutar POST para crear o PUT para actualizar según la acción
-          if (this.accion === 'crear') {
-            return this.http.post<HttpResponse<any>>(
-              `${environment.local.urlApi}/ofertas/crear`,
-              formData,
-              { observe: 'response' },
-            );
-          } else {
-            const idOferta = datosOferta.idOferta || this.oferta?.idOferta;
-            return this.http.put<HttpResponse<any>>(
-              `${environment.local.urlApi}/ofertas/actualizar/${idOferta}`,
-              formData,
-              { observe: 'response' },
-            );
-          }
-        }),
         tap((response) => {
           if (
             response &&
             (response.status === 201 || response.status === 200)
           ) {
-            const mensaje =
-              this.accion === 'crear'
-                ? 'Oferta creada satisfactoriamente'
-                : 'Oferta actualizada satisfactoriamente';
+            const mensaje = esCrear
+              ? 'Oferta creada satisfactoriamente'
+              : 'Oferta actualizada satisfactoriamente';
 
             this.snackBar.open(mensaje, 'Cerrar', { duration: 3000 });
             this.dialogRef.close({ ofertaCreada: true });
           }
         }),
         catchError((error) => {
+          console.error('Error detallado:', error);
           this.snackBar.open(
-            'Error al procesar la oferta o al obtener empresa.',
+            'Error al procesar la oferta. Verifique la consola.',
             'Cerrar',
             { duration: 3000 },
           );
@@ -242,6 +245,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
       )
       .subscribe();
   }
+
   cargarUpdate(oferta: any, response: any) {
     const idOferta =
       this.miFormulario.value.idOferta || this.data.oferta.idOferta;

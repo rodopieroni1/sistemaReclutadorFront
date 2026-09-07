@@ -50,11 +50,12 @@ export class EmpresasComponent implements OnInit {
   }
 
   cargarEmpresas(): void {
-    this.http.get<any[]>(`${this.urlApi}/empresas`).subscribe({
-      next: (data) => {
-        console.log('Empresas cargadas:', data);
-        this.empresas = data;
-        this.empresasFiltradas = data;
+    this.http.get<any>(`${this.urlApi}/empresas`).subscribe({
+      next: (response) => {
+        console.log('Empresas cargadas:', response);
+        const listaEmpresas = response.data || [];
+        this.empresas = listaEmpresas;
+        this.empresasFiltradas = listaEmpresas;
       },
       error: (error) => {
         console.error('Error al cargar empresas', error);
