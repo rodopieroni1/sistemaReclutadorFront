@@ -29,7 +29,6 @@
             </nav>
 
             <div class="contenedor-usuario-ancla" style="position: relative;">
-                <!-- 🟢 Cambiado: Eliminamos la clase 'dropdown' de este div -->
                 <div *ngIf="userLoginOn" class="perfil">
                     <a class="d-flex flex-column align-items-center" href="javascript:void(0)"
                         style="text-decoration: none; color: inherit; cursor: pointer; gap: 4px;"
@@ -40,8 +39,6 @@
                             {{ userName }}
                         </span>
                     </a>
-
-                    <!-- 🟢 CLAVE: Reemplazamos 'dropdown-menu' por 'mi-menu-desplegable' -->
                     <ul class="mi-menu-desplegable" *ngIf="dropdownAbierto">
                         <li class="mi-menu-header text-center">
                             <strong>{{ userName }}</strong>

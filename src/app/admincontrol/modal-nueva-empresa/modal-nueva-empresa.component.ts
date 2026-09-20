@@ -30,6 +30,13 @@ import { ActivatedRoute } from '@angular/router';
 import { MatSelectModule } from '@angular/material/select';
 import { environment } from '../../../environments/environment';
 
+export interface ResponseRest<T> {
+  success: boolean;
+  message: string;
+  data: T;
+  timestamp: string;
+  errorCode: string;
+}
 @Component({
   selector: 'app-modal-nueva-empresa',
   standalone: true,
@@ -167,98 +174,29 @@ export class ModalNuevaEmpresaComponent implements OnInit {
       }
     }
   }
-
-  guardar() {
-    Object.keys(this.miFormulario.controls).forEach((key) => {
-      const control = this.miFormulario.get(key);
-    });
-
+  guardar(): void {
     if (this.miFormulario.invalid) {
       this.miFormulario.markAllAsTouched();
       return;
     }
     if (this.accion === 'crear') {
-      if (
-        this.miFormulario.value.nombreEmpresa === '' ||
-        this.miFormulario.value.historiaEmpresa === '' ||
-        this.miFormulario.value.direccionEmpresa === '' ||
-        this.miFormulario.value.emailEmpresa === '' ||
-        this.miFormulario.value.cuitEmpresa === ''
-      ) {
-        this.snackBar.open('Debe completar cada uno de los campos', 'Cerrar', {
-          duration: 3000,
-        });
-        return;
-      }
+      const cuit = this.miFormulario.value.cuitEmpresa;
       this.http
-        .get<boolean>(
-          `${environment.local.urlApi}/empresas/existe/${this.miFormulario.value.cuitEmpresa}`,
-        )
+        .get<
+          ResponseRest<boolean>
+        >(`${environment.local.urlApi}/empresas/existe/${cuit}`)
         .subscribe({
-          next: (existe: boolean) => {
-            if (existe) {
+          next: (respuesta) => {
+            console.log('Respuesta de existencia de CUIT:', respuesta);
+            if (respuesta.data) {
               this.snackBar.open(
-                'El CUIT ingresado ya existe. Por favor, utiliza otro.',
+                'El CUIT ingresado ya existe. Por favor, corrobore.',
                 'Cerrar',
                 { duration: 3000 },
               );
               return;
             }
-            const formData = new FormData();
-            formData.append('nombre', this.miFormulario.value.nombreEmpresa);
-            formData.append(
-              'direccion',
-              this.miFormulario.value.direccionEmpresa,
-            );
-            formData.append(
-              'historiaEmpresa',
-              this.miFormulario.value.historiaEmpresa,
-            );
-            formData.append(
-              'observaciones',
-              this.miFormulario.value.observacionesEmpresa,
-            );
-            formData.append('email', this.miFormulario.value.emailEmpresa);
-            formData.append('cuit', this.miFormulario.value.cuitEmpresa);
-            formData.append(
-              'telefono',
-              this.miFormulario.value.telefonoEmpresa,
-            );
-            formData.append('idRubro', this.miFormulario.value.idRubro);
-            if (this.logoSeleccionado) {
-              formData.append('logo', this.logoSeleccionado);
-            }
-            console.log('Datos a enviar:', {
-              nombre: this.miFormulario.value.nombreEmpresa,
-              direccion: this.miFormulario.value.direccionEmpresa,
-              historiaEmpresa: this.miFormulario.value.historiaEmpresa,
-              observaciones: this.miFormulario.value.observacionesEmpresa,
-              email: this.miFormulario.value.emailEmpresa,
-              cuit: this.miFormulario.value.cuitEmpresa,
-              telefono: this.miFormulario.value.telefonoEmpresa,
-            });
-            this.http
-              .post(environment.local.urlApi + '/empresas/crear', formData, {
-                observe: 'response',
-              })
-              .subscribe({
-                next: (response) => {
-                  if (response.status === 201 || response.status === 200) {
-                    this.snackBar.open(
-                      'Empresa creada satisfactoriamente',
-                      'Cerrar',
-                      { duration: 3000 },
-                    );
-                    this.datosActualizadosEmpresa.emit();
-                    this.limpiarFormulario();
-                  }
-                },
-                error: (err) => {
-                  const mensaje =
-                    err?.error?.message || 'Error al crear la empresa';
-                  this.snackBar.open(mensaje, 'Cerrar', { duration: 3000 });
-                },
-              });
+            this.crearEmpresa();
           },
           error: () => {
             this.snackBar.open(
@@ -273,7 +211,42 @@ export class ModalNuevaEmpresaComponent implements OnInit {
       this.dialogRef.close();
     }
   }
-
+  private crearEmpresa(): void {
+    const formData = new FormData();
+    formData.append('nombre', this.miFormulario.value.nombreEmpresa);
+    formData.append('direccion', this.miFormulario.value.direccionEmpresa);
+    formData.append('historiaEmpresa', this.miFormulario.value.historiaEmpresa);
+    formData.append(
+      'observaciones',
+      this.miFormulario.value.observacionesEmpresa,
+    );
+    formData.append('email', this.miFormulario.value.emailEmpresa);
+    formData.append('cuit', this.miFormulario.value.cuitEmpresa);
+    formData.append('telefono', this.miFormulario.value.telefonoEmpresa);
+    formData.append('idRubro', this.miFormulario.value.idRubro);
+    if (this.logoSeleccionado) {
+      formData.append('logo', this.logoSeleccionado);
+    }
+    this.http
+      .post(`${environment.local.urlApi}/empresas/crear`, formData, {
+        observe: 'response',
+      })
+      .subscribe({
+        next: (response) => {
+          if (response.status === 201) {
+            this.snackBar.open('Empresa creada satisfactoriamente', 'Cerrar', {
+              duration: 3000,
+            });
+            this.datosActualizadosEmpresa.emit();
+            this.limpiarFormulario();
+          }
+        },
+        error: (err) => {
+          const mensaje = err?.error?.message || 'Error al crear la empresa';
+          this.snackBar.open(mensaje, 'Cerrar', { duration: 3000 });
+        },
+      });
+  }
   cerrar() {
     this.dialogRef.close(); // Cierra el modal sin acción
   }
@@ -294,7 +267,7 @@ export class ModalNuevaEmpresaComponent implements OnInit {
 
     this.http
       .put(
-        `${environment.local.urlApi}/empresas/actualizar/${empresa.id_empresa}`,
+        `${environment.local.urlApi}/empresas/${empresa.id_empresa}`,
         formData,
         {
           observe: 'response',

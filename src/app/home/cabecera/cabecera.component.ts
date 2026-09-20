@@ -48,25 +48,27 @@ export class CabeceraComponent implements OnInit {
     });
   }
   ngOnInit() {
-    this.loginService.currentUserNombre.subscribe((userName) => {
-      this.userName = userName;
-    });
-    this.loginService.currentUserProfileImage.subscribe((img) => {
-      this.userProfileImage = img || 'assets/default-profile.png';
-    });
-
-    // this.userName = sessionStorage.getItem('userName') || 'Usuario desconocido';
-    this.userLoginOn = !!sessionStorage.getItem('token'); // Verifica si hay token
-    this.loginService.currentUserProfileImage.subscribe((imageUrl) => {
-      this.userProfileImage = imageUrl
-        ? `${imageUrl}?${Date.now()}`
-        : 'assets/default-profile.png';
-      this.cdRef.detectChanges(); // Asegura render
-    });
-    this.cdRef.detectChanges(); // Forza la actualización en el DOM
-    this.navigationService.previousUrl$.subscribe((url) => {
+    const subNombre = this.loginService.currentUserNombre.subscribe(
+      (userName) => {
+        this.userName = userName;
+      },
+    );
+    this.userLoginOn = !!sessionStorage.getItem('token');
+    const subFoto = this.loginService.currentUserProfileImage.subscribe(
+      (imageUrl) => {
+        if (imageUrl) {
+          this.userProfileImage = `${imageUrl}?t=${new Date().getTime()}`;
+        } else {
+          this.userProfileImage = 'assets/default-profile.png';
+        }
+        this.cdRef.detectChanges(); // Forzamos actualización visual
+      },
+    );
+    this.subs.push(subNombre, subFoto);
+    const subNav = this.navigationService.previousUrl$.subscribe((url) => {
       this.mostrarCabecera = url !== '/admincontrol';
     });
+    this.subs.push(subNav);
   }
 
   irAOfertas(): void {

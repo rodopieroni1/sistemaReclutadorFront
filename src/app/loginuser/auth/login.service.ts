@@ -37,8 +37,10 @@ export class LoginService {
   constructor(private http: HttpClient) {
     const token = sessionStorage.getItem('token');
     const userName = sessionStorage.getItem('userName');
-    const imageUrl = sessionStorage.getItem('userProfileImage');
-
+    let imageUrl = sessionStorage.getItem('userProfileImage');
+    if (imageUrl) {
+      imageUrl = imageUrl.replace(':8080', ':8081');
+    }
     this.currentUserLoginOn = new BehaviorSubject<boolean>(!!token);
     this.currentUserData = new BehaviorSubject<string>(token || '');
     this.currentUserNombre = new BehaviorSubject<string>(userName || '');
@@ -73,14 +75,14 @@ export class LoginService {
                 try {
                   const parsedData = JSON.parse(data);
                   sessionStorage.setItem('userName', parsedData.clave);
-                  sessionStorage.setItem(
-                    'userProfileImage',
-                    parsedData.fotoUrl,
-                  );
+                  const fotoUrl = parsedData.fotoUrl
+                    ? parsedData.fotoUrl.replace(':8080', ':8081')
+                    : '';
+                  sessionStorage.setItem('userProfileImage', fotoUrl);
                   sessionStorage.setItem('idPerfil', parsedData.id_perfil); // Guarda el nombre en sessionStorage
                   this.currentUserNombre.next(parsedData.clave);
                   this.currentUserProfileImage.next(
-                    parsedData.fotoUrl + '?' + Date.now(),
+                    fotoUrl ? `${fotoUrl}?${Date.now()}` : '',
                   );
                   this.currentUserLoginOn.next(true);
                 } catch (e) {
