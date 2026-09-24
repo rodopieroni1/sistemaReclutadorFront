@@ -8,7 +8,7 @@
         <div class="container">
             <div class="header">
                 <div class="avatar">
-                    <img *ngIf="usuario.fotoUrl" [src]="usuario.fotoUrl" alt="Foto">
+                    <img *ngIf="usuario.fotoUrl" [src]="obtenerUrlFoto(usuario.fotoUrl)" alt="Foto">
                     <mat-icon *ngIf="!usuario.fotoUrl">
                         person
                     </mat-icon>

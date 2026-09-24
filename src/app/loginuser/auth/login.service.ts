@@ -38,8 +38,8 @@ export class LoginService {
     const token = sessionStorage.getItem('token');
     const userName = sessionStorage.getItem('userName');
     let imageUrl = sessionStorage.getItem('userProfileImage');
-    if (imageUrl) {
-      imageUrl = imageUrl.replace(':8080', ':8081');
+    if (imageUrl && !imageUrl.startsWith('http')) {
+      imageUrl = `${this.urlApi}${imageUrl}`;
     }
     this.currentUserLoginOn = new BehaviorSubject<boolean>(!!token);
     this.currentUserData = new BehaviorSubject<string>(token || '');
@@ -47,6 +47,8 @@ export class LoginService {
     this.currentUserProfileImage = new BehaviorSubject<string>(
       imageUrl ? `${imageUrl}?${Date.now()}` : '',
     );
+
+    console.log('URL foto desde sessionStorage:', imageUrl);
   }
 
   login(credential: LoginRequest): Observable<any> {
@@ -75,15 +77,19 @@ export class LoginService {
                 try {
                   const parsedData = JSON.parse(data);
                   sessionStorage.setItem('userName', parsedData.clave);
-                  const fotoUrl = parsedData.fotoUrl
-                    ? parsedData.fotoUrl.replace(':8080', ':8081')
-                    : '';
+                  const fotoUrl = parsedData.fotoUrl || '';
+
                   sessionStorage.setItem('userProfileImage', fotoUrl);
+
+                  const fotoUrlCompleta = fotoUrl
+                    ? `${this.urlApi}${fotoUrl}`
+                    : '';
                   sessionStorage.setItem('idPerfil', parsedData.id_perfil); // Guarda el nombre en sessionStorage
                   this.currentUserNombre.next(parsedData.clave);
                   this.currentUserProfileImage.next(
-                    fotoUrl ? `${fotoUrl}?${Date.now()}` : '',
+                    fotoUrlCompleta ? `${fotoUrlCompleta}?${Date.now()}` : '',
                   );
+
                   this.currentUserLoginOn.next(true);
                 } catch (e) {
                   sessionStorage.setItem('userProfileImage', data);
@@ -124,6 +130,12 @@ export class LoginService {
       this.userProfileImage = `${rawImage}?${Date.now()}`;
       this.currentUserProfileImage.next(this.userProfileImage);
     }
+  }
+
+  actualizarFotoPerfil(fotoUrl: string): void {
+    sessionStorage.setItem('userProfileImage', fotoUrl);
+    const urlCompleta = `${this.urlApi}${fotoUrl}?${Date.now()}`;
+    this.currentUserProfileImage.next(urlCompleta);
   }
 
   logout(): Observable<any> {

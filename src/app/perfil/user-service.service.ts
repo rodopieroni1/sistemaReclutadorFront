@@ -86,17 +86,18 @@ export class UserServiceService {
 
   private handleError(error: HttpErrorResponse) {
     if (error.status === 0) {
-      console.error('Ocurrio un ERROR de red o URL inválida:', error.error);
-    } else {
-      console.error(
-        'Backend Retorno codigo de Error',
-        error.status,
-        error.message,
+      return throwError(
+        () => new Error('No se pudo conectar con el servidor.'),
       );
     }
-    return throwError(
-      () => new Error('Algo Fallo por favor intente nuevamente'),
-    );
+
+    const mensaje =
+      error.error?.message ||
+      error.error?.error ||
+      (typeof error.error === 'string' ? error.error : null) ||
+      'Ocurrió un error en el servidor.';
+
+    return throwError(() => new Error(mensaje));
   }
 
   notificarCambioPerfil(usuarioActualizado: any) {

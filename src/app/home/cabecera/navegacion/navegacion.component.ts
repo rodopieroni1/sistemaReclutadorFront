@@ -22,7 +22,7 @@ export class NavegacionComponent implements OnInit {
   constructor(
     private loginService: LoginService,
     private router: Router,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
   ) {}
 
   ngOnDestroy(): void {
@@ -33,7 +33,7 @@ export class NavegacionComponent implements OnInit {
     this.loginService.currentUserLoginOn.subscribe((isLoggedIn) => {
       this.userLoginOn = isLoggedIn;
       if (isLoggedIn) {
-        this.cd.detectChanges(); // 🔄 fuerza el renderizado de la vista
+        this.cd.detectChanges();
         const profileImage = sessionStorage.getItem('userProfileImage');
         this.userProfileImage = profileImage
           ? `${profileImage}?${new Date().getTime()}`

@@ -57,7 +57,10 @@ export class CabeceraComponent implements OnInit {
     const subFoto = this.loginService.currentUserProfileImage.subscribe(
       (imageUrl) => {
         if (imageUrl) {
-          this.userProfileImage = `${imageUrl}?t=${new Date().getTime()}`;
+          console.log('URL de imagen recibida:', imageUrl);
+
+          this.userProfileImage = imageUrl;
+          console.log('URL de imagen recibida 2:', this.userProfileImage);
         } else {
           this.userProfileImage = 'assets/default-profile.png';
         }

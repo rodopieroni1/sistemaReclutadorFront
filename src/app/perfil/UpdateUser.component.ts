@@ -7,6 +7,7 @@ import { environment } from '../../environments/environment';
 import { UserServiceService } from '../perfil/user-service.service';
 import { CabeceraComponent } from '../home/cabecera/cabecera.component';
 import { MatIcon } from '@angular/material/icon';
+import { LoginService } from '../loginuser/auth/login.service';
 
 interface Usuario {
   dni: string;
@@ -50,9 +51,12 @@ export class UpdateUserComponent implements OnInit {
     private usuarioService: UserServiceService,
     private router: Router,
     private http: HttpClient,
+    private loginService: LoginService,
   ) {}
 
   ngOnInit(): void {
+    this.foto = null;
+    this.cv = null;
     const id = Number(sessionStorage.getItem('idPerfil')); // o extraído desde el token
     if (id) {
       this.http.get<Usuario>(`${this.urlApi}/perfiles/${id}`).subscribe({
@@ -68,7 +72,6 @@ export class UpdateUserComponent implements OnInit {
           };
         },
         error: (err) => {
-          console.error('Error al cargar perfil:', err);
           alert('No se pudo cargar la información del usuario');
         },
       });
@@ -82,11 +85,9 @@ export class UpdateUserComponent implements OnInit {
     if (file) {
       if (tipo === 'foto') {
         this.foto = file;
-
-        // Crear una previsualización local inmediata de la imagen
         const reader = new FileReader();
         reader.onload = () => {
-          this.usuario.fotoUrl = reader.result as string; // Esto actualiza el <img [src]> en tiempo real
+          this.usuario.fotoUrl = reader.result as string;
         };
         reader.readAsDataURL(file);
       } else {
@@ -97,48 +98,86 @@ export class UpdateUserComponent implements OnInit {
 
   actualizarUsuario(event: Event) {
     event.preventDefault();
-    const errores = this.usuarioService.validarUsuario(
-      this.usuario,
-      this.foto,
-      this.cv,
-    );
-    if (errores.length > 0) {
-      alert(errores.join('\n'));
-      return;
-    }
-
+    // 2. Construcción del FormData
     const formData = new FormData();
     for (const key in this.usuario) {
-      // Evitamos enviar la fotoUrl vieja o en base64 corrupta como texto al backend
       if (key !== 'fotoUrl') {
         formData.append(key, (this.usuario as any)[key]);
       }
     }
 
-    if (this.foto) formData.append('foto', this.foto);
-    if (this.cv) formData.append('uploadcv', this.cv);
+    if (this.foto) {
+      formData.append('foto', this.foto);
+    }
+
+    if (this.cv) {
+      formData.append('uploadcv', this.cv);
+    }
 
     const id = Number(sessionStorage.getItem('idPerfil'));
     this.usuarioService.updateUsuario(id, formData).subscribe({
+      //llamo al backend
       next: (respuesta: any) => {
         alert('Usuario actualizado correctamente');
+        this.http.get<Usuario>(`${this.urlApi}/perfiles/${id}`).subscribe({
+          next: (data: Usuario) => {
+            this.usuario = {
+              dni: data.dni ?? '',
+              nombre: data.nombre ?? '',
+              direccion: data.direccion ?? '',
+              email: data.email ?? '',
+              clave: data.clave ?? '',
+              documentoUrl: data.documentoUrl,
+              fotoUrl: data.fotoUrl,
+            };
 
-        // Si tu backend te devuelve la nueva URL de la imagen en la respuesta, úsala.
-        // Si no te la devuelve, le añadimos un parámetro aleatorio (?v=fecha) a la URL actual para limpiar la caché del navegador:
-        if (this.usuario.fotoUrl && !this.usuario.fotoUrl.startsWith('data:')) {
-          const timestamp = new Date().getTime();
-          const separador = this.usuario.fotoUrl.includes('?') ? '&' : '?';
-          this.usuario.fotoUrl = `${this.usuario.fotoUrl.split('?')[0]}${separador}v=${timestamp}`;
-        }
+            // Actualizamos la foto que utiliza la cabecera
+            if (data.fotoUrl) {
+              this.loginService.actualizarFotoPerfil(data.fotoUrl);
+            }
 
-        this.usuarioService.notificarCambioPerfil(this.usuario);
-        this.foto = null;
-        this.cv = null;
+            this.usuarioService.notificarCambioPerfil(this.usuario);
+
+            this.foto = null;
+            this.cv = null;
+          },
+
+          error: (err) => {
+            console.error('Error al obtener el perfil actualizado:', err);
+          },
+        });
       },
+
+      // =========================
+      // BACKEND RESPONDE ERROR
+      // =========================
       error: (err) => {
-        console.error('Error al actualizar usuario:', err);
-        alert('Hubo un problema al guardar los cambios');
+        const mensaje =
+          err.message || 'Ocurrió un error al actualizar el usuario..';
+
+        alert(mensaje);
       },
     });
+  }
+
+  obtenerUrlFoto(fotoUrl: string | null): string {
+    if (!fotoUrl) {
+      return 'assets/default-profile.png';
+    }
+    if (fotoUrl.startsWith('data:') || fotoUrl.startsWith('http')) {
+      return fotoUrl;
+    }
+    return `${this.urlApi}${fotoUrl}`;
+  }
+
+  obtenerUrlCv(documentoUrl: string | null): string | null {
+    if (!documentoUrl) {
+      return null;
+    }
+    if (documentoUrl.startsWith('http')) {
+      return documentoUrl;
+    }
+    const nombreArchivo = documentoUrl.split('?')[0];
+    return `${this.urlApi}/uploads/documentos/${nombreArchivo}`;
   }
 }

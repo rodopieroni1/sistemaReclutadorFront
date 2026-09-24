@@ -151,11 +151,14 @@ export class UsuarioControlComponent {
           }
         },
         error: (response) => {
-          const errorMsg = response.error?.error || 'Error al crear el Usuario';
+          const errorMsg =
+            response.error?.message || 'Error al crear el Usuario';
+
           this.snackBar.open(errorMsg, 'Cerrar', {
             duration: 3000,
           });
-          this.isSubmitting = false; // 🔓 desbloquear el botón
+
+          this.isSubmitting = false;
         },
       });
   }
