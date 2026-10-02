@@ -38,15 +38,12 @@
                                         {{ aplicacion.oferta?.empresa?.nombre || 'Empresa desconocida' }},
                                         {{ aplicacion.perfil?.nombre || 'Perfil no disponible' }}
                                     </h4><br />
-                                    <h5>
-                                        {{ aplicacion.oferta?.nombreOferta || '' }}
-                                    </h5><br />
+                                    <strong>Propuesta:</strong>
+                                    {{ aplicacion.oferta?.nombreOferta || '' }}
+                                    <br />
                                     <strong>Fecha de aplicación:</strong>
                                     {{ aplicacion.fechaAplicacion || 'Sin fecha' }}<br />
-                                    <strong>Propuesta:</strong>
-                                    {{ aplicacion.oferta?.descripcionOferta || 'No disponible'
-                                    }}<br />
-                                    <a [href]="aplicacion.perfil?.documentoUrl" download>
+                                    <a [href]="apiUrl + aplicacion.perfil?.documentoUrl" download>
                                         📄 Descargar CV
                                     </a><br /><br />
                                 </div>
@@ -62,6 +59,85 @@
                     </span>
                     <button mat-button (click)="changePage(currentPage + 1)"
                         [disabled]="currentPage === getTotalPages(aplicacionesFiltradas.length)">
+                        Siguiente
+                    </button>
+                </div>
+            </mat-expansion-panel>
+
+            <!-- Postulantes -->
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>Postulantes</mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="barra-ofertas-superior">
+                    <div class="buscador">
+                        <mat-icon>search</mat-icon>
+                        <input type="text" placeholder="Buscar Postulantes" [formControl]="buscarPerfil">
+                    </div>
+                    <button mat-raised-button color="warn" (click)="logout()">
+                        <mat-icon>logout</mat-icon>
+                        Cerrar sesión
+                    </button>
+                </div>
+                <ul>
+                    <li *ngFor="let perfil of getPaginatedDataPerfiles()">
+                        <div class="card-empresa">
+                            <div class="oferta-empresa-header">
+                                <div class="oferta-empresa-info">
+
+                                    <h3>{{ perfil?.nombre || 'Nombre no disponible' }}</h3>
+
+                                    <div class="dato-perfil">
+                                        <strong>📞 Teléfono:</strong>
+                                        <span>{{ perfil?.telefono || 'No disponible' }}</span>
+                                    </div>
+
+                                    <div class="dato-perfil">
+                                        <strong>✉️ Email:</strong>
+                                        <span>{{ perfil?.email || 'No disponible' }}</span>
+                                    </div>
+
+                                    <div class="postulaciones-container">
+
+                                        <strong>💼 Postulaciones:</strong>
+
+                                        <div class="postulaciones-chips"
+                                            *ngIf="perfil?.aplicaciones?.length; else sinAplicaciones">
+
+                                            <span class="postulacion-chip"
+                                                *ngFor="let aplicacion of perfil.aplicaciones">
+                                                {{ aplicacion }},
+                                            </span>
+
+                                        </div>
+
+                                        <ng-template #sinAplicaciones>
+                                            <span class="sin-postulaciones">
+                                                No tiene postulaciones
+                                            </span>
+                                        </ng-template>
+
+                                    </div>
+
+                                    <div class="cv-container">
+                                        <a [href]="apiUrl + perfil?.documentoUrl" download class="btn-cv">
+                                            📄 Descargar CV
+                                        </a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="pagination">
+                    <button mat-button (click)="changePage(currentPage - 1)"
+                        [disabled]="currentPage === 1">Anterior</button>
+                    <span>
+                        Página {{ currentPage }} de {{ getTotalPages(perfilesFiltradas.length) }}
+                    </span>
+                    <button mat-button (click)="changePage(currentPage + 1)"
+                        [disabled]="currentPage === getTotalPages(perfilesFiltradas.length)">
                         Siguiente
                     </button>
                 </div>
@@ -147,7 +223,7 @@
                                     <h3>{{ empresa.nombre }}</h3>
                                     <p><strong>📍 Dirección:</strong> {{ empresa.direccion }}</p>
                                     <p><strong>📖 Historia:</strong> {{ empresa.historiaEmpresa }}</p>
-                                    <p><strong>📝 Observaciones:</strong> {{ empresa.observaciones }}</p>
+                                    <p><strong>📞 Teléfono:</strong> {{ empresa.telefono }}</p>
                                 </div>
                                 <div class="botones-inferiores">
                                     <button mat-icon-button color="accent" (click)="updateEmpresa(empresa)">

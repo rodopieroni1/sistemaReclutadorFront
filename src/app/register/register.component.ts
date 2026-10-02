@@ -24,15 +24,22 @@ import { AuthServiceService } from '../auth.service.service';
   styleUrls: ['./register.component.css'],
 })
 export class RegisterComponent {
+  clave: string = '';
   email: string = '';
   password: string = '';
   confirmPassword: string = '';
-  dni: string = '';
+  nombre: string = '';
 
   constructor(private authService: AuthServiceService) {}
 
   register() {
-    if (!this.email || !this.password || !this.confirmPassword || !this.dni) {
+    if (
+      !this.nombre ||
+      !this.clave ||
+      !this.email ||
+      !this.password ||
+      !this.confirmPassword
+    ) {
       alert('Por favor, complete todos los campos');
       return;
     }
@@ -42,24 +49,16 @@ export class RegisterComponent {
       return;
     }
 
+    this.authService;
     this.authService
-      .checkEmailAndDni(this.email, this.dni)
-      .subscribe((response) => {
-        if (response.emailExists) {
-          alert('Este correo electrónico ya está registrado');
-        } else if (response.dniExists) {
-          alert('Este DNI ya está registrado');
-        } else {
-          this.authService
-            .registerBackend(this.email, this.password, this.dni)
-            .then(() => {
-              alert('Usuario registrado exitosamente');
-            })
-            .catch((error) => {
-              console.error('Error en el registro:', error);
-              alert('El registro no se realizó correctamente');
-            });
-        }
+      .registerBackend(this.clave, this.nombre, this.email, this.password)
+      .then(() => {
+        alert('Usuario registrado exitosamente');
+      })
+      .catch((error) => {
+        console.error('Error en el registro:', error);
+        const mensaje =  error.error || 'El registro no se realizó correctamente';
+        alert(mensaje);
       });
   }
 }

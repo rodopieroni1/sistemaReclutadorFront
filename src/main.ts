@@ -12,9 +12,7 @@ bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),
     provideFirebaseApp(() => initializeApp(environment.firebase)),
-    provideHttpClient(),
     provideAuth(() => getAuth()),
     provideHttpClient(withInterceptors([TokenInterceptor])),
-    // Ya no es necesario llamar a provideRouter nuevamente
   ],
 });

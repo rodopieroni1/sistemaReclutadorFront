@@ -34,6 +34,14 @@ interface Rubros {
   idRubro: number;
   descripcionRubro: string;
 }
+interface Perfil {
+  id_perfil: number;
+  nombre: string;
+  telefono: string;
+  email: string;
+  documentoUrl: string;
+  aplicaciones: string[];
+}
 
 interface Ofertas {
   idOferta: number;
@@ -63,6 +71,16 @@ interface Aplicaciones {
   documentoUrl: string | null;
 }
 
+interface PerfilConAplicacionesResponse {
+  perfil: {
+    id_perfil: number;
+    nombre: string;
+    telefono: string;
+    email: string;
+    documentoUrl: string;
+  };
+  aplicaciones: string[];
+}
 @Component({
   standalone: true,
   selector: 'app-admincontrol',
@@ -81,6 +99,24 @@ interface Aplicaciones {
 })
 export class AdminControlComponent {
   [x: string]: any;
+
+  //Filtro Aplicaciones
+  buscarAplicaciones = new FormControl('');
+  aplicacionesFiltradas: Aplicaciones[] = [];
+  //Filto Rubro
+  buscarRubro = new FormControl('');
+  rubrosFiltradas: Rubros[] = [];
+  //Filtro Postulantes
+  buscarPerfil = new FormControl('');
+  perfilesFiltradas: Perfil[] = [];
+  //Filtro Empresas
+  buscarEmpresa = new FormControl('');
+  empresasFiltradas: Empresa[] = [];
+  //Filtro Ofertas
+  buscarOferta = new FormControl('');
+  ofertasFiltradas: Ofertas[] = [];
+
+  //Objeto para almacenar los datos de las aplicaciones
   aplicaciones: {
     [x: string]: any;
     id_aplicacion: number;
@@ -100,10 +136,21 @@ export class AdminControlComponent {
     };
     documentoUrl: string | null;
   }[] = [];
+  //Objeto Rubros
   rubros: {
     idRubro: number;
     descripcionRubro: string;
   }[] = [];
+  //Objeto Postulantes/Perfil
+  perfiles: {
+    id_perfil: number;
+    nombre: string;
+    email: string;
+    telefono: string;
+    documentoUrl: string;
+    aplicaciones: string[];
+  }[] = [];
+  //Objeto empresas
   empresas: {
     nombre: string;
     direccion: string;
@@ -118,6 +165,7 @@ export class AdminControlComponent {
       descripcionRubro: string;
     };
   }[] = [];
+  //Objeto Oferta
   ofertas: {
     empresa: any;
     idOferta: number;
@@ -126,19 +174,11 @@ export class AdminControlComponent {
     fotoOferta: string;
     estadoOferta: boolean;
   }[] = [];
-
-  currentPage: number = 1; // Página actual
-  itemsPerPage: number = 50; // Número de elementos por página
   //Aplicaciones
   id_aplicacion: number = 0;
   fechaAplicacion: Date = new Date();
   id_perfil: number = 1;
   estadoAplicaciones: boolean = true;
-  buscarAplicaciones = new FormControl('');
-  aplicacionesFiltradas: Aplicaciones[] = [];
-  //Rubro
-  buscarRubro = new FormControl('');
-  rubrosFiltradas: Rubros[] = [];
   //Empresa
   nombreEmpresa: string = '';
   direccionEmpresa: string = '';
@@ -148,19 +188,17 @@ export class AdminControlComponent {
   telefonoEmpresa: string = '';
   cuitEmpresa: number = 1;
   id_empresa: number = 1;
-  buscarEmpresa = new FormControl('');
-  empresasFiltradas: Empresa[] = [];
   //Oferta
   idOferta: number = 1;
   nombreOferta: string = '';
   descripcion: string = '';
   fotoOferta: string = '';
-  buscarOferta = new FormControl('');
-  ofertasFiltradas: Ofertas[] = [];
-  private router = inject(Router);
-  private auth = inject(Auth);
 
-  private apiUrl = environment.local.urlApi;
+  currentPage: number = 1; // Página actual
+  itemsPerPage: number = 50; // Número de elementos por página
+  private router = inject(Router);
+  apiUrl = environment.local.urlApi;
+
   constructor(
     private http: HttpClient, // public dialogRef: MatDialogRef<ModalNuevaEmpresaComponent>
     private dialog: MatDialog,
@@ -168,93 +206,29 @@ export class AdminControlComponent {
 
   ngOnInit() {
     setTimeout(() => window.dispatchEvent(new Event('resize')), 1000000);
-    this.http
-      .get<
-        {
-          idaplicacion: number;
-          fecha: Date;
-          oferta: {
-            id: number;
-            nombreOferta: string;
-            descripcionOferta: string;
-            empresa: { nombre: string };
-          };
-          perfil: {
-            id: number;
-            nombre: string;
-            email: string;
-            documentoUrl: string;
-            fotoUrl: string;
-          };
-          documentoUrl: string | null;
-          estadoAplicaciones: boolean;
-        }[]
-      >(`${this.apiUrl}/aplicaciones/activas`)
-      .subscribe((data) => {
-        this.aplicaciones = data.map((item) => ({
-          ...item,
-          id_aplicacion: item.idaplicacion,
-          fechaAplicacion: item.fecha,
-        }));
-        this.aplicacionesFiltradas = [...this.aplicaciones];
-      });
+
     this.cargarAplicaciones();
+    this.cargarRubros();
+    this.cargarPerfiles();
+    this.cargarEmpresas();
+    this.cargarOfertas();
+
     this.buscarAplicaciones.valueChanges.subscribe((valor) => {
       this.filtrarAplicaciones(valor ?? '');
     });
-    this.http
-      .get<
-        { idRubro: number; descripcionRubro: string }[]
-      >(`${this.apiUrl}/rubro`)
-      .subscribe((data) => {
-        this.rubros = data;
-        this.rubrosFiltradas = [...this.rubros];
-      });
-    this.cargarRubros();
+
     this.buscarRubro.valueChanges.subscribe((valor) => {
       this.filtrarRubros(valor ?? '');
     });
-    this.http
-      .get<
-        {
-          nombre: string;
-          id_empresa: number;
-          cuit: number;
-          email: string;
-          direccion: string;
-          historiaEmpresa: string;
-          observaciones: string;
-          telefono: string;
-          rubro: {
-            idRubro: number;
-            descripcionRubro: string;
-          };
-        }[]
-      >(`${this.apiUrl}/empresas`)
-      .subscribe((data) => {
-        this.empresas = data;
-        this.empresasFiltradas = [...this.empresas];
-      });
-    this.cargarEmpresas();
+
+    this.buscarPerfil.valueChanges.subscribe((valor) => {
+      this.filtrarPerfiles(valor ?? '');
+    });
+
     this.buscarEmpresa.valueChanges.subscribe((valor) => {
       this.filtrarEmpresas(valor ?? '');
     });
-    this.http
-      .get<
-        {
-          idOferta: number;
-          nombreOferta: string;
-          descripcionOferta: string;
-          fotoOferta: string;
-          empresa: { nombre: string };
-          estadoOferta: boolean;
-        }[]
-      >(`${this.apiUrl}/ofertas/disponibles`)
-      .subscribe((data) => {
-        this.ofertas = data;
-        this.ofertasFiltradas = [...this.ofertas];
-      });
-    this.cargarOfertas();
+
     this.buscarOferta.valueChanges.subscribe((valor) => {
       this.filtrarOfertas(valor ?? '');
     });
@@ -310,11 +284,16 @@ export class AdminControlComponent {
             (d) =>
               ({
                 ...d,
-                id_aplicacion: (d as any).idaplicacion,
-                fechaAplicacion: (d as any).fecha,
-              }) as any,
+                id_aplicacion: d.idaplicacion,
+                fechaAplicacion: d.fecha,
+              }) as Aplicaciones,
           );
+          this.aplicacionesFiltradas = [...this.aplicaciones];
+
+          console.log('Aplicaciones recibidas:', this.aplicaciones);
+          console.log('Aplicaciones filtradas:', this.aplicacionesFiltradas);
         },
+
         error: (error) => {
           console.error('Error al cargar las aplicaciones:', error);
         },
@@ -333,6 +312,23 @@ export class AdminControlComponent {
         },
         error: (error) => {
           console.error('Error al cargar los rubros:', error);
+        },
+      });
+  }
+  cargarPerfiles() {
+    this.http
+      .get<PerfilConAplicacionesResponse[]>(`${this.apiUrl}/perfiles`)
+      .subscribe({
+        next: (data) => {
+          this.perfiles = data.map((item) => ({
+            ...item.perfil,
+            aplicaciones: item.aplicaciones,
+          }));
+
+          this.perfilesFiltradas = [...this.perfiles];
+        },
+        error: (error) => {
+          console.error('Error al cargar los perfiles:', error);
         },
       });
   }
@@ -441,6 +437,15 @@ export class AdminControlComponent {
       (e) =>
         e.nombre?.toLowerCase().includes(texto) ||
         e.rubro?.descripcionRubro?.toLowerCase().includes(texto),
+    );
+  }
+
+  filtrarPerfiles(texto: string): void {
+    texto = texto.toLowerCase().trim();
+    this.perfilesFiltradas = this.perfiles.filter(
+      (p) =>
+        p.nombre?.toLowerCase().includes(texto) ||
+        p.email?.toLowerCase().includes(texto),
     );
   }
 
@@ -589,15 +594,26 @@ export class AdminControlComponent {
   }
 
   logout() {
-    signOut(this.auth).then(() => {
-      this.router.navigate(['/login']);
-    });
+    sessionStorage.removeItem('usuarioToken');
+    this.router.navigate(['/login']);
   }
   /////////////////////////Paginacion///////////////////////////////////////
-  getPaginatedDataOfertas() {
+  getPaginatedDataAplicaciones() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
-    return this.ofertasFiltradas.slice(startIndex, endIndex);
+    return this.aplicacionesFiltradas.slice(startIndex, endIndex);
+  }
+
+  getPaginatedDataPerfiles() {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.perfilesFiltradas.slice(startIndex, endIndex);
+  }
+
+  getPaginatedDataRubros() {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.rubrosFiltradas.slice(startIndex, endIndex);
   }
 
   getPaginatedDataEmpresas() {
@@ -606,15 +622,10 @@ export class AdminControlComponent {
     return this.empresasFiltradas.slice(startIndex, endIndex);
   }
 
-  getPaginatedDataRubros() {
+  getPaginatedDataOfertas() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
-    return this.rubrosFiltradas.slice(startIndex, endIndex);
-  }
-  getPaginatedDataAplicaciones() {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    const endIndex = startIndex + this.itemsPerPage;
-    return this.aplicacionesFiltradas.slice(startIndex, endIndex);
+    return this.ofertasFiltradas.slice(startIndex, endIndex);
   }
 
   changePage(page: number) {

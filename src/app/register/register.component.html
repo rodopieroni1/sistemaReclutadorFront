@@ -6,6 +6,16 @@
         <mat-card-content>
             <form>
                 <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Clave de usuario</mat-label>
+                    <input matInput type="text" [(ngModel)]="clave" name="clave"
+                        placeholder="Ingrese una clave de usuario" required>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Nombre completo</mat-label>
+                    <input matInput type="text" [(ngModel)]="nombre" name="nombre"
+                        placeholder="Ingrese su nombre completo" required>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width">
                     <mat-label>Correo Electrónico</mat-label>
                     <input matInput type="email" [(ngModel)]="email" name="email" placeholder="Ingrese su correo"
                         required>

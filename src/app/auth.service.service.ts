@@ -3,18 +3,22 @@ import { HttpClient } from '@angular/common/http';
 import {
   Auth,
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
   signOut,
 } from '@angular/fire/auth';
-import { browserSessionPersistence, setPersistence } from 'firebase/auth';
 import { lastValueFrom, Observable } from 'rxjs';
 import { environment } from '../environments/environment';
+
+interface LoginUsuarioResponse {
+  token: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class AuthServiceService {
   private apiUrl = environment.local.urlApi;
   private backendUrl = environment.local.urlApi + '/login';
+
   constructor(
     private auth: Auth,
     private http: HttpClient,
@@ -34,26 +38,35 @@ export class AuthServiceService {
     return createUserWithEmailAndPassword(this.auth, email, password);
   }
 
-  registerBackend(email: string, password: string, dni: string): Promise<void> {
+  registerBackend(
+    clave: string,
+    nombre: string,
+    email: string,
+    password: string,
+  ): Promise<string> {
     const user = {
       email,
       password,
-      nombre: email,
-      clave: password,
-      tipoUsuario: 'Administrador',
-      dni,
+      nombre,
+      clave,
     };
+
     return lastValueFrom(
-      this.http.post<void>(this.backendUrl, user, {
+      this.http.post(this.backendUrl, user, {
         headers: { 'Content-Type': 'application/json' },
+        responseType: 'text',
       }),
     );
   }
 
-  login(email: string, password: string) {
-    return setPersistence(this.auth, browserSessionPersistence).then(() => {
-      return signInWithEmailAndPassword(this.auth, email, password);
-    });
+  login(clave: string, password: string): Observable<LoginUsuarioResponse> {
+    return this.http.post<LoginUsuarioResponse>(
+      this.apiUrl + '/usuarios/auth/login',
+      {
+        clave,
+        password,
+      },
+    );
   }
 
   logout() {

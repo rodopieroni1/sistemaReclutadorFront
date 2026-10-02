@@ -21,6 +21,7 @@ export class UsuarioControlComponent {
     nombre: '',
     direccion: '',
     email: '',
+    telefono: '',
     clave: '',
     password: '',
   };
@@ -56,6 +57,7 @@ export class UsuarioControlComponent {
       !this.nuevoUsuario.nombre ||
       !this.nuevoUsuario.direccion ||
       !this.nuevoUsuario.email ||
+      !this.nuevoUsuario.telefono ||
       !this.nuevoUsuario.clave ||
       !this.nuevoUsuario.password ||
       !this.fotoSeleccionada ||
@@ -125,6 +127,7 @@ export class UsuarioControlComponent {
     formData.append('nombre', this.nuevoUsuario.nombre);
     formData.append('direccion', this.nuevoUsuario.direccion);
     formData.append('email', this.nuevoUsuario.email);
+    formData.append('telefono', this.nuevoUsuario.telefono);
     formData.append('clave', this.nuevoUsuario.clave);
     formData.append('password', this.nuevoUsuario.password);
     formData.append('foto', this.fotoSeleccionada);
@@ -170,6 +173,7 @@ export class UsuarioControlComponent {
       nombre: '',
       direccion: '',
       email: '',
+      telefono: '',
       clave: '',
       password: '',
     };

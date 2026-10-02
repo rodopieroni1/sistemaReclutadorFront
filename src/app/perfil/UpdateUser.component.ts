@@ -14,6 +14,7 @@ interface Usuario {
   nombre: string;
   direccion: string;
   email: string;
+  telefono: string;
   clave: string;
   documentoUrl: string | null;
   fotoUrl: string | null;
@@ -40,6 +41,7 @@ export class UpdateUserComponent implements OnInit {
     nombre: '',
     direccion: '',
     email: '',
+    telefono: '',
     clave: '',
     documentoUrl: null,
     fotoUrl: null,
@@ -66,6 +68,7 @@ export class UpdateUserComponent implements OnInit {
             nombre: data.nombre ?? '',
             direccion: data.direccion ?? '',
             email: data.email ?? '',
+            telefono: data.telefono ?? '',
             clave: data.clave ?? '',
             documentoUrl: data.documentoUrl,
             fotoUrl: data.fotoUrl,
@@ -126,6 +129,7 @@ export class UpdateUserComponent implements OnInit {
               nombre: data.nombre ?? '',
               direccion: data.direccion ?? '',
               email: data.email ?? '',
+              telefono: data.telefono ?? '',
               clave: data.clave ?? '',
               documentoUrl: data.documentoUrl,
               fotoUrl: data.fotoUrl,

@@ -1,21 +1,31 @@
-// auth-admin.guard.ts
 import { inject } from '@angular/core';
-import { CanActivateFn } from '@angular/router';
-import { Router } from '@angular/router';
-import { Auth, onAuthStateChanged } from '@angular/fire/auth';
+import { CanActivateFn, Router } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
 
-export const AuthGuard: CanActivateFn = async () => {
-  console.log('ENTRÓ AL AUTHGUARD');
+interface JwtPayload {
+  exp: number;
+}
+
+export const AuthGuard: CanActivateFn = () => {
   const router = inject(Router);
-  const auth = inject(Auth);
-
-  const user = await new Promise((resolve) => {
-    onAuthStateChanged(auth, resolve);
-  });
-  console.log('usuario' + user);
-  if (!user) {
+  const token = sessionStorage.getItem('usuarioToken');
+  if (!token) {
     router.navigate(['/login']);
     return false;
   }
-  return true;
+
+  try {
+    const decoded = jwtDecode<JwtPayload>(token);
+    const now = Date.now() / 1000;
+    if (decoded.exp < now) {
+      sessionStorage.removeItem('usuarioToken');
+      router.navigate(['/login']);
+      return false;
+    }
+    return true;
+  } catch (error) {
+    sessionStorage.removeItem('usuarioToken');
+    router.navigate(['/login']);
+    return false;
+  }
 };

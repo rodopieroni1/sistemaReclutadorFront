@@ -228,8 +228,8 @@ export class ModalNuevaOfertaComponent implements OnInit {
             const mensaje = esCrear
               ? 'Oferta creada satisfactoriamente'
               : 'Oferta actualizada satisfactoriamente';
-
             this.snackBar.open(mensaje, 'Cerrar', { duration: 3000 });
+            this.datosActualizadosOferta.emit();
             this.dialogRef.close({ ofertaCreada: true });
           }
         }),
