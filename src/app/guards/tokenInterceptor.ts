@@ -18,7 +18,7 @@ export const TokenInterceptor: HttpInterceptorFn = (
   if (usuarioToken) {
     try {
       const decoded = jwtDecode<JwtPayload>(usuarioToken);
-      const now = Date.now() / 1000;
+      const now = Date.now() / 5000;
       if (decoded.exp < now) {
         console.log('⏰ JWT administrativo expirado');
         sessionStorage.removeItem('usuarioToken');
@@ -42,7 +42,7 @@ export const TokenInterceptor: HttpInterceptorFn = (
   if (token) {
     try {
       const decoded = jwtDecode<JwtPayload>(token);
-      const now = Date.now() / 1000;
+      const now = Date.now() / 5000;
       if (decoded.exp < now) {
         console.log('⏰ JWT postulante expirado');
         sessionStorage.removeItem('token');

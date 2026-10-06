@@ -31,7 +31,7 @@ import { switchMap, catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { MatDividerModule } from '@angular/material/divider';
 import { environment } from '../../../environments/environment';
-
+import { QuillModule } from 'ngx-quill';
 @Component({
   selector: 'app-modal-nueva-oferta',
   standalone: true,
@@ -49,6 +49,7 @@ import { environment } from '../../../environments/environment';
     MatSelectModule,
     MatOptionModule,
     MatDividerModule,
+    QuillModule,
   ],
   templateUrl: './modal-nueva-oferta.component.html',
   styleUrl: './modal-nueva-oferta.component.css',
@@ -84,7 +85,16 @@ export class ModalNuevaOfertaComponent implements OnInit {
   imagenPreview: string | null = null;
   isSubmitting = false;
   uploadUrl = environment.local.urlApi;
-
+  quillModules = {
+    toolbar: [
+      ['bold', 'italic', 'underline'],
+      [{ header: [1, 2, 3, false] }],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      [{ align: [] }],
+      ['link'],
+      ['clean'],
+    ],
+  };
   constructor(
     private http: HttpClient,
     public dialogRef: MatDialogRef<ModalNuevaOfertaComponent>,

@@ -94,21 +94,6 @@ export class UsuarioControlComponent {
       return;
     }
 
-    const password = this.nuevoUsuario.password;
-    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{6,}$/;
-    if (!passwordRegex.test(password)) {
-      this.snackBar.open(
-        'La contraseña debe tener al menos 6 caracteres e incluir letras y números.',
-        'Cerrar',
-        {
-          duration: 4000,
-        },
-      );
-
-      this.isSubmitting = false;
-      return;
-    }
-
     if (this.nuevoUsuario.password !== this.confirmarPassword) {
       this.snackBar.open(
         'Las contraseñas no coinciden. Por favor, vuelve a ingresarlas.',
@@ -152,6 +137,7 @@ export class UsuarioControlComponent {
             });
             this.limpiarFormulario();
           }
+          this.isSubmitting = false;
         },
         error: (response) => {
           const errorMsg =

@@ -68,31 +68,7 @@
     color: #333;
 }
 
-/* Contenedor en paralelo para Descripción y Foto */
-.info-seccion-paralelo {
-    display: grid;
-    /* Incrementamos el espacio de la foto a 300px (antes 200px) */
-    grid-template-columns: 1fr 300px;
-    gap: 40px;
-    /* Aumentamos el espacio de separación */
-    align-items: flex-start;
-    margin-bottom: 25px;
-}
 
-.foto-contenedor {
-    display: flex;
-    justify-content: center;
-}
-
-.logo {
-    /* Escalamos el tamaño de la imagen a 300px */
-    width: 300px;
-    height: 300px;
-    object-fit: cover;
-    border-radius: 12px;
-    /* Bordes ligeramente más redondeados para el nuevo tamaño */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-}
 
 .btn-volver-flotante {
     position: fixed;
@@ -134,8 +110,67 @@
     outline: none !important;
 }
 
-/* Responsivo para móviles */
+/* Contenedor en paralelo para Descripción y Foto */
+.info-seccion-paralelo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 40px;
+    align-items: start;
+    margin-bottom: 25px;
+}
+
+/* Columna de la descripción */
+.descripcion-texto {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* Contenido HTML generado por Quill */
+.descripcion-texto>div {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* Evita que el texto desborde */
+.descripcion-texto p,
+.descripcion-texto ul,
+.descripcion-texto ol,
+.descripcion-texto li {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* Listas creadas por Quill */
+.descripcion-texto ul,
+.descripcion-texto ol {
+    padding-left: 25px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+/* Contenedor de la foto */
+.foto-contenedor {
+    width: 300px;
+    display: flex;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.logo {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsivo */
 @media (max-width: 768px) {
+
     .detalle-header {
         text-align: center;
     }
@@ -154,13 +189,20 @@
         text-align: center;
     }
 
-    /* En móviles, la foto vuelve a ponerse abajo o arriba de la descripción */
     .info-seccion-paralelo {
         grid-template-columns: 1fr;
         gap: 20px;
     }
 
     .foto-contenedor {
+        width: 100%;
         order: -1;
+    }
+
+    .logo {
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+        aspect-ratio: 1 / 1;
     }
 }

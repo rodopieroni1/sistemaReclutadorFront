@@ -105,3 +105,24 @@ mat-form-field {
   font-size: 24px;
   font-weight: 600;
 }
+
+.editor-oferta {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.editor-oferta ::ng-deep .ql-toolbar {
+  border-radius: 4px 4px 0 0;
+}
+
+.editor-oferta ::ng-deep .ql-container {
+  height: 300px;
+  border-radius: 0 0 4px 4px;
+}
+
+.editor-oferta ::ng-deep .ql-editor {
+  height: 300px;
+  overflow-y: auto;
+  font-size: 16px;
+}

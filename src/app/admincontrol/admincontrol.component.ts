@@ -308,22 +308,27 @@ export class AdminControlComponent {
       .subscribe({
         next: (data) => {
           this.rubros = data;
-          this.rubrosFiltradas = [...this.rubros];
+          this.rubrosFiltradas = [...this.rubros].sort((a, b) =>
+            (a.descripcionRubro || '').localeCompare(b.descripcionRubro || ''),
+          );
         },
         error: (error) => {
           console.error('Error al cargar los rubros:', error);
         },
       });
   }
+
   cargarPerfiles() {
     this.http
       .get<PerfilConAplicacionesResponse[]>(`${this.apiUrl}/perfiles`)
       .subscribe({
         next: (data) => {
-          this.perfiles = data.map((item) => ({
-            ...item.perfil,
-            aplicaciones: item.aplicaciones,
-          }));
+          this.perfiles = data
+            .map((item) => ({
+              ...item.perfil,
+              aplicaciones: item.aplicaciones,
+            }))
+            .sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
 
           this.perfilesFiltradas = [...this.perfiles];
         },
@@ -411,8 +416,9 @@ export class AdminControlComponent {
           rubro: empresa.rubro,
           logo: empresa.logo,
         }));
-
-        this.empresasFiltradas = [...this.empresas];
+        this.empresasFiltradas = [...this.empresas].sort((a, b) =>
+          (a.nombre || '').localeCompare(b.nombre || ''),
+        );
       },
       error: (error) => {
         console.error('Error al cargar empresas', error);
@@ -423,21 +429,30 @@ export class AdminControlComponent {
   filtrarAplicaciones(texto: string): void {
     texto = texto.toLowerCase().trim();
 
-    this.aplicacionesFiltradas = this.aplicaciones.filter(
-      (a) =>
-        a.oferta?.nombreOferta?.toLowerCase().includes(texto) ||
-        a.oferta?.empresa?.nombre?.toLowerCase().includes(texto) ||
-        a.perfil?.nombre?.toLowerCase().includes(texto),
-    );
+    this.aplicacionesFiltradas = this.aplicaciones
+      .filter(
+        (a) =>
+          a.oferta?.nombreOferta?.toLowerCase().includes(texto) ||
+          a.oferta?.empresa?.nombre?.toLowerCase().includes(texto) ||
+          a.perfil?.nombre?.toLowerCase().includes(texto),
+      )
+      .sort((a, b) => {
+        return (
+          new Date(b.fechaAplicacion).getTime() -
+          new Date(a.fechaAplicacion).getTime()
+        );
+      });
   }
 
   filtrarEmpresas(texto: string): void {
     texto = texto.toLowerCase().trim();
-    this.empresasFiltradas = this.empresas.filter(
-      (e) =>
-        e.nombre?.toLowerCase().includes(texto) ||
-        e.rubro?.descripcionRubro?.toLowerCase().includes(texto),
-    );
+    this.empresasFiltradas = this.empresas
+      .filter(
+        (e) =>
+          e.nombre?.toLowerCase().includes(texto) ||
+          e.rubro?.descripcionRubro?.toLowerCase().includes(texto),
+      )
+      .sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
   }
 
   filtrarPerfiles(texto: string): void {
@@ -532,18 +547,26 @@ export class AdminControlComponent {
           fotoOferta: string;
           empresa: { nombre: string };
           estadoOferta: boolean;
+          fecha: string;
         }[]
       >(`${this.apiUrl}/ofertas`)
       .subscribe({
         next: (data) => {
-          this.ofertas = data.map((oferta) => ({
-            idOferta: oferta.idOferta,
-            nombreOferta: oferta.nombreOferta,
-            descripcionOferta: oferta.descripcionOferta,
-            fotoOferta: oferta.fotoOferta,
-            empresa: oferta.empresa,
-            estadoOferta: oferta.estadoOferta,
-          }));
+          this.ofertas = data
+            .map((oferta) => ({
+              idOferta: oferta.idOferta,
+              nombreOferta: oferta.nombreOferta,
+              descripcionOferta: oferta.descripcionOferta,
+              fotoOferta: oferta.fotoOferta,
+              empresa: oferta.empresa,
+              estadoOferta: oferta.estadoOferta,
+              fecha: oferta.fecha,
+            }))
+            .sort(
+              (a, b) =>
+                new Date(b.fecha).getTime() - new Date(a.fecha).getTime(),
+            );
+
           this.ofertasFiltradas = [...this.ofertas];
         },
         error: (error) => {

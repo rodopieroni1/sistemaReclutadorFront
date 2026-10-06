@@ -14,16 +14,23 @@
                 </mat-error>
             </mat-form-field>
             <!-- Descripción amplia -->
-            <mat-form-field appearance="fill" class="inputModal full-width grande">
+            <div class="inputModal full-width grande">
                 <mat-label>Descripción de la Oferta</mat-label>
-                <textarea matInput placeholder="Ingrese la descripción completa aquí..."
-                    formControlName="descripcionOferta" rows="12" required></textarea>
-                <mat-hint align="start">Puedes usar viñetas con "-" para listar puntos</mat-hint>
-                <mat-error
-                    *ngIf="miFormulario.get('descripcionOferta')?.invalid && miFormulario.get('descripcionOferta')?.touched">
+
+                <quill-editor formControlName="descripcionOferta" [modules]="quillModules"
+                    placeholder="Ingrese la descripción completa aquí..." class="editor-oferta">
+                </quill-editor>
+
+                <mat-hint align="start">
+                    Podés utilizar negrita, cursiva, subrayado, viñetas, numeración,
+                    títulos y enlaces.
+                </mat-hint>
+
+                <mat-error *ngIf="miFormulario.get('descripcionOferta')?.invalid &&
+           miFormulario.get('descripcionOferta')?.touched">
                     La descripción es obligatoria.
                 </mat-error>
-            </mat-form-field>
+            </div>
         </section>
         <section class="form-section doble-columna">
             <!-- Estado -->

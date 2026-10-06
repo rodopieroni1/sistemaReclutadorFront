@@ -29,8 +29,6 @@
                 </div>
 
                 <div class="contacto-info">
-                    <p class="contacto"><mat-icon>email</mat-icon> {{ oferta.empresa.email }}</p>
-                    <p class="contacto"><mat-icon>phone</mat-icon> {{ oferta.empresa.telefono }}</p>
                     <p class="contacto"><mat-icon>location_on</mat-icon> {{ oferta.empresa.direccion }}</p>
                 </div>
             </div>
@@ -38,8 +36,7 @@
             <!-- Sección de Descripción en paralelo con la Foto -->
             <section class="info-seccion-paralelo">
                 <div class="descripcion-texto">
-                    <h3>📝 Descripción del puesto</h3>
-                    <div [innerHTML]="getDescripcionFormateada(oferta.descripcionOferta)"></div>
+                    <div [innerHTML]="oferta.descripcionOferta"></div>
                 </div>
 
                 <div class="foto-contenedor">
