@@ -29,6 +29,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { MatSelectModule } from '@angular/material/select';
 import { environment } from '../../../environments/environment';
+import { QuillModule } from 'ngx-quill';
 
 export interface ResponseRest<T> {
   success: boolean;
@@ -50,6 +51,7 @@ export interface ResponseRest<T> {
     MatDialogModule,
     CommonModule,
     MatSelectModule,
+    QuillModule,
   ],
   templateUrl: './modal-nueva-empresa.component.html',
   styleUrls: ['./modal-nueva-empresa.component.css'], // Corregido
@@ -96,6 +98,19 @@ export class ModalNuevaEmpresaComponent implements OnInit {
   isSubmitting = false;
   imagenDesdeBD: string | null = null;
   uploadUrl = environment.local.urlApi;
+  limiteCaracteres = 600;
+  caracteresHistoria = 0;
+  caracteresObservaciones = 0;
+  quillModules = {
+    toolbar: [
+      ['bold', 'italic', 'underline'],
+      [{ header: [1, 2, 3, false] }],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      [{ align: [] }],
+      ['link'],
+      ['clean'],
+    ],
+  };
 
   constructor(
     private http: HttpClient,
@@ -322,5 +337,45 @@ export class ModalNuevaEmpresaComponent implements OnInit {
     };
     reader.readAsDataURL(this.logoSeleccionado);
     console.log('Logo seleccionado:', this.logoSeleccionado.name);
+  }
+
+  /** * Cuenta solamente el texto visible de Quill, * sin contar las etiquetas HTML. */
+  obtenerCantidadCaracteres(html: string): number {
+    if (!html) {
+      return 0;
+    }
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    const texto = div.textContent || div.innerText || '';
+    return texto.replace(/\u200B/g, '').length;
+  }
+
+  /** * Controla el límite de 600 caracteres. */
+  onQuillContentChanged(event: any, campo: string): void {
+    const html = event.html || '';
+    const cantidad = this.obtenerCantidadCaracteres(html);
+
+    if (campo === 'historiaEmpresa') {
+      this.caracteresHistoria = cantidad;
+    }
+
+    if (campo === 'observacionesEmpresa') {
+      this.caracteresObservaciones = cantidad;
+    }
+
+    const control = this.miFormulario.get(campo);
+    if (!control) {
+      return;
+    }
+
+    if (cantidad > this.limiteCaracteres) {
+      control.setErrors({ ...(control.errors || {}), maxlength600: true });
+    } else {
+      if (control.hasError('maxlength600')) {
+        const errores = { ...(control.errors || {}) };
+        delete errores['maxlength600'];
+        control.setErrors(Object.keys(errores).length > 0 ? errores : null);
+      }
+    }
   }
 }

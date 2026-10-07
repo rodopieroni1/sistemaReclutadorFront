@@ -161,6 +161,13 @@ h1 {
     transform: scale(1.1);
 }
 
+.historia-empresa {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    overflow: hidden;
+}
+
 @media (max-width: 768px) {
     .btn-volver-flotante {
         display: flex;

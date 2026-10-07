@@ -226,7 +226,8 @@
                                 <div class="oferta-empresa-info">
                                     <h3>{{ empresa.nombre }}</h3>
                                     <p><strong>📍 Dirección:</strong> {{ empresa.direccion }}</p>
-                                    <p><strong>📖 Historia:</strong> {{ empresa.historiaEmpresa }}</p>
+                                    <strong>📖 Historia:</strong>
+                                    <div class="historia-empresa" [innerHTML]="empresa.historiaEmpresa"></div>
                                     <p><strong>📞 Teléfono:</strong> {{ empresa.telefono }}</p>
                                 </div>
                                 <div class="botones-inferiores">

@@ -57,47 +57,6 @@
 
 }
 
-
-/* ===========================================================
-   TABLETS
-=========================================================== */
-@media (min-width:769px) and (max-width:1024px) {
-
-  html,
-  body {
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
-
-  .layout-fijo {
-    display: contents;
-  }
-
-  .columna-titulo,
-  .columna-imagen {
-    display: none !important;
-  }
-
-  .columna-contenido {
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    padding: 15px;
-    box-sizing: border-box;
-    background: #f09b56;
-    height: auto;
-    overflow: visible;
-  }
-
-  .responsive-accordion {
-    width: 100%;
-    max-width: 100%;
-  }
-}
-
-
 /* ===========================================================
    ESCRITORIO
 =========================================================== */
@@ -301,4 +260,111 @@ li {
 
 .imagen-mobile {
   display: none;
+}
+
+.oferta-empresa-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  min-width: 0;
+}
+
+.oferta-empresa-info {
+  flex: 1;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.historia-empresa {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  overflow: hidden;
+}
+
+/* Elementos generados por Quill */
+.historia-empresa * {
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* ===========================================================
+   TABLETS Y CELULARES
+=========================================================== */
+
+@media (max-width: 1024px) {
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  /* El contenedor deja de usar las 3 columnas */
+  .layout-fijo {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+    background: #f09b56;
+  }
+
+  /* Ocultar columna izquierda */
+  .columna-titulo {
+    display: none !important;
+  }
+
+  /* Ocultar columna derecha */
+  .columna-imagen {
+    display: none !important;
+  }
+
+  /* El contenido ocupa toda la pantalla */
+  .columna-contenido {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 100vh;
+    margin: 0;
+    padding: 15px;
+    box-sizing: border-box;
+    overflow: visible;
+    background: #f09b56;
+  }
+
+  /* Accordion a pantalla completa */
+  .responsive-accordion,
+  .mat-accordion {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .mat-expansion-panel {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Ocultar logo inferior */
+  .imagen-mobile {
+    display: none;
+  }
 }

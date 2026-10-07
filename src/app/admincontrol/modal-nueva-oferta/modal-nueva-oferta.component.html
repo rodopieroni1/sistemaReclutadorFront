@@ -54,9 +54,15 @@
         <section class="form-section">
             <div class="file-upload-container">
                 <input type="file" #inputFile accept="image/*" (change)="onArchivoSeleccionado($event)" hidden>
-                <button mat-raised-button color="primary" type="button" (click)="inputFile.click()">
-                    Seleccionar / Subir Imagen
+
+                <button mat-raised-button color="primary" type="button" class="btn-subir-imagen"
+                    (click)="inputFile.click()">
+                    <span class="material-icons" aria-hidden="true">add_photo_alternate</span>
+                    <span class="texto-subir-imagen">
+                        Seleccionar / Subir Imagen
+                    </span>
                 </button>
+
                 <div class="preview-container">
                     <img *ngIf="imagenPreview" [src]="imagenPreview" alt="Previsualización" class="preview-img" />
                     <img *ngIf="!imagenPreview && imagenDesdeBD" [src]="uploadUrl + '/uploads/logos/' + imagenDesdeBD"

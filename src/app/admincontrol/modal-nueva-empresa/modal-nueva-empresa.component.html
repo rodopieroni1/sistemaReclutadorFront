@@ -14,12 +14,21 @@
                     El nombre es obligatorio.
                 </mat-error>
             </mat-form-field>
-            <mat-form-field appearance="fill" class="full-width">
-                <mat-label>Historia</mat-label>
-                <textarea matInput rows="8" placeholder="Describa la historia de la empresa"
-                    formControlName="historiaEmpresa">
-                </textarea>
-            </mat-form-field>
+            <div class="quill-container">
+                <label class="quill-label">Historia</label>
+                <quill-editor formControlName="historiaEmpresa" [modules]="quillModules" [styles]="{height: '220px'}"
+                    placeholder="Describa la historia de la empresa"
+                    (onContentChanged)="onQuillContentChanged($event, 'historiaEmpresa')"> </quill-editor>
+                <div class="quill-footer">
+                    <span [class.limite-alcanzado]=" caracteresHistoria >= limiteCaracteres"> {{
+                        caracteresHistoria }} / {{ limiteCaracteres }}
+                    </span>
+                    <span *ngIf="caracteresHistoria >= limiteCaracteres" class="mensaje-limite"> Has alcanzado el límite
+                        de 600 caracteres. </span>
+                </div> <mat-error *ngIf="miFormulario.get('historiaEmpresa')?.hasError('maxlength600')"> La historia no
+                    puede superar
+                    los 600 caracteres. </mat-error>
+            </div>
         </section>
         <section class="form-section doble-columna">
             <mat-form-field appearance="fill">
@@ -83,11 +92,20 @@
             </div>
         </section>
         <section class="form-section">
-            <mat-form-field appearance="fill" class="full-width">
-                <mat-label>Observaciones</mat-label>
-                <textarea matInput rows="5" placeholder="Observaciones" formControlName="observacionesEmpresa">
-                </textarea>
-            </mat-form-field>
+            <div class="quill-container"> <label class="quill-label">Observaciones</label> <quill-editor
+                    formControlName="observacionesEmpresa" [modules]="quillModules" [styles]="{height: '180px'}"
+                    placeholder="Ingrese observaciones sobre la empresa"
+                    (onContentChanged)="onQuillContentChanged($event, 'observacionesEmpresa')"> </quill-editor>
+                <div class="quill-footer">
+                    <span [class.limite-alcanzado]=" caracteresObservaciones >= limiteCaracteres"> {{
+                        caracteresObservaciones }} / {{ limiteCaracteres }} </span>
+                    <span *ngIf="caracteresObservaciones >= limiteCaracteres" class="mensaje-limite"> Has alcanzado el
+                        límite de 600 caracteres. </span>
+                </div>
+                <mat-error *ngIf=" miFormulario.get('observacionesEmpresa')?.hasError('maxlength600')"> Las
+                    observaciones no
+                    pueden superar los 600 caracteres. </mat-error>
+            </div>
         </section>
     </form>
 </mat-dialog-content>

@@ -29,9 +29,7 @@
             <p class="rubro">
                 {{ empresa.rubro?.descripcionRubro }}
             </p>
-            <p class="descripcion">
-                {{empresa.historiaEmpresa}}
-            </p>
+            <div class="historia-empresa" [innerHTML]="empresa.historiaEmpresa"></div>
         </div>
     </section>
 </main>
