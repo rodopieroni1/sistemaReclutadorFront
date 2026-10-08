@@ -15,6 +15,7 @@ import {
   of,
   Subscription,
   interval,
+  finalize,
 } from 'rxjs';
 import { environment } from '../../../environments/environment';
 @Injectable({
@@ -154,7 +155,7 @@ export class LoginService {
           },
         },
       )
-      .pipe(tap(() => this.limpiarSesion()));
+      .pipe(finalize(() => this.limpiarSesion()));
   }
 
   private limpiarSesion() {

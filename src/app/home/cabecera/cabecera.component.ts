@@ -7,7 +7,7 @@ import { UserServiceService } from '../../perfil/user-service.service';
 import { NavigationServiceService } from '../../navigation-service.service';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { finalize, Subscription } from 'rxjs';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -139,20 +139,30 @@ export class CabeceraComponent implements OnInit {
   }
 
   logout(): void {
-    this.loginService.logout().subscribe({
-      next: () => {
-        this.userProfileImage = '';
-        this.userName = '';
-        this.userLoginOn = false;
-        this.subs.forEach((sub) => sub.unsubscribe());
+    this.loginService
+      .logout()
+      .pipe(
+        finalize(() => {
+          this.userProfileImage = '';
+          this.userName = '';
+          this.userLoginOn = false;
+          this.subs.forEach((sub) => sub.unsubscribe());
+          this.router.navigate(['/login-user']);
+        }),
+      )
+      .subscribe({
+        error: (err) => {
+          console.error('Error al cerrar sesión:', err);
+        },
+      });
+  }
 
-        this.router.navigate(['/login-user']);
-      },
-
-      error: (err) => {
-        console.error(err);
-      },
-    });
+  private finalizarLogout(): void {
+    this.userProfileImage = '';
+    this.userName = '';
+    this.userLoginOn = false;
+    this.subs.forEach((sub) => sub.unsubscribe());
+    this.router.navigate(['/login-user']);
   }
 
   ngOnDestroy(): void {
