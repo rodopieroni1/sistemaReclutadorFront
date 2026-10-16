@@ -233,7 +233,23 @@ export class AdminControlComponent {
       this.filtrarOfertas(valor ?? '');
     });
   }
-
+  cargarRubros() {
+    this.http
+      .get<
+        { idRubro: number; descripcionRubro: string }[]
+      >(`${this.apiUrl}/rubro`)
+      .subscribe({
+        next: (data) => {
+          this.rubros = data;
+          this.rubrosFiltradas = [...this.rubros].sort((a, b) =>
+            (a.descripcionRubro || '').localeCompare(b.descripcionRubro || ''),
+          );
+        },
+        error: (error) => {
+          console.error('Error al cargar los rubros:', error);
+        },
+      });
+  }
   nuevoRubro() {
     const descripcion = prompt('Ingrese la descripción del nuevo rubro:');
     if (descripcion) {
@@ -249,6 +265,51 @@ export class AdminControlComponent {
           error: (err) => {
             const mensajeError =
               err.error?.message || 'Error al crear el rubro';
+            alert(mensajeError);
+          },
+        });
+    }
+  }
+  eliminarRubro(rubro: { idRubro: number; descripcionRubro: string }) {
+    if (
+      confirm(
+        `¿Estás seguro que deseas eliminar el rubro "${rubro.descripcionRubro}"?`,
+      )
+    ) {
+      this.http
+        .delete<any>(`${this.apiUrl}/rubro/eliminar/${rubro.idRubro}`)
+        .subscribe({
+          next: (respuesta) => {
+            alert(respuesta.message || 'Rubro eliminado exitosamente');
+            this.cargarRubros();
+          },
+          error: (error) => {
+            console.error('Error al eliminar el rubro:', error);
+            const mensajeError =
+              error.error?.message || 'Error al eliminar el rubro';
+            alert(mensajeError);
+          },
+        });
+    }
+  }
+  actualizarRubro(rubro: { idRubro: number; descripcionRubro: string }) {
+    const nuevaDescripcion = prompt(
+      'Editar descripción del rubro:',
+      rubro.descripcionRubro,
+    );
+    if (nuevaDescripcion) {
+      this.http
+        .put(`${this.apiUrl}/rubro/actualizar/${rubro.idRubro}`, {
+          descripcionRubro: nuevaDescripcion,
+        })
+        .subscribe({
+          next: (response: any) => {
+            alert(response.message || 'Rubro modificado exitosamente');
+            this.cargarRubros();
+          },
+          error: (err) => {
+            const mensajeError =
+              err.error?.message || 'Error al modificar el rubro';
             alert(mensajeError);
           },
         });
@@ -300,24 +361,6 @@ export class AdminControlComponent {
       });
   }
 
-  cargarRubros() {
-    this.http
-      .get<
-        { idRubro: number; descripcionRubro: string }[]
-      >(`${this.apiUrl}/rubro`)
-      .subscribe({
-        next: (data) => {
-          this.rubros = data;
-          this.rubrosFiltradas = [...this.rubros].sort((a, b) =>
-            (a.descripcionRubro || '').localeCompare(b.descripcionRubro || ''),
-          );
-        },
-        error: (error) => {
-          console.error('Error al cargar los rubros:', error);
-        },
-      });
-  }
-
   cargarPerfiles() {
     this.http
       .get<PerfilConAplicacionesResponse[]>(`${this.apiUrl}/perfiles`)
@@ -336,66 +379,6 @@ export class AdminControlComponent {
           console.error('Error al cargar los perfiles:', error);
         },
       });
-  }
-
-  eliminarRubro(rubro: { idRubro: number; descripcionRubro: string }) {
-    if (
-      confirm(
-        `¿Estás seguro que deseas eliminar el rubro "${rubro.descripcionRubro}"?`,
-      )
-    ) {
-      this.http
-        .delete(`${this.apiUrl}/rubro/eliminar/${rubro.idRubro}`, {
-          responseType: 'text',
-        })
-        .subscribe({
-          next: (mensaje) => {
-            alert(mensaje);
-            this.cargarRubros();
-          },
-          error: (error) => {
-            alert(error.error);
-          },
-        });
-    }
-  }
-
-  actualizarRubro(rubro: { idRubro: number; descripcionRubro: string }) {
-    const nuevaDescripcion = prompt(
-      'Editar descripción del rubro:',
-      rubro.descripcionRubro,
-    );
-    if (nuevaDescripcion) {
-      this.http
-        .put(`${this.apiUrl}/rubro/actualizar/${rubro.idRubro}`, {
-          descripcionRubro: nuevaDescripcion,
-        })
-        .subscribe({
-          next: (response: any) => {
-            alert(response.message || 'Rubro modificado exitosamente');
-            this.cargarRubros();
-          },
-          error: (err) => {
-            const mensajeError =
-              err.error?.message || 'Error al modificar el rubro';
-            alert(mensajeError);
-          },
-        });
-    }
-  }
-
-  nuevaEmpresa() {
-    const dialogRef = this.dialog.open(ModalNuevaEmpresaComponent, {
-      width: '750px',
-      maxWidth: '95vw',
-      maxHeight: '90vh',
-      autoFocus: false,
-      data: { accion: 'crear' }, // Pasando la acción al modal
-    });
-    // Verifica que la instancia tenga acceso al evento y suscríbete
-    dialogRef.componentInstance.datosActualizadosEmpresa.subscribe(() => {
-      this.cargarEmpresas(); // Recargar las ofertas
-    });
   }
 
   cargarEmpresas() {
@@ -425,61 +408,19 @@ export class AdminControlComponent {
       },
     });
   }
-
-  filtrarAplicaciones(texto: string): void {
-    texto = texto.toLowerCase().trim();
-
-    this.aplicacionesFiltradas = this.aplicaciones
-      .filter(
-        (a) =>
-          a.oferta?.nombreOferta?.toLowerCase().includes(texto) ||
-          a.oferta?.empresa?.nombre?.toLowerCase().includes(texto) ||
-          a.perfil?.nombre?.toLowerCase().includes(texto),
-      )
-      .sort((a, b) => {
-        return (
-          new Date(b.fechaAplicacion).getTime() -
-          new Date(a.fechaAplicacion).getTime()
-        );
-      });
+  nuevaEmpresa() {
+    const dialogRef = this.dialog.open(ModalNuevaEmpresaComponent, {
+      width: '750px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      autoFocus: false,
+      data: { accion: 'crear' }, // Pasando la acción al modal
+    });
+    // Verifica que la instancia tenga acceso al evento y suscríbete
+    dialogRef.componentInstance.datosActualizadosEmpresa.subscribe(() => {
+      this.cargarEmpresas(); // Recargar las ofertas
+    });
   }
-
-  filtrarEmpresas(texto: string): void {
-    texto = texto.toLowerCase().trim();
-    this.empresasFiltradas = this.empresas
-      .filter(
-        (e) =>
-          e.nombre?.toLowerCase().includes(texto) ||
-          e.rubro?.descripcionRubro?.toLowerCase().includes(texto),
-      )
-      .sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
-  }
-
-  filtrarPerfiles(texto: string): void {
-    texto = texto.toLowerCase().trim();
-    this.perfilesFiltradas = this.perfiles.filter(
-      (p) =>
-        p.nombre?.toLowerCase().includes(texto) ||
-        p.email?.toLowerCase().includes(texto),
-    );
-  }
-
-  filtrarRubros(texto: string): void {
-    texto = texto.toLowerCase().trim();
-    this.rubrosFiltradas = this.rubros.filter((r) =>
-      r.descripcionRubro?.toLowerCase().includes(texto),
-    );
-  }
-
-  filtrarOfertas(texto: string): void {
-    texto = texto.toLowerCase().trim();
-    this.ofertasFiltradas = this.ofertas.filter(
-      (o) =>
-        o.nombreOferta?.toLowerCase().includes(texto) ||
-        o.empresa?.nombre?.toLowerCase().includes(texto),
-    );
-  }
-
   updateEmpresa(empresa: {
     id_empresa: number;
     cuit: number;
@@ -499,7 +440,6 @@ export class AdminControlComponent {
     });
     dialogRef.componentInstance.datosActualizadosEmpresa.subscribe(() => {
       this.cargarEmpresas(); // Recargar las empresas
-      //dialogRef.componentInstance.cargarUpdate(this['empresa']);
     });
   }
 
@@ -508,14 +448,17 @@ export class AdminControlComponent {
       confirm(`¿Estás seguro que deseas eliminar la empresa ${empresa.nombre}?`)
     ) {
       this.http
-        .delete(`${this.apiUrl}/empresas/eliminar/${empresa.id_empresa}`)
+        .delete(`${this.apiUrl}/empresas/${empresa.id_empresa}`)
         .subscribe({
           next: () => {
             alert('Empresa eliminada exitosamente');
             this.cargarEmpresas(); // Recargar las empresas
           },
           error: (error) => {
-            alert('Ocurrió un error al intentar eliminar la empresa');
+            alert(
+              error.error?.message ||
+                'Ocurrió un error al intentar eliminar la empresa',
+            );
           },
         });
     }
@@ -596,24 +539,85 @@ export class AdminControlComponent {
     });
   }
 
-  deleteOferta(oferta: { idOferta: number; descripcionOferta: string }) {
+  deleteOferta(oferta: { idOferta: number; nombreOferta: string }) {
     if (
       confirm(
-        `¿Estás seguro que deseas eliminar la oferta ${oferta.descripcionOferta}?`,
+        `¿Estás seguro que deseas desactivar esta oferta ${oferta.nombreOferta}?`,
       )
     ) {
       this.http
         .delete(`${this.apiUrl}/ofertas/eliminar/${oferta.idOferta}`)
         .subscribe({
           next: () => {
-            alert('Oferta eliminada exitosamente');
+            alert('Oferta desactivada exitosamente');
             this.cargarOfertas(); // Recargar las empresas
           },
           error: (error) => {
-            alert('Ocurrió un error al intentar eliminar la Oferta');
+            alert(
+              error.error?.message ||
+                'Ocurrió un error al intentar desactivar esta Oferta',
+            );
           },
         });
     }
+  }
+
+  filtrarAplicaciones(texto: string): void {
+    texto = texto.toLowerCase().trim();
+
+    this.aplicacionesFiltradas = this.aplicaciones
+      .filter(
+        (a) =>
+          a.oferta?.nombreOferta?.toLowerCase().includes(texto) ||
+          a.oferta?.empresa?.nombre?.toLowerCase().includes(texto) ||
+          a.perfil?.nombre?.toLowerCase().includes(texto),
+      )
+      .sort((a, b) => {
+        return (
+          new Date(b.fechaAplicacion).getTime() -
+          new Date(a.fechaAplicacion).getTime()
+        );
+      });
+  }
+
+  filtrarEmpresas(texto: string): void {
+    texto = texto.toLowerCase().trim();
+    this.empresasFiltradas = this.empresas
+      .filter(
+        (e) =>
+          e.nombre?.toLowerCase().includes(texto) ||
+          e.rubro?.descripcionRubro?.toLowerCase().includes(texto),
+      )
+      .sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
+  }
+
+  filtrarPerfiles(texto: string): void {
+    texto = texto.toLowerCase().trim();
+    this.perfilesFiltradas = this.perfiles.filter(
+      (p) =>
+        p.nombre?.toLowerCase().includes(texto) ||
+        p.email?.toLowerCase().includes(texto),
+    );
+  }
+
+  filtrarRubros(texto: string): void {
+    texto = texto.toLowerCase().trim();
+    this.rubrosFiltradas = this.rubros.filter((r) =>
+      r.descripcionRubro?.toLowerCase().includes(texto),
+    );
+  }
+
+  filtrarOfertas(texto: string): void {
+    texto = texto.toLowerCase().trim();
+    this.ofertasFiltradas = this.ofertas.filter(
+      (o) =>
+        o.nombreOferta?.toLowerCase().includes(texto) ||
+        o.empresa?.nombre?.toLowerCase().includes(texto),
+    );
+  }
+
+  modificarPasswordAdmin(): void {
+    this.router.navigate(['/modificar-contraseña-administrador']);
   }
 
   logout() {

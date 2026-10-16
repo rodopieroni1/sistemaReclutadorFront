@@ -14,6 +14,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { MisAplicacionesComponent } from './mis-aplicaciones/mis-aplicaciones.component';
 import { environment } from '../environments/environment';
 import { EmpresasComponent } from './empresas/empresas.component';
+import { ModificarPasswordAdminComponent } from './modificar-password-admin/modificar-password-admin.component';
 
 interface JwtPayload {
   exp: number;
@@ -52,6 +53,10 @@ export const routes: Routes = [
       ),
   },
   { path: 'register', component: RegisterComponent },
+  {
+    path: 'modificar-contraseña-administrador',
+    component: ModificarPasswordAdminComponent,
+  },
   { path: 'olvide-password', component: OlvidePasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'registro', component: UsuarioControlComponent },

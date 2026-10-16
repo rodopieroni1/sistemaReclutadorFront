@@ -120,16 +120,20 @@ export class ModalNuevaEmpresaComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { accion: string; empresa?: any },
   ) {
     this.miFormulario = this.fb.group({
-      nombreEmpresa: ['', Validators.required],
-      direccionEmpresa: ['', Validators.required],
+      nombreEmpresa: ['', [Validators.required, Validators.maxLength(100)]],
+      direccionEmpresa: ['', [Validators.required, Validators.maxLength(255)]],
       historiaEmpresa: ['', Validators.required],
       observacionesEmpresa: [''],
-      emailEmpresa: ['', [Validators.required, Validators.email]],
-      cuitEmpresa: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
-      telefonoEmpresa: ['', Validators.required],
+      emailEmpresa: [
+        '',
+        [Validators.required, Validators.email, Validators.maxLength(150)],
+      ],
+      cuitEmpresa: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
+      telefonoEmpresa: ['', [Validators.required, Validators.maxLength(20)]],
       id_empresa: [''],
       idRubro: ['', Validators.required],
     });
+
     this.accion = data.accion;
     this.empresa = data.empresa || null;
   }
@@ -189,28 +193,47 @@ export class ModalNuevaEmpresaComponent implements OnInit {
       }
     }
   }
+
   guardar(): void {
     if (this.miFormulario.invalid) {
       this.miFormulario.markAllAsTouched();
+
+      this.snackBar.open(
+        'Revisá los campos marcados antes de continuar.',
+        'Cerrar',
+        { duration: 3000 },
+      );
+
       return;
     }
+
     if (this.accion === 'crear') {
-      const cuit = this.miFormulario.value.cuitEmpresa;
+      const cuit = this.miFormulario.get('cuitEmpresa')?.value;
+
       this.http
         .get<
           ResponseRest<boolean>
         >(`${environment.local.urlApi}/empresas/existe/${cuit}`)
         .subscribe({
           next: (respuesta) => {
-            console.log('Respuesta de existencia de CUIT:', respuesta);
             if (respuesta.data) {
+              const control = this.miFormulario.get('cuitEmpresa');
+
+              control?.setErrors({
+                ...(control.errors || {}),
+                cuitDuplicado: true,
+              });
+              control?.markAsTouched();
+
               this.snackBar.open(
                 'El CUIT ingresado ya existe. Por favor, corrobore.',
                 'Cerrar',
                 { duration: 3000 },
               );
+
               return;
             }
+
             this.crearEmpresa();
           },
           error: () => {
@@ -223,9 +246,9 @@ export class ModalNuevaEmpresaComponent implements OnInit {
         });
     } else {
       this.cargarUpdate(this.miFormulario.value);
-      this.dialogRef.close();
     }
   }
+
   private crearEmpresa(): void {
     const formData = new FormData();
     formData.append('nombre', this.miFormulario.value.nombreEmpresa);
@@ -279,9 +302,14 @@ export class ModalNuevaEmpresaComponent implements OnInit {
     if (this.logoSeleccionado) {
       formData.append('logo', this.logoSeleccionado);
     }
-
     this.http
-      .put(
+      .put<{
+        success: boolean;
+        message: string;
+        data: any;
+        timestamp: string;
+        errorCode: string;
+      }>(
         `${environment.local.urlApi}/empresas/${empresa.id_empresa}`,
         formData,
         {
@@ -291,21 +319,26 @@ export class ModalNuevaEmpresaComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (response.status === 201 || response.status === 200) {
-            this.snackBar.open(
-              'Empresa actualizada satisfactoriamente',
-              'Cerrar',
-              { duration: 3000 },
-            );
+            const mensaje =
+              response.body?.message ||
+              'Empresa actualizada satisfactoriamente';
+
+            this.snackBar.open(mensaje, 'Cerrar', {
+              duration: 3000,
+            });
+
             this.datosActualizadosEmpresa.emit();
             this.limpiarFormulario();
           }
         },
-        error: () => {
-          this.snackBar.open(
-            'Error al actualizar la empresa. Inténtelo nuevamente.',
-            'Cerrar',
-            { duration: 3000 },
-          );
+        error: (error) => {
+          console.error('Error al actualizar la empresa:', error);
+          const mensajeError =
+            error.error?.message ||
+            'Error al actualizar la empresa. Inténtelo nuevamente.';
+          this.snackBar.open(mensajeError, 'Cerrar', {
+            duration: 3000,
+          });
         },
       });
   }
@@ -339,7 +372,11 @@ export class ModalNuevaEmpresaComponent implements OnInit {
     console.log('Logo seleccionado:', this.logoSeleccionado.name);
   }
 
-  /** * Cuenta solamente el texto visible de Quill, * sin contar las etiquetas HTML. */
+  mostrarError(campo: string): boolean {
+    const control = this.miFormulario.get(campo);
+
+    return !!control && control.invalid && control.touched;
+  }
   obtenerCantidadCaracteres(html: string): number {
     if (!html) {
       return 0;

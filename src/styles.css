@@ -1,8 +1,28 @@
-/* You can add global styles to this file, and also import other style files */
+/* Ajustes exclusivos para celulares */
+@media screen and (max-width: 768px) {
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+    /* Ocultar mensajes de error de Angular Material */
+    .mat-mdc-form-field-error,
+    mat-error,
+    .mat-error,
+    .mat-mdc-form-field-subscript-wrapper {
+        display: none !important;
+    }
 
-.ng-invalid.ng-touched:not(form) {
-    border: 1px solid red;
+    /* Quitar el borde rojo de los controles inválidos */
+    .ng-invalid.ng-touched:not(form),
+    .mat-mdc-form-field.mat-form-field-invalid input,
+    .mat-mdc-form-field.mat-form-field-invalid textarea,
+    .mat-mdc-form-field.mat-form-field-invalid .mdc-notched-outline__leading,
+    .mat-mdc-form-field.mat-form-field-invalid .mdc-notched-outline__notch,
+    .mat-mdc-form-field.mat-form-field-invalid .mdc-notched-outline__trailing {
+        border-color: #bdbdbd !important;
+    }
+
+    /* Fondo blanco para campos de contraseña */
+    .campo-password .mat-mdc-text-field-wrapper {
+        background-color: white !important;
+        border-radius: 5px !important;
+        overflow: hidden;
+    }
 }

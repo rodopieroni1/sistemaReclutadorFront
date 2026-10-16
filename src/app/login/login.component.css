@@ -3,13 +3,29 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f4f4f9; /* fondo blanco que queremos eliminar en móviles */
+  background-color: #f4f4f9;
+  /* fondo blanco que queremos eliminar en móviles */
 }
 
 mat-card {
   width: 400px;
   padding: 20px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+mat-card-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+mat-card-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.btn-login {
+  display: block;
+  margin: 10px auto 0;
 }
 
 .full-width {
@@ -20,7 +36,8 @@ mat-card {
 /* --- Responsive --- */
 @media (max-width: 768px) {
   body {
-    background-color: #fcae6e !important; /* fondo institucional */
+    background-color: #fcae6e !important;
+    /* fondo institucional */
   }
 
   .auth-container {

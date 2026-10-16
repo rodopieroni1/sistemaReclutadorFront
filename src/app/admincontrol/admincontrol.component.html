@@ -226,8 +226,6 @@
                                 <div class="oferta-empresa-info">
                                     <h3>{{ empresa.nombre }}</h3>
                                     <p><strong>📍 Dirección:</strong> {{ empresa.direccion }}</p>
-                                    <strong>📖 Historia:</strong>
-                                    <div class="historia-empresa" [innerHTML]="empresa.historiaEmpresa"></div>
                                     <p><strong>📞 Teléfono:</strong> {{ empresa.telefono }}</p>
                                 </div>
                                 <div class="botones-inferiores">
@@ -318,7 +316,25 @@
                     </button>
                 </div>
             </mat-expansion-panel>
+            <!-- Seguridad de la cuenta -->
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <mat-icon class="icono-seguridad">lock</mat-icon>
+                        Seguridad de la cuenta
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
 
+                <div class="barra-ofertas-superior">
+                    <span>Se recomienda que la primera vez cambies tu contraseña, y luego de un tiempo lo vuelvas a
+                        hacer</span>
+
+                    <button mat-raised-button color="primary" (click)="modificarPasswordAdmin()">
+                        <mat-icon>vpn_key</mat-icon>
+                        Cambiar contraseña
+                    </button>
+                </div>
+            </mat-expansion-panel>
         </mat-accordion>
         <div class="imagen-mobile">
             <img src="assets/logo.png" alt="Carina Di Fonzo">

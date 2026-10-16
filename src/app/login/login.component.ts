@@ -6,6 +6,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterModule } from '@angular/router';
 import { AuthServiceService } from '../auth.service.service';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
@@ -17,6 +19,7 @@ import { AuthServiceService } from '../auth.service.service';
     MatInputModule,
     MatButtonModule,
     RouterModule,
+    MatProgressSpinner,
   ],
   providers: [AuthServiceService],
   templateUrl: './login.component.html',
@@ -26,22 +29,31 @@ export class LoginComponent {
   [x: string]: any;
   clave: string = '';
   password: string = '';
+  cargando: boolean = false;
   constructor(
     private authService: AuthServiceService,
     private router: Router,
   ) {}
 
   login() {
-    this.authService.login(this.clave, this.password).subscribe({
-      next: (response) => {
-        sessionStorage.setItem('usuarioToken', response.token);
-        this.router.navigate(['/admincontrol']);
-      },
+    if (this.cargando) {
+      return;
+    }
 
-      error: (error) => {
-        console.error('❌ Error de login:', error);
-        alert('Usuario o contraseña incorrectas');
-      },
-    });
+    this.cargando = true;
+    this.authService
+      .login(this.clave, this.password)
+      .pipe(finalize(() => (this.cargando = false)))
+      .subscribe({
+        next: (response) => {
+          sessionStorage.setItem('usuarioToken', response.token);
+          this.router.navigate(['/admincontrol']);
+        },
+
+        error: (error) => {
+          console.error('❌ Error de login:', error);
+          alert('Usuario o contraseña incorrectas');
+        },
+      });
   }
 }

@@ -9,55 +9,90 @@
             <mat-form-field appearance="fill" class="full-width">
                 <mat-label>Nombre de la Empresa</mat-label>
                 <input matInput placeholder="Ingrese el nombre de la empresa" formControlName="nombreEmpresa">
-                <mat-error
-                    *ngIf="miFormulario.get('nombreEmpresa')?.invalid && miFormulario.get('nombreEmpresa')?.touched">
-                    El nombre es obligatorio.
+                <mat-error *ngIf="miFormulario.get('nombreEmpresa')?.hasError('required')
+         && miFormulario.get('nombreEmpresa')?.touched">
+                    El nombre de la empresa es obligatorio.
+                </mat-error>
+                <mat-error *ngIf="miFormulario.get('nombreEmpresa')?.hasError('maxlength')
+         && miFormulario.get('nombreEmpresa')?.touched">
+                    El nombre de la empresa no puede superar los 100 caracteres.
                 </mat-error>
             </mat-form-field>
             <div class="quill-container">
-                <label class="quill-label">Historia</label>
-                <quill-editor formControlName="historiaEmpresa" [modules]="quillModules" [styles]="{height: '220px'}"
-                    placeholder="Describa la historia de la empresa"
-                    (onContentChanged)="onQuillContentChanged($event, 'historiaEmpresa')"> </quill-editor>
+                <label class="quill-label">Historia</label> &nbsp;<span class="quill-subtitle">(Máx. 600
+                    caracteres)</span>
                 <div class="quill-footer">
                     <span [class.limite-alcanzado]=" caracteresHistoria >= limiteCaracteres"> {{
                         caracteresHistoria }} / {{ limiteCaracteres }}
                     </span>
                     <span *ngIf="caracteresHistoria >= limiteCaracteres" class="mensaje-limite"> Has alcanzado el límite
                         de 600 caracteres. </span>
-                </div> <mat-error *ngIf="miFormulario.get('historiaEmpresa')?.hasError('maxlength600')"> La historia no
+                </div>
+                <mat-error *ngIf="miFormulario.get('historiaEmpresa')?.hasError('maxlength600')"> La historia no
                     puede superar
-                    los 600 caracteres. </mat-error>
+                    los 600 caracteres.
+                </mat-error>
+                <br />
+                <quill-editor formControlName="historiaEmpresa" [modules]="quillModules" [styles]="{height: '220px'}"
+                    placeholder="Describa la historia de la empresa"
+                    (onContentChanged)="onQuillContentChanged($event, 'historiaEmpresa')">
+                </quill-editor>
+                <div class="error-campo" *ngIf="mostrarError('historiaEmpresa') &&
+         miFormulario.get('historiaEmpresa')?.hasError('required')">
+                    La historia de la empresa es obligatoria.
+                </div>
+                <div class="error-campo" *ngIf="miFormulario.get('historiaEmpresa')?.hasError('maxlength600')">
+                    La historia no puede superar los 600 caracteres.
+                </div>
             </div>
         </section>
         <section class="form-section doble-columna">
             <mat-form-field appearance="fill">
                 <mat-label>Dirección</mat-label>
-                <input matInput placeholder="Dirección" formControlName="direccionEmpresa">
+                <input matInput placeholder="Dirección" formControlName="direccionEmpresa" />
+                <mat-error *ngIf="miFormulario.get('direccionEmpresa')?.hasError('required')
+           && miFormulario.get('direccionEmpresa')?.touched">
+                    La dirección es obligatoria.
+                </mat-error>
+                <mat-error *ngIf="miFormulario.get('direccionEmpresa')?.hasError('maxlength')
+           && miFormulario.get('direccionEmpresa')?.touched">
+                    La dirección no puede superar los 255 caracteres.
+                </mat-error>
             </mat-form-field>
-            <mat-form-field appearance="fill">
+            <mat-form-field appearance="outline" class="full-width">
                 <mat-label>CUIT</mat-label>
-                <input matInput placeholder="Solo números" formControlName="cuitEmpresa">
-                <mat-error *ngIf="miFormulario.get('cuitEmpresa')?.hasError('required')">
+                <input matInput formControlName="cuitEmpresa" placeholder="Ej.: 30123456789" />
+                <mat-error *ngIf="mostrarError('cuitEmpresa') &&
+           miFormulario.get('cuitEmpresa')?.hasError('required')">
                     El CUIT es obligatorio.
                 </mat-error>
-                <mat-error *ngIf="miFormulario.get('cuitEmpresa')?.hasError('pattern')">
-                    El CUIT debe contener únicamente números sin guiones.
+                <mat-error *ngIf="mostrarError('cuitEmpresa') &&
+           miFormulario.get('cuitEmpresa')?.hasError('pattern')">
+                    El CUIT debe contener exactamente 11 dígitos numéricos.
+                </mat-error>
+
+                <mat-error *ngIf="miFormulario.get('cuitEmpresa')?.hasError('cuitDuplicado')">
+                    El CUIT ingresado ya existe.
                 </mat-error>
             </mat-form-field>
             <mat-form-field appearance="fill">
                 <mat-label>Email</mat-label>
-                <input matInput placeholder="Correo electrónico" formControlName="emailEmpresa">
-                <mat-error *ngIf="miFormulario.get('emailEmpresa')?.hasError('required')">
+                <input matInput placeholder="Correo electrónico" formControlName="emailEmpresa" />
+                <mat-error *ngIf="mostrarError('emailEmpresa') &&
+           miFormulario.get('emailEmpresa')?.hasError('required')">
                     El correo electrónico es obligatorio.
                 </mat-error>
-                <mat-error *ngIf="miFormulario.get('emailEmpresa')?.hasError('email')">
-                    El formato del correo no es válido (ej: falta el "&#64;" o el dominio).
+                <mat-error *ngIf="mostrarError('emailEmpresa') &&
+           miFormulario.get('emailEmpresa')?.hasError('email')">
+                    El formato del correo electrónico no es válido.
                 </mat-error>
             </mat-form-field>
             <mat-form-field appearance="fill">
-                <mat-label>Telefono</mat-label>
-                <input matInput placeholder="Número de teléfono" formControlName="telefonoEmpresa">
+                <mat-label>Teléfono</mat-label>
+                <input matInput placeholder="Número de teléfono" formControlName="telefonoEmpresa" />
+                <mat-error *ngIf="mostrarError('telefonoEmpresa')">
+                    El teléfono es obligatorio.
+                </mat-error>
             </mat-form-field>
             <mat-form-field appearance="fill">
                 <mat-label>Rubro</mat-label>
@@ -66,7 +101,7 @@
                         {{ rubro.descripcionRubro }}
                     </mat-option>
                 </mat-select>
-                <mat-error *ngIf="miFormulario.get('idRubro')?.hasError('required')">
+                <mat-error *ngIf="mostrarError('idRubro')">
                     El rubro es obligatorio.
                 </mat-error>
             </mat-form-field>
@@ -78,24 +113,18 @@
                     Seleccionar Logo
                 </button>
                 <div class="preview-container">
-                    <!-- Preview de imagen nueva -->
                     <img *ngIf="imagenPreview" [src]="imagenPreview" alt="Vista previa logo" class="preview-img">
-                    <!-- Logo existente de BD -->
                     <img *ngIf="!imagenPreview && imagenDesdeBD" [src]="uploadUrl + '/uploads/logos/' + imagenDesdeBD"
                         alt="Logo actual" class="preview-img">
-                    <!-- Sin imagen -->
                     <div *ngIf="!imagenPreview && !imagenDesdeBD" class="sin-logo">
                         Sin logo
                     </div>
                 </div>
-
             </div>
         </section>
         <section class="form-section">
-            <div class="quill-container"> <label class="quill-label">Observaciones</label> <quill-editor
-                    formControlName="observacionesEmpresa" [modules]="quillModules" [styles]="{height: '180px'}"
-                    placeholder="Ingrese observaciones sobre la empresa"
-                    (onContentChanged)="onQuillContentChanged($event, 'observacionesEmpresa')"> </quill-editor>
+            <div class="quill-container"> <label class="quill-label">Observaciones</label>$nbsp;<span
+                    class="quill-subtitle">(Máx. 600 caracteres)</span>
                 <div class="quill-footer">
                     <span [class.limite-alcanzado]=" caracteresObservaciones >= limiteCaracteres"> {{
                         caracteresObservaciones }} / {{ limiteCaracteres }} </span>
@@ -106,6 +135,10 @@
                     observaciones no
                     pueden superar los 600 caracteres. </mat-error>
             </div>
+            <br />
+            <quill-editor formControlName="observacionesEmpresa" [modules]="quillModules" [styles]="{height: '180px'}"
+                placeholder="Ingrese observaciones sobre la empresa"
+                (onContentChanged)="onQuillContentChanged($event, 'observacionesEmpresa')"> </quill-editor>
         </section>
     </form>
 </mat-dialog-content>

@@ -62,6 +62,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
   miFormulario: FormGroup;
   empresas: any[] = [];
   imagenDesdeBD: string | null = null;
+  miFormularioSubmitted = false;
   @Output() datosActualizadosOferta = new EventEmitter<void>(); // Evento para notificar cambios
   @Input() oferta: {
     idOferta: number;
@@ -102,15 +103,25 @@ export class ModalNuevaOfertaComponent implements OnInit {
     private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: { accion: string; oferta?: any },
   ) {
-    // Solución 1: Eliminar Validators.required de idOferta y fotoOferta
     this.miFormulario = this.fb.group({
       idOferta: [null],
-      nombreOferta: ['', Validators.required],
+
+      nombreOferta: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(100),
+          Validators.pattern(/.*\S.*/),
+        ],
+      ],
+
       descripcionOferta: ['', Validators.required],
       estadoOferta: [true, Validators.required],
       idEmpresa: [null, Validators.required],
       fotoOferta: [''],
     });
+
     this.accion = data.accion;
   }
 
@@ -254,6 +265,16 @@ export class ModalNuevaOfertaComponent implements OnInit {
         }),
       )
       .subscribe();
+  }
+
+  mostrarError(campo: string): boolean {
+    const control = this.miFormulario.get(campo);
+
+    return (
+      !!control &&
+      control.invalid &&
+      (control.touched || this.miFormularioSubmitted)
+    );
   }
 
   cargarUpdate(oferta: any, response: any) {

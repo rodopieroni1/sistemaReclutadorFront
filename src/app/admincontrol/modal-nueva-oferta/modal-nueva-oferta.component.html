@@ -2,77 +2,130 @@
     <h2 *ngIf="accion === 'crear'">Agregar Oferta</h2>
     <h2 *ngIf="accion === 'actualizar'">Modificar Oferta</h2>
 </div>
+
 <mat-dialog-content>
     <form [formGroup]="miFormulario" (ngSubmit)="guardar()" id="formOferta" class="form-oferta mejorado">
         <section class="form-section">
+            <!-- Título -->
             <mat-form-field appearance="fill" class="inputModal full-width">
                 <mat-label>Título de la Oferta</mat-label>
-                <input matInput placeholder="Ingrese un título para la oferta" formControlName="nombreOferta" required>
-                <mat-error
-                    *ngIf="miFormulario.get('nombreOferta')?.invalid && miFormulario.get('nombreOferta')?.touched">
-                    El título es obligatorio.
+
+                <input matInput placeholder="Ingrese un título para la oferta" formControlName="nombreOferta"
+                    maxlength="100" />
+
+                <mat-error *ngIf="miFormulario.get('nombreOferta')?.hasError('required')">
+                    El título de la oferta es obligatorio.
+                </mat-error>
+
+                <mat-error *ngIf="miFormulario.get('nombreOferta')?.hasError('minlength')">
+                    El título debe tener al menos 3 caracteres.
+                </mat-error>
+
+                <mat-error *ngIf="miFormulario.get('nombreOferta')?.hasError('maxlength')">
+                    El título no puede superar los 100 caracteres.
+                </mat-error>
+
+                <mat-error *ngIf="miFormulario.get('nombreOferta')?.hasError('pattern')">
+                    El título no puede contener solamente espacios.
                 </mat-error>
             </mat-form-field>
-            <!-- Descripción amplia -->
-            <div class="inputModal full-width grande">
-                <mat-label>Descripción de la Oferta</mat-label>
 
-                <quill-editor formControlName="descripcionOferta" [modules]="quillModules"
-                    placeholder="Ingrese la descripción completa aquí..." class="editor-oferta">
+            <!-- Descripción -->
+            <div class="quill-container full-width grande">
+                <label class="quill-label">Descripción de la Oferta</label>
+
+                <quill-editor formControlName="descripcionOferta" [modules]="quillModules" [styles]="{height: '220px'}"
+                    placeholder="Ingrese la descripción completa aquí...">
                 </quill-editor>
 
-                <mat-hint align="start">
-                    Podés utilizar negrita, cursiva, subrayado, viñetas, numeración,
-                    títulos y enlaces.
-                </mat-hint>
+                <div class="quill-subtitle">
+                    Podés utilizar negrita, cursiva, subrayado, viñetas,
+                    numeración, títulos y enlaces.
+                </div>
 
-                <mat-error *ngIf="miFormulario.get('descripcionOferta')?.invalid &&
-           miFormulario.get('descripcionOferta')?.touched">
-                    La descripción es obligatoria.
-                </mat-error>
+                <div class="error-campo" *ngIf="mostrarError('descripcionOferta') &&
+          miFormulario.get('descripcionOferta')?.hasError('required')">
+                    La descripción de la oferta es obligatoria.
+                </div>
             </div>
+
         </section>
+
         <section class="form-section doble-columna">
+
             <!-- Estado -->
             <mat-form-field appearance="fill">
                 <mat-label>Estado de la Oferta</mat-label>
+
                 <mat-select formControlName="estadoOferta">
-                    <mat-option [value]="true">✅ Activa</mat-option>
-                    <mat-option [value]="false">❌ Inactiva</mat-option>
+                    <mat-option [value]="true">Activa</mat-option>
+                    <mat-option [value]="false">Inactiva</mat-option>
                 </mat-select>
+
+                <mat-error *ngIf="mostrarError('estadoOferta')">
+                    Debés seleccionar el estado de la oferta.
+                </mat-error>
             </mat-form-field>
+
             <!-- Empresa -->
             <mat-form-field appearance="fill">
                 <mat-label>Empresa</mat-label>
+
                 <mat-select formControlName="idEmpresa">
                     <mat-option *ngFor="let empresa of empresas" [value]="empresa.id_empresa">
                         {{ empresa.nombre }}
                     </mat-option>
                 </mat-select>
+
+                <mat-error *ngIf="mostrarError('idEmpresa') &&
+          miFormulario.get('idEmpresa')?.hasError('required')">
+                    Debés seleccionar una empresa.
+                </mat-error>
             </mat-form-field>
+
         </section>
+
+        <!-- Imagen -->
         <section class="form-section">
             <div class="file-upload-container">
+
                 <input type="file" #inputFile accept="image/*" (change)="onArchivoSeleccionado($event)" hidden>
 
                 <button mat-raised-button color="primary" type="button" class="btn-subir-imagen"
                     (click)="inputFile.click()">
-                    <span class="material-icons" aria-hidden="true">add_photo_alternate</span>
+
+                    <span class="material-icons" aria-hidden="true">
+                        add_photo_alternate
+                    </span>
+
                     <span class="texto-subir-imagen">
                         Seleccionar / Subir Imagen
                     </span>
                 </button>
 
                 <div class="preview-container">
-                    <img *ngIf="imagenPreview" [src]="imagenPreview" alt="Previsualización" class="preview-img" />
-                    <img *ngIf="!imagenPreview && imagenDesdeBD" [src]="uploadUrl + '/uploads/logos/' + imagenDesdeBD"
-                        alt="Imagen actual" class="preview-img" />
+                    <img *ngIf="imagenPreview" [src]="imagenPreview" alt="Previsualización" class="preview-img">
+
+                    <img *ngIf="!imagenPreview && imagenDesdeBD" [src]="uploadUrl + '/uploads/ofertas/' + imagenDesdeBD"
+                        alt="Imagen actual" class="preview-img">
+
+                    <div *ngIf="!imagenPreview && !imagenDesdeBD" class="sin-logo">
+                        Sin imagen
+                    </div>
                 </div>
+
             </div>
         </section>
+
     </form>
 </mat-dialog-content>
+
 <mat-dialog-actions align="end">
-    <button type="button" mat-button (click)="cerrar()">Cancelar / Cerrar</button>
-    <button type="submit" mat-raised-button color="primary" form="formOferta">Guardar</button>
+    <button type="button" mat-button (click)="cerrar()">
+        Cancelar / Cerrar
+    </button>
+
+    <button type="submit" mat-raised-button color="primary" form="formOferta">
+        Guardar
+    </button>
 </mat-dialog-actions>
