@@ -340,19 +340,34 @@ export class AdminControlComponent {
         }[]
       >(`${this.apiUrl}/aplicaciones`)
       .subscribe({
-        next: (data) => {
-          this.aplicaciones = data.map(
-            (d) =>
-              ({
-                ...d,
-                id_aplicacion: d.idaplicacion,
-                fechaAplicacion: d.fecha,
-              }) as Aplicaciones,
-          );
+        next: (data: any[]) => {
+          console.log('Respuesta original de aplicaciones:', data);
+
+          this.aplicaciones = data.map((d: any) => {
+            const oferta = d.oferta;
+            const empresa = oferta?.empresa ?? oferta?.empresaOferta;
+
+            return {
+              ...d,
+              id_aplicacion: d.idaplicacion ?? d.id_aplicacion,
+              fechaAplicacion: d.fecha ?? d.fechaAplicacion,
+              oferta: oferta
+                ? {
+                    ...oferta,
+                    empresa: empresa
+                      ? {
+                          ...empresa,
+                          nombre: empresa.nombre ?? empresa.nombreEmpresa ?? '',
+                        }
+                      : null,
+                  }
+                : null,
+            };
+          });
+
           this.aplicacionesFiltradas = [...this.aplicaciones];
 
-          console.log('Aplicaciones recibidas:', this.aplicaciones);
-          console.log('Aplicaciones filtradas:', this.aplicacionesFiltradas);
+          console.log('Aplicaciones normalizadas:', this.aplicaciones);
         },
 
         error: (error) => {
@@ -481,42 +496,44 @@ export class AdminControlComponent {
   }
 
   cargarOfertas() {
-    this.http
-      .get<
-        {
-          idOferta: number;
-          nombreOferta: string;
-          descripcionOferta: string;
-          fotoOferta: string;
-          empresa: { nombre: string };
-          estadoOferta: boolean;
-          fecha: string;
-        }[]
-      >(`${this.apiUrl}/ofertas`)
-      .subscribe({
-        next: (data) => {
-          this.ofertas = data
-            .map((oferta) => ({
-              idOferta: oferta.idOferta,
-              nombreOferta: oferta.nombreOferta,
-              descripcionOferta: oferta.descripcionOferta,
-              fotoOferta: oferta.fotoOferta,
-              empresa: oferta.empresa,
-              estadoOferta: oferta.estadoOferta,
-              fecha: oferta.fecha,
-            }))
-            .sort(
-              (a, b) =>
-                new Date(b.fecha).getTime() - new Date(a.fecha).getTime(),
-            );
+    this.http.get<any>(`${this.apiUrl}/ofertas`).subscribe({
+      next: (response) => {
+        // Admite tanto una lista directa como una respuesta con data.
+        const listaOfertas = Array.isArray(response)
+          ? response
+          : (response?.data ?? []);
 
-          this.ofertasFiltradas = [...this.ofertas];
-        },
-        error: (error) => {
-          console.error('Error al cargar las ofertas:', error);
-        },
-      });
+        this.ofertas = listaOfertas
+          .map((oferta: any) => {
+            const empresa = oferta.empresa ?? oferta.empresaOferta;
+
+            return {
+              ...oferta,
+              empresa: empresa
+                ? {
+                    ...empresa,
+                    nombre: empresa.nombre ?? empresa.nombreEmpresa ?? '',
+                  }
+                : null,
+            };
+          })
+          .sort((a: any, b: any) => {
+            const fechaA = a.fecha ? new Date(a.fecha).getTime() : 0;
+            const fechaB = b.fecha ? new Date(b.fecha).getTime() : 0;
+            return fechaB - fechaA;
+          });
+
+        this.ofertasFiltradas = [...this.ofertas];
+
+        console.log('Respuesta original de ofertas:', response);
+        console.log('Ofertas normalizadas:', this.ofertas);
+      },
+      error: (error) => {
+        console.error('Error al cargar las ofertas:', error);
+      },
+    });
   }
+
   updateOferta(oferta: {
     idOferta: number;
     nombreOferta: string;

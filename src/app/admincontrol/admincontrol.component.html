@@ -224,7 +224,7 @@
                         <div class="card-empresa">
                             <div class="oferta-empresa-header">
                                 <div class="oferta-empresa-info">
-                                    <h3>{{ empresa.nombre }}</h3>
+                                    <h3>{{ empresa. }}</h3>
                                     <p><strong>📍 Dirección:</strong> {{ empresa.direccion }}</p>
                                     <p><strong>📞 Teléfono:</strong> {{ empresa.telefono }}</p>
                                 </div>
@@ -282,8 +282,9 @@
                             <div class="oferta-empresa-header">
                                 <div class="oferta-empresa-info">
                                     <h4>{{ oferta?.nombreOferta || 'Sin título' }}</h4><br />
-                                    <strong>Empresa:</strong> {{ oferta?.empresa?.nombre || 'Empresa desconocida'
-                                    }}<br />
+                                    <strong>Empresa:</strong>
+                                    {{ oferta.empresa?.nombre || 'Empresa desconocida' }}
+                                    <br />
                                     <strong>Estado:</strong>
                                     <span *ngIf="oferta?.estadoOferta">✅ Activa</span>
                                     <span *ngIf="!oferta?.estadoOferta">❌Inactiva</span><br />

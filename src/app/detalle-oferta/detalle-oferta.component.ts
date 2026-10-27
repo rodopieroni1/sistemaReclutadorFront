@@ -49,8 +49,25 @@ export class DetalleOfertaComponent {
   }
 
   aplicar(idOferta: number, nombreOferta: string): void {
+    console.log(
+      'Aplicando a la oferta:',
+      idOferta,
+      'Nombre de la oferta:',
+      nombreOferta,
+    );
+
     const idPerfil = Number(sessionStorage.getItem('idPerfil'));
     const token = sessionStorage.getItem('token');
+    console.log(
+      'Aplicando a la oferta:',
+      idOferta,
+      'Nombre de la oferta:',
+      nombreOferta,
+      'Token:',
+      token,
+      'ID del perfil:',
+      idPerfil,
+    );
 
     if (!token || !idPerfil) {
       this.snackBar.open(
