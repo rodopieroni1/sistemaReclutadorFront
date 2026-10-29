@@ -86,6 +86,8 @@ export class ModalNuevaOfertaComponent implements OnInit {
   imagenPreview: string | null = null;
   isSubmitting = false;
   uploadUrl = environment.local.urlApi;
+  limiteCaracteresDescripcion = 600;
+  caracteresDescripcion = 0;
   quillModules = {
     toolbar: [
       ['bold', 'italic', 'underline'],
@@ -105,7 +107,6 @@ export class ModalNuevaOfertaComponent implements OnInit {
   ) {
     this.miFormulario = this.fb.group({
       idOferta: [null],
-
       nombreOferta: [
         '',
         [
@@ -176,16 +177,15 @@ export class ModalNuevaOfertaComponent implements OnInit {
     this.http.get<any>(environment.local.urlApi + '/empresas').subscribe({
       next: (data: any) => {
         // Extrae la lista en caso de que venga en data, content o sea una lista directa
-              console.log('Respuesta de /empresas:', data);
+        console.log('Respuesta de /empresas:', data);
 
         this.empresas = Array.isArray(data)
           ? data
           : data.content || data.data || [];
-                console.log('Empresas cargadas:', this.empresas);
-
+        console.log('Empresas cargadas:', this.empresas);
       },
       error: (err) => {
-              console.error('Error al cargar empresas:', err);
+        console.error('Error al cargar empresas:', err);
 
         this.snackBar.open('Error al cargar las empresas.', 'Cerrar', {
           duration: 3000,
@@ -273,16 +273,6 @@ export class ModalNuevaOfertaComponent implements OnInit {
       .subscribe();
   }
 
-  mostrarError(campo: string): boolean {
-    const control = this.miFormulario.get(campo);
-
-    return (
-      !!control &&
-      control.invalid &&
-      (control.touched || this.miFormularioSubmitted)
-    );
-  }
-
   cargarUpdate(oferta: any, response: any) {
     const idOferta =
       this.miFormulario.value.idOferta || this.data.oferta.idOferta;
@@ -343,6 +333,62 @@ export class ModalNuevaOfertaComponent implements OnInit {
           );
         },
       });
+  }
+
+  mostrarError(campo: string): boolean {
+    const control = this.miFormulario.get(campo);
+
+    return (
+      !!control &&
+      control.invalid &&
+      (control.touched || this.miFormularioSubmitted)
+    );
+  }
+
+  /**
+   * Cuenta solamente el texto visible de Quill,
+   * sin contar las etiquetas HTML.
+   */
+  obtenerCantidadCaracteres(html: string): number {
+    if (!html) {
+      return 0;
+    }
+
+    const div = document.createElement('div');
+    div.innerHTML = html;
+
+    const texto = div.textContent || div.innerText || '';
+
+    return texto.replace(/\u200B/g, '').length;
+  }
+
+  /**
+   * Controla el límite de caracteres de la descripción.
+   */
+  onDescripcionContentChanged(event: any): void {
+    const html = event.html || '';
+    const cantidad = this.obtenerCantidadCaracteres(html);
+
+    this.caracteresDescripcion = cantidad;
+
+    const control = this.miFormulario.get('descripcionOferta');
+
+    if (!control) {
+      return;
+    }
+
+    if (cantidad > this.limiteCaracteresDescripcion) {
+      control.setErrors({
+        ...(control.errors || {}),
+        maxlength600: true,
+      });
+    } else if (control.hasError('maxlength600')) {
+      const errores = { ...(control.errors || {}) };
+
+      delete errores['maxlength600'];
+
+      control.setErrors(Object.keys(errores).length > 0 ? errores : null);
+    }
   }
 
   obtenerIdUsuarioDelToken(): number | null {

@@ -16,14 +16,14 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 interface Empresa {
-  nombre: string;
+  nombreEmpresa: string;
   direccion: string;
   historiaEmpresa: string;
   observaciones: string;
   email: string;
   cuit: number;
   telefono: string;
-  id_empresa: number;
+  idEmpresa: number;
   rubro: {
     idRubro: number;
     descripcionRubro: string;
@@ -35,7 +35,7 @@ interface Rubros {
   descripcionRubro: string;
 }
 interface Perfil {
-  id_perfil: number;
+  idPerfil: number;
   nombre: string;
   telefono: string;
   email: string;
@@ -53,16 +53,16 @@ interface Ofertas {
 }
 
 interface Aplicaciones {
-  id_aplicacion: number;
+  idAplicacion: number;
   fechaAplicacion: Date;
   oferta: {
-    id: number;
+    idOferta: number;
     descripcionOferta: string;
     nombreOferta: string;
     empresa: { nombre: string };
   };
   perfil: {
-    id: number;
+    idPerfil: number;
     nombre: string;
     email: string;
     documentoUrl: string;
@@ -73,7 +73,7 @@ interface Aplicaciones {
 
 interface PerfilConAplicacionesResponse {
   perfil: {
-    id_perfil: number;
+    idPerfil: number;
     nombre: string;
     telefono: string;
     email: string;
@@ -119,16 +119,16 @@ export class AdminControlComponent {
   //Objeto para almacenar los datos de las aplicaciones
   aplicaciones: {
     [x: string]: any;
-    id_aplicacion: number;
+    idAplicacion: number;
     fechaAplicacion: Date;
     oferta: {
-      id: number;
+      idOferta: number;
       descripcionOferta: string;
       nombreOferta: string;
       empresa: { nombre: string };
     };
     perfil: {
-      id: number;
+      idPerfil: number;
       nombre: string;
       email: string;
       documentoUrl: string;
@@ -143,7 +143,7 @@ export class AdminControlComponent {
   }[] = [];
   //Objeto Postulantes/Perfil
   perfiles: {
-    id_perfil: number;
+    idPerfil: number;
     nombre: string;
     email: string;
     telefono: string;
@@ -152,14 +152,14 @@ export class AdminControlComponent {
   }[] = [];
   //Objeto empresas
   empresas: {
-    nombre: string;
+    nombreEmpresa: string;
     direccion: string;
     historiaEmpresa: string;
     observaciones: string;
     email: string;
     cuit: number;
     telefono: string;
-    id_empresa: number;
+    idEmpresa: number;
     rubro: {
       idRubro: number;
       descripcionRubro: string;
@@ -175,9 +175,9 @@ export class AdminControlComponent {
     estadoOferta: boolean;
   }[] = [];
   //Aplicaciones
-  id_aplicacion: number = 0;
+  idAplicacion: number = 0;
   fechaAplicacion: Date = new Date();
-  id_perfil: number = 1;
+  idPerfil: number = 1;
   estadoAplicaciones: boolean = true;
   //Empresa
   nombreEmpresa: string = '';
@@ -187,7 +187,7 @@ export class AdminControlComponent {
   emailEmpresa: string = '';
   telefonoEmpresa: string = '';
   cuitEmpresa: number = 1;
-  id_empresa: number = 1;
+  idEmpresa: number = 1;
   //Oferta
   idOferta: number = 1;
   nombreOferta: string = '';
@@ -399,23 +399,21 @@ export class AdminControlComponent {
   cargarEmpresas() {
     this.http.get<any>(`${this.apiUrl}/empresas`).subscribe({
       next: (response) => {
-        // Extraemos la lista desde la propiedad 'data' del objeto que responde el backend
         const listaEmpresas = response.data || [];
-
         this.empresas = listaEmpresas.map((empresa: any) => ({
-          nombre: empresa.nombre,
+          nombreEmpresa: empresa.nombreEmpresa,
           direccion: empresa.direccion,
           historiaEmpresa: empresa.historiaEmpresa,
           observaciones: empresa.observaciones,
           email: empresa.email,
           cuit: empresa.cuit,
           telefono: empresa.telefono,
-          id_empresa: empresa.id_empresa,
+          idEmpresa: empresa.idEmpresa,
           rubro: empresa.rubro,
           logo: empresa.logo,
         }));
         this.empresasFiltradas = [...this.empresas].sort((a, b) =>
-          (a.nombre || '').localeCompare(b.nombre || ''),
+          (a.nombreEmpresa || '').localeCompare(b.nombreEmpresa || ''),
         );
       },
       error: (error) => {
@@ -437,9 +435,9 @@ export class AdminControlComponent {
     });
   }
   updateEmpresa(empresa: {
-    id_empresa: number;
+    idEmpresa: number;
     cuit: number;
-    nombre: string;
+    nombreEmpresa: string;
     email: string;
     direccion: string;
     historiaEmpresa: string;
@@ -458,12 +456,14 @@ export class AdminControlComponent {
     });
   }
 
-  deleteEmpresa(empresa: { nombre: string; id_empresa: number }) {
+  deleteEmpresa(empresa: { nombreEmpresa: string; idEmpresa: number }) {
     if (
-      confirm(`¿Estás seguro que deseas eliminar la empresa ${empresa.nombre}?`)
+      confirm(
+        `¿Estás seguro que deseas eliminar la empresa ${empresa.nombreEmpresa}?`,
+      )
     ) {
       this.http
-        .delete(`${this.apiUrl}/empresas/${empresa.id_empresa}`)
+        .delete(`${this.apiUrl}/empresas/${empresa.idEmpresa}`)
         .subscribe({
           next: () => {
             alert('Empresa eliminada exitosamente');
@@ -602,10 +602,12 @@ export class AdminControlComponent {
     this.empresasFiltradas = this.empresas
       .filter(
         (e) =>
-          e.nombre?.toLowerCase().includes(texto) ||
+          e.nombreEmpresa?.toLowerCase().includes(texto) ||
           e.rubro?.descripcionRubro?.toLowerCase().includes(texto),
       )
-      .sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
+      .sort((a, b) =>
+        (a.nombreEmpresa || '').localeCompare(b.nombreEmpresa || ''),
+      );
   }
 
   filtrarPerfiles(texto: string): void {

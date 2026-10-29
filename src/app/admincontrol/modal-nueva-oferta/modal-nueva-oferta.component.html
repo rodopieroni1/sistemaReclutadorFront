@@ -7,35 +7,57 @@
     <form [formGroup]="miFormulario" (ngSubmit)="guardar()" id="formOferta" class="form-oferta mejorado">
         <section class="form-section">
             <!-- Título -->
+
+            <!-- Título -->
             <mat-form-field appearance="fill" class="inputModal full-width">
                 <mat-label>Título de la Oferta</mat-label>
 
-                <input matInput placeholder="Ingrese un título para la oferta" formControlName="nombreOferta"
-                    maxlength="100" />
+                <input matInput placeholder="Ingrese un título para la oferta" formControlName="nombreOferta" />
 
-                <mat-error *ngIf="miFormulario.get('nombreOferta')?.hasError('required')">
+                <mat-error *ngIf="mostrarError('nombreOferta') &&
+        miFormulario.get('nombreOferta')?.hasError('required')">
                     El título de la oferta es obligatorio.
                 </mat-error>
 
-                <mat-error *ngIf="miFormulario.get('nombreOferta')?.hasError('minlength')">
+                <mat-error *ngIf="mostrarError('nombreOferta') &&
+        miFormulario.get('nombreOferta')?.hasError('minlength')">
                     El título debe tener al menos 3 caracteres.
                 </mat-error>
 
-                <mat-error *ngIf="miFormulario.get('nombreOferta')?.hasError('maxlength')">
+                <mat-error *ngIf="mostrarError('nombreOferta') &&
+        miFormulario.get('nombreOferta')?.hasError('maxlength')">
                     El título no puede superar los 100 caracteres.
+                    No se podrá guardar este valor.
                 </mat-error>
 
-                <mat-error *ngIf="miFormulario.get('nombreOferta')?.hasError('pattern')">
+                <mat-error *ngIf="mostrarError('nombreOferta') &&
+        miFormulario.get('nombreOferta')?.hasError('pattern')">
                     El título no puede contener solamente espacios.
                 </mat-error>
             </mat-form-field>
+
+
+            <!-- Descripción -->
 
             <!-- Descripción -->
             <div class="quill-container full-width grande">
                 <label class="quill-label">Descripción de la Oferta</label>
 
+                <span class="quill-subtitle">(Máx. 600 caracteres)</span>
+
+                <div class="quill-footer">
+                    <span [class.limite-alcanzado]="caracteresDescripcion >= limiteCaracteresDescripcion">
+                        {{ caracteresDescripcion }} / {{ limiteCaracteresDescripcion }}
+                    </span>
+
+                    <span *ngIf="caracteresDescripcion >= limiteCaracteresDescripcion" class="mensaje-limite">
+                        Has alcanzado el límite de caracteres.
+                    </span>
+                </div>
+
                 <quill-editor formControlName="descripcionOferta" [modules]="quillModules" [styles]="{height: '220px'}"
-                    placeholder="Ingrese la descripción completa aquí...">
+                    placeholder="Ingrese la descripción completa aquí..."
+                    (onContentChanged)="onDescripcionContentChanged($event)">
                 </quill-editor>
 
                 <div class="quill-subtitle">
@@ -44,10 +66,16 @@
                 </div>
 
                 <div class="error-campo" *ngIf="mostrarError('descripcionOferta') &&
-          miFormulario.get('descripcionOferta')?.hasError('required')">
+            miFormulario.get('descripcionOferta')?.hasError('required')">
                     La descripción de la oferta es obligatoria.
                 </div>
+
+                <div class="error-campo" *ngIf="miFormulario.get('descripcionOferta')?.hasError('maxlength600')">
+                    La descripción no puede superar los 600 caracteres.
+                    No se podrá guardar este valor.
+                </div>
             </div>
+
 
         </section>
 
