@@ -65,14 +65,14 @@ export class ModalNuevaEmpresaComponent implements OnInit {
   emailEmpresa: string = '';
   telefonoEmpresa: string = '';
   cuitEmpresa: number = 1;
-  id_empresa: number = 1;
+  idEmpresa: number = 1;
   miFormulario: FormGroup;
   logoSeleccionado: File | null = null;
   @Output() datosActualizadosEmpresa = new EventEmitter<void>(); // Evento para notificar cambios
   @Input() empresa: {
     nombreEmpresa: string;
     cuitEmpresa: number;
-    id_empresa: number;
+    idEmpresa: number;
     idRubro: number;
     emailEmpresa: string;
     telefonoEmpresa: string;
@@ -82,7 +82,7 @@ export class ModalNuevaEmpresaComponent implements OnInit {
   } = {
     nombreEmpresa: '',
     cuitEmpresa: 1,
-    id_empresa: 1,
+    idEmpresa: 1,
     idRubro: 1,
     emailEmpresa: '',
     telefonoEmpresa: '',
@@ -130,7 +130,7 @@ export class ModalNuevaEmpresaComponent implements OnInit {
       ],
       cuitEmpresa: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
       telefonoEmpresa: ['', [Validators.required, Validators.maxLength(20)]],
-      id_empresa: [''],
+      idEmpresa: [''],
       idRubro: ['', Validators.required],
     });
 
@@ -183,7 +183,7 @@ export class ModalNuevaEmpresaComponent implements OnInit {
           '',
         historiaEmpresa:
           this.data.empresa.historiaEmpresa || this.data.empresa.historia || '',
-        id_empresa: this.data.empresa.id_empresa || this.data.empresa.id || 0,
+        idEmpresa: this.data.empresa.idEmpresa || this.data.empresa.id || 0,
         idRubro: rubroId,
       });
       if (rubroId && this.rubros.length > 0) {
@@ -310,7 +310,7 @@ export class ModalNuevaEmpresaComponent implements OnInit {
         timestamp: string;
         errorCode: string;
       }>(
-        `${environment.local.urlApi}/empresas/${empresa.id_empresa}`,
+        `${environment.local.urlApi}/empresas/${empresa.idEmpresa}`,
         formData,
         {
           observe: 'response',
@@ -328,7 +328,7 @@ export class ModalNuevaEmpresaComponent implements OnInit {
             });
 
             this.datosActualizadosEmpresa.emit();
-            this.limpiarFormulario();
+            // this.limpiarFormulario();
           }
         },
         error: (error) => {

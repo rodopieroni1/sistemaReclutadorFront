@@ -7,7 +7,7 @@ import { CabeceraComponent } from '../home/cabecera/cabecera.component';
 
 export interface Postulacion {
   idAplicacion?: number;
-  id_aplicaciones?: number;
+  idAplicaciones?: number;
   id?: number;
   idPerfil?: number;
   idOferta?: number;
@@ -31,7 +31,7 @@ export class MisAplicacionesComponent implements OnInit {
     nombreOferta: string;
     descripcionOferta: string;
     fotoOferta: string;
-    empresa: { nombre: string };
+    empresa: { nombreEmpresa: string };
   }[] = [];
 
   constructor(
@@ -60,7 +60,7 @@ export class MisAplicacionesComponent implements OnInit {
     event.stopPropagation();
 
     // Resuelve cuál es el campo con el ID activo de las propiedades
-    const idPost = post.idAplicacion ?? post.id_aplicaciones ?? post.id;
+    const idPost = post.idAplicacion ?? post.idAplicaciones ?? post.id;
 
     if (!idPost) {
       console.error('No se encontró un ID válido en la postulación:', post);
@@ -83,7 +83,7 @@ export class MisAplicacionesComponent implements OnInit {
   ReactivarPostulaciones(event: Event, post: Postulacion): void {
     event.stopPropagation();
 
-    const idPost = post.idAplicacion ?? post.id_aplicaciones ?? post.id;
+    const idPost = post.idAplicacion ?? post.idAplicaciones ?? post.id;
 
     if (!idPost) {
       console.error('No se encontró un ID válido en la postulación:', post);

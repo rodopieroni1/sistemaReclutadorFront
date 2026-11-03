@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ResultadoAplicacion } from './resultado-aplicaciones.enum';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { environment } from '../../../environments/environment';
 
 export interface AplicacionResponse {
@@ -19,11 +18,11 @@ export class AplicacionServiceService {
 
   aplicar(idOferta: number, idPerfil: number): Observable<ResultadoAplicacion> {
     const body = {
-      id_oferta: {
+      idOferta: {
         idOferta: idOferta,
       },
-      id_perfil: {
-        id_perfil: idPerfil,
+      idPerfil: {
+        idPerfil: idPerfil,
       },
     };
     console.log(JSON.stringify(body));

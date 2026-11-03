@@ -76,52 +76,63 @@ export class CuerpoComponent implements OnInit {
     this.cargarOfertasActivas();
   }
 
-  searchJobs(event: Event) {
-    event.preventDefault();
-    const termino = this.ofertaEmpresa.value?.trim().toLowerCase();
-    if (!termino) {
-      this.currentPage = 1;
-      this.cargarOfertasActivas();
-      return;
-    }
-    this.currentPage = 1;
-    this.http
-      .get<any[]>(this.urlApiTodas + '/ofertas/todas/activas')
-      .subscribe({
-        next: (data) => {
-          let ofertasFiltradas = data;
+  
+searchJobs(event: Event): void {
+  event.preventDefault();
 
-          if (this.criterio === 'oferta') {
-            ofertasFiltradas = data.filter((oferta) =>
-              oferta.nombreOferta?.toLowerCase().includes(termino),
-            );
-          }
+  const termino = this.ofertaEmpresa.value?.trim().toLowerCase();
 
-          if (this.criterio === 'empresa') {
-            ofertasFiltradas = data.filter((oferta) =>
-              oferta.empresa?.nombre?.toLowerCase().includes(termino),
-            );
-          }
+  this.currentPage = 1;
 
-          if (this.criterio === 'rubro') {
-            ofertasFiltradas = data.filter((oferta) =>
-              oferta.empresa?.rubro?.descripcionRubro
-                ?.toLowerCase()
-                .includes(termino),
-            );
-          }
-
-          this.ofertas = ofertasFiltradas;
-
-          console.log('Criterio:', this.criterio);
-          console.log('Término:', termino);
-          console.log('Ofertas encontradas:', this.ofertas);
-        },
-        error: (error) => {
-          console.error('Error al buscar empleos:', error);
-        },
-      });
+  if (!termino) {
+    this.cargarOfertasActivas();
+    return;
   }
+
+  this.http
+    .get<any[]>(this.urlApiTodas + '/ofertas/todas/activas')
+    .subscribe({
+      next: (data) => {
+        this.ofertas = data.filter((oferta) => {
+          const nombreOferta =
+            oferta.nombreOferta?.toLowerCase() ?? '';
+
+          const nombreEmpresa =
+            oferta.empresa?.nombre?.toLowerCase() ?? '';
+
+          const nombreRubro =
+            oferta.empresa?.rubro?.descripcionRubro?.toLowerCase() ?? '';
+
+          switch (this.criterio) {
+            case 'oferta':
+              return nombreOferta.includes(termino);
+
+            case 'empresa':
+              return nombreEmpresa.includes(termino);
+
+            case 'rubro':
+              return nombreRubro.includes(termino);
+
+            default:
+              return false;
+          }
+        });
+
+        console.log('Criterio:', this.criterio);
+        console.log('Término:', termino);
+        console.log('Ofertas encontradas:', this.ofertas);
+      },
+      error: (error) => {
+        console.error('Error al buscar empleos:', error);
+        this.snackBar.open(
+          'No se pudieron buscar las ofertas.',
+          'Cerrar',
+          { duration: 5000 }
+        );
+      }
+    });
+}
+
 
   cargarOfertasActivas(): void {
     this.http
@@ -135,6 +146,7 @@ export class CuerpoComponent implements OnInit {
         },
       });
   }
+
   ngOnDestroy(): void {
     this.webSocketService.disconnect(); // Desconectar al destruir el componente
   }
@@ -147,18 +159,15 @@ export class CuerpoComponent implements OnInit {
       });
       return;
     }
-
     this.aplicacionService.aplicar(idOferta, idPerfil).subscribe({
       next: (response: any) => {
         const mensaje =
           response?.mensaje ??
-          response?.message ??
           'Aplicación enviada con éxito.';
         this.snackBar.open(mensaje, 'Cerrar', { duration: 5000 });
 
         this.isBtnAplicar = true;
       },
-
       error: () => {
         this.snackBar.open(
           'Hubo un problema al procesar la solicitud.',
@@ -170,8 +179,6 @@ export class CuerpoComponent implements OnInit {
   }
 
   verDetalle(oferta: any): void {
-    console.log('Datos que vienen de la fila de Mis Aplicaciones:', oferta);
-
     this.router.navigate(['/detalle-oferta'], {
       state: { oferta: oferta },
     });

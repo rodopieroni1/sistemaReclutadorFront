@@ -70,14 +70,14 @@ export class ModalNuevaOfertaComponent implements OnInit {
     descripcionOferta: string;
     fotoOferta: string;
     estadoOferta: boolean;
-    empresa: { id_empresa: number };
+    empresa: { idEmpresa: number };
   } = {
     idOferta: 1,
     nombreOferta: '',
     descripcionOferta: '',
     fotoOferta: '',
     estadoOferta: false,
-    empresa: { id_empresa: 0 },
+    empresa: { idEmpresa: 0 },
   };
   fotoOfertaUrl: string = '';
   accion: string | undefined;
@@ -86,6 +86,8 @@ export class ModalNuevaOfertaComponent implements OnInit {
   imagenPreview: string | null = null;
   isSubmitting = false;
   uploadUrl = environment.local.urlApi;
+  limiteCaracteresDescripcion = 600;
+  caracteresDescripcion = 0;
   quillModules = {
     toolbar: [
       ['bold', 'italic', 'underline'],
@@ -105,7 +107,6 @@ export class ModalNuevaOfertaComponent implements OnInit {
   ) {
     this.miFormulario = this.fb.group({
       idOferta: [null],
-
       nombreOferta: [
         '',
         [
@@ -135,14 +136,14 @@ export class ModalNuevaOfertaComponent implements OnInit {
         )
         .subscribe({
           next: (response) => {
-            console.log('📌 Respuesta de oferta:', response);
+            console.log(' Respuesta de oferta:', response);
 
             // Solución 2: Extraer el ID de empresa garantizando un fallback numérico
             const idEmpresaCalculado =
-              response.empresa?.id_empresa ??
+              response.empresa?.idEmpresa ??
               response.empresa?.id ??
               response.idEmpresa ??
-              this.data.oferta?.empresa?.id_empresa ??
+              this.data.oferta?.empresa?.idEmpresa ??
               this.data.oferta?.empresa?.id ??
               1;
 
@@ -176,11 +177,16 @@ export class ModalNuevaOfertaComponent implements OnInit {
     this.http.get<any>(environment.local.urlApi + '/empresas').subscribe({
       next: (data: any) => {
         // Extrae la lista en caso de que venga en data, content o sea una lista directa
+        console.log('Respuesta de /empresas:', data);
+
         this.empresas = Array.isArray(data)
           ? data
           : data.content || data.data || [];
+        console.log('Empresas cargadas:', this.empresas);
       },
       error: (err) => {
+        console.error('Error al cargar empresas:', err);
+
         this.snackBar.open('Error al cargar las empresas.', 'Cerrar', {
           duration: 3000,
         });
@@ -203,7 +209,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
     }
 
     const datosOferta = this.miFormulario.getRawValue();
-
+    console.log('ID del usuario:', this.obtenerIdUsuarioDelToken());
     // 2. Determinar el ID de la empresa de forma segura
     const idEmpresaLimpio = Number(datosOferta.idEmpresa) || 1;
 
@@ -267,22 +273,12 @@ export class ModalNuevaOfertaComponent implements OnInit {
       .subscribe();
   }
 
-  mostrarError(campo: string): boolean {
-    const control = this.miFormulario.get(campo);
-
-    return (
-      !!control &&
-      control.invalid &&
-      (control.touched || this.miFormularioSubmitted)
-    );
-  }
-
   cargarUpdate(oferta: any, response: any) {
     const idOferta =
       this.miFormulario.value.idOferta || this.data.oferta.idOferta;
     const fotoCalculada =
       this.miFormulario.value.fotoOferta || this.imagenDesdeBD;
-    const idEmpresaNum = oferta.empresa?.id_empresa || oferta.idEmpresa;
+    const idEmpresaNum = oferta.empresa?.idEmpresa || oferta.idEmpresa;
     if (!idEmpresaNum) {
       this.snackBar.open('Error: El ID de la empresa está vacío.', 'Cerrar', {
         duration: 3000,
@@ -337,6 +333,85 @@ export class ModalNuevaOfertaComponent implements OnInit {
           );
         },
       });
+  }
+
+  mostrarError(campo: string): boolean {
+    const control = this.miFormulario.get(campo);
+
+    return (
+      !!control &&
+      control.invalid &&
+      (control.touched || this.miFormularioSubmitted)
+    );
+  }
+
+  /**
+   * Cuenta solamente el texto visible de Quill,
+   * sin contar las etiquetas HTML.
+   */
+  obtenerCantidadCaracteres(html: string): number {
+    if (!html) {
+      return 0;
+    }
+
+    const div = document.createElement('div');
+    div.innerHTML = html;
+
+    const texto = div.textContent || div.innerText || '';
+
+    return texto.replace(/\u200B/g, '').length;
+  }
+
+  /**
+   * Controla el límite de caracteres de la descripción.
+   */
+  onDescripcionContentChanged(event: any): void {
+    const html = event.html || '';
+    const cantidad = this.obtenerCantidadCaracteres(html);
+
+    this.caracteresDescripcion = cantidad;
+
+    const control = this.miFormulario.get('descripcionOferta');
+
+    if (!control) {
+      return;
+    }
+
+    if (cantidad > this.limiteCaracteresDescripcion) {
+      control.setErrors({
+        ...(control.errors || {}),
+        maxlength600: true,
+      });
+    } else if (control.hasError('maxlength600')) {
+      const errores = { ...(control.errors || {}) };
+
+      delete errores['maxlength600'];
+
+      control.setErrors(Object.keys(errores).length > 0 ? errores : null);
+    }
+  }
+
+  obtenerIdUsuarioDelToken(): number | null {
+    const token = sessionStorage.getItem('usuarioToken');
+    console.log('🔑 Token JWT obtenido del sessionStorage:', token);
+    if (!token) {
+      return null;
+    }
+
+    try {
+      const payloadBase64 = token
+        .split('.')[1]
+        .replace(/-/g, '+')
+        .replace(/_/g, '/');
+
+      const payload = JSON.parse(atob(payloadBase64));
+
+      // Ajustar el nombre según el claim real del JWT.
+      return payload.idUsuario ?? payload.id_usuario ?? payload.id ?? null;
+    } catch (error) {
+      console.error('No se pudo leer el JWT:', error);
+      return null;
+    }
   }
 
   getImagenUrl(): string {

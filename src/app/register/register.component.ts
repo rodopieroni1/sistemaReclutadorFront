@@ -57,7 +57,8 @@ export class RegisterComponent {
       })
       .catch((error) => {
         console.error('Error en el registro:', error);
-        const mensaje =  error.error || 'El registro no se realizó correctamente';
+        const mensaje =
+          error.error || 'El registro no se realizó correctamente';
         alert(mensaje);
       });
   }

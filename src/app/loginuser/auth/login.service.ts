@@ -59,6 +59,8 @@ export class LoginService {
       })
       .pipe(
         tap((userData: any) => {
+          console.log('Respuesta del login:', userData);
+
           sessionStorage.setItem('idUsuario', userData.id);
           sessionStorage.setItem('token', userData.token); // Guarda el token en sessionStorage
           sessionStorage.setItem('userName', credential.clave); // Guarda el nombre en sessionStorage
@@ -85,7 +87,7 @@ export class LoginService {
                   const fotoUrlCompleta = fotoUrl
                     ? `${this.urlApi}${fotoUrl}`
                     : '';
-                  sessionStorage.setItem('idPerfil', parsedData.id_perfil); // Guarda el nombre en sessionStorage
+                  sessionStorage.setItem('idPerfil', parsedData.idPerfil); // Guarda el nombre en sessionStorage
                   this.currentUserNombre.next(parsedData.clave);
                   this.currentUserProfileImage.next(
                     fotoUrlCompleta ? `${fotoUrlCompleta}?${Date.now()}` : '',
