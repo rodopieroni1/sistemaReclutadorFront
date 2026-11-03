@@ -15,6 +15,7 @@ import { MisAplicacionesComponent } from './mis-aplicaciones/mis-aplicaciones.co
 import { environment } from '../environments/environment';
 import { EmpresasComponent } from './empresas/empresas.component';
 import { ModificarPasswordAdminComponent } from './modificar-password-admin/modificar-password-admin.component';
+import { CrearCvComponent } from './usuariocontrol/crear-cv/crear-cv.component';
 
 interface JwtPayload {
   exp: number;
@@ -82,6 +83,11 @@ export const routes: Routes = [
   {
     path: 'empresas',
     component: EmpresasComponent,
+  },
+  {
+    path: 'crear-cv',
+    component: CrearCvComponent,
+    canActivate: [PostulanteGuard],
   },
 ];
 

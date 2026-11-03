@@ -151,10 +151,6 @@ export class UpdateUserComponent implements OnInit {
           },
         });
       },
-
-      // =========================
-      // BACKEND RESPONDE ERROR
-      // =========================
       error: (err) => {
         const mensaje =
           err.message || 'Ocurrió un error al actualizar el usuario..';

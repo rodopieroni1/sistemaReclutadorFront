@@ -108,9 +108,17 @@
 
             <div class="upload-box">
                 <label>Currículum Vitae</label>
-                <!-- Agregamos id="cv" -->
-                <input id="cv" placeholder="seleccionar CV" type="file" (change)="seleccionarArchivo($event,'cv')"
-                    accept=".pdf,.doc,.docx">
+
+                <input id="cv" type="file" (change)="seleccionarArchivo($event,'cv')" accept=".pdf,.doc,.docx">
+
+                <div class="crear-cv">
+                    <span>¿No tenés un currículum?</span>
+
+                    <button type="button" mat-stroked-button color="primary" routerLink="/crear-cv">
+                        <mat-icon>description</mat-icon>
+                        Crear mi CV
+                    </button>
+                </div>
             </div>
 
             <!-- Si quieres que el botón se deshabilite si el formulario es inválido, puedes agregar: [disabled]="isSubmitting || !formUsuario.valid" -->
