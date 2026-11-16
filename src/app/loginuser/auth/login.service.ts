@@ -16,6 +16,7 @@ import {
   Subscription,
   interval,
   finalize,
+  switchMap,
 } from 'rxjs';
 import { environment } from '../../../environments/environment';
 @Injectable({
@@ -55,53 +56,46 @@ export class LoginService {
   login(credential: LoginRequest): Observable<any> {
     return this.http
       .post<any>(this.urlApi + '/perfiles/auth/login', credential, {
-        headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json',
+        }),
       })
       .pipe(
-        tap((userData: any) => {
+        switchMap((userData: any) => {
           console.log('Respuesta del login:', userData);
-
-          sessionStorage.setItem('idUsuario', userData.id);
-          sessionStorage.setItem('token', userData.token); // Guarda el token en sessionStorage
-          sessionStorage.setItem('userName', credential.clave); // Guarda el nombre en sessionStorage
-          this.currentUserLoginOn.next(true);
-          let nombreRec = sessionStorage.getItem('userName');
-          const token = sessionStorage.getItem('token');
-
-          this.http
-            .get(`${this.urlApi}/perfiles/name/${nombreRec}`, {
+          sessionStorage.setItem('token', userData.token);
+          sessionStorage.setItem('userName', credential.clave);
+          const token = userData.token;
+          return this.http
+            .get(`${this.urlApi}/perfiles/name/${credential.clave}`, {
               responseType: 'text',
               headers: new HttpHeaders({
                 Authorization: `Bearer ${token}`,
               }),
             })
-            .subscribe({
-              next: (data) => {
-                try {
-                  const parsedData = JSON.parse(data);
-                  sessionStorage.setItem('userName', parsedData.clave);
-                  const fotoUrl = parsedData.fotoUrl || '';
-
-                  sessionStorage.setItem('userProfileImage', fotoUrl);
-
-                  const fotoUrlCompleta = fotoUrl
-                    ? `${this.urlApi}${fotoUrl}`
-                    : '';
-                  sessionStorage.setItem('idPerfil', parsedData.idPerfil); // Guarda el nombre en sessionStorage
-                  this.currentUserNombre.next(parsedData.clave);
-                  this.currentUserProfileImage.next(
-                    fotoUrlCompleta ? `${fotoUrlCompleta}?${Date.now()}` : '',
-                  );
-
-                  this.currentUserLoginOn.next(true);
-                } catch (e) {
-                  sessionStorage.setItem('userProfileImage', data);
+            .pipe(
+              map((data: string) => {
+                const parsedData = JSON.parse(data);
+                if (!parsedData.idPerfil) {
+                  throw new Error('El backend no devolvió un idPerfil válido.');
                 }
-              },
-              error: (err) => console.error('Error en la petición:', err),
-            });
+                sessionStorage.setItem('idPerfil', String(parsedData.idPerfil));
+                sessionStorage.setItem('userName', parsedData.clave);
+                const fotoUrl = parsedData.fotoUrl || '';
+                sessionStorage.setItem('userProfileImage', fotoUrl);
+                const fotoUrlCompleta = fotoUrl
+                  ? `${this.urlApi}${fotoUrl}`
+                  : '';
+                this.currentUserNombre.next(parsedData.clave);
+                this.currentUserProfileImage.next(
+                  fotoUrlCompleta ? `${fotoUrlCompleta}?${Date.now()}` : '',
+                );
+                this.currentUserData.next(token);
+                this.currentUserLoginOn.next(true);
+                return token;
+              }),
+            );
         }),
-        map((userData) => userData.token),
         catchError(this.handleError),
       );
   }

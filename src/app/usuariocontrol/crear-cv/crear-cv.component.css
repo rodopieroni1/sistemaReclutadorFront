@@ -10,6 +10,10 @@
     box-sizing: border-box;
 }
 
+/* ========================================
+   ESTRUCTURA GENERAL
+======================================== */
+
 .cv-page {
     width: 100%;
     max-width: 1600px;
@@ -17,7 +21,23 @@
     padding: 24px;
 }
 
-/* ENCABEZADO */
+.cv-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.85fr);
+    align-items: start;
+    gap: 24px;
+}
+
+.cv-form {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    min-width: 0;
+}
+
+/* ========================================
+   ENCABEZADO
+======================================== */
 
 .cv-header {
     display: flex;
@@ -47,23 +67,9 @@
     line-height: 1.5;
 }
 
-/* DISTRIBUCIÓN PRINCIPAL */
-
-.cv-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.85fr);
-    align-items: start;
-    gap: 24px;
-}
-
-.cv-form {
-    display: flex;
-    flex-direction: column;
-    gap: 22px;
-    min-width: 0;
-}
-
-/* SECCIONES */
+/* ========================================
+   SECCIONES
+======================================== */
 
 .cv-section {
     padding: 24px;
@@ -98,18 +104,16 @@
 .section-heading button {
     flex-shrink: 0;
     white-space: nowrap;
+    min-height: 44px;
 }
 
 .section-heading mat-icon {
     margin-right: 5px;
 }
 
-.section-heading button,
-.cv-actions button {
-    min-height: 44px;
-}
-
-/* DATOS PERSONALES */
+/* ========================================
+   DATOS PERSONALES
+======================================== */
 
 .perfil-resumen {
     display: flex;
@@ -151,7 +155,9 @@
     overflow-wrap: anywhere;
 }
 
-/* FORMULARIOS */
+/* ========================================
+   FORMULARIOS DE EXPERIENCIA Y ESTUDIOS
+======================================== */
 
 .item-form {
     margin-bottom: 18px;
@@ -249,13 +255,101 @@
     line-height: 1.5;
 }
 
-/* ACCIONES */
+/* ========================================
+   BOTONES AGREGAR
+======================================== */
+
+.add-item-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px dashed #d5dfeb;
+}
+
+.btn-agregar-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 46px;
+    padding: 0 24px;
+    color: #3569a8;
+    background: #f0f5fb;
+    border: 1px solid #c8d9ed;
+    border-radius: 9px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.btn-agregar-item mat-icon {
+    margin: 0;
+    width: 21px;
+    height: 21px;
+    font-size: 21px;
+}
+
+.btn-agregar-item:hover {
+    color: #ffffff;
+    background: #3569a8;
+    border-color: #3569a8;
+    box-shadow: 0 4px 12px rgba(53, 105, 168, 0.20);
+    transform: translateY(-2px);
+}
+
+.btn-agregar-item:active {
+    transform: translateY(0);
+}
+
+/* ========================================
+   BOTÓN ELIMINAR
+======================================== */
+
+.btn-eliminar-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 18px;
+    color: #c0392b;
+    background: #fff5f4;
+    border: 1px solid #f0c9c5;
+    border-radius: 9px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.btn-eliminar-item mat-icon {
+    width: 19px;
+    height: 19px;
+    font-size: 19px;
+}
+
+.btn-eliminar-item:hover {
+    color: #ffffff;
+    background: #c0392b;
+    border-color: #c0392b;
+    box-shadow: 0 4px 12px rgba(192, 57, 43, 0.18);
+    transform: translateY(-2px);
+}
+
+/* ========================================
+   ACCIONES: CANCELAR Y DESCARGAR
+======================================== */
 
 .cv-actions {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 12px;
+    margin-top: 30px;
     padding: 20px 24px;
     background: #ffffff;
     border: 1px solid #e2e8f0;
@@ -267,11 +361,73 @@
     margin: 0;
 }
 
-.cv-actions button mat-icon {
-    margin-right: 6px;
+.cv-actions button {
+    min-height: 48px;
 }
 
-/* VISTA PREVIA */
+.cv-actions mat-icon {
+    margin-right: 7px;
+}
+
+.btn-cancelar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 48px;
+    padding: 0 26px !important;
+    color: #526477 !important;
+    background: #f0f3f6 !important;
+    border: 1px solid #d5dee8 !important;
+    border-radius: 9px !important;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    transition: all 0.25s ease;
+}
+
+.btn-cancelar:hover {
+    color: #243b53 !important;
+    background: #e1e8ef !important;
+    border-color: #bdcbd9 !important;
+    transform: translateY(-2px);
+}
+
+.btn-descargar-cv {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 0 28px !important;
+    color: #ffffff !important;
+    background: #3569a8 !important;
+    border: 1px solid #3569a8 !important;
+    border-radius: 9px !important;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    transition: all 0.25s ease;
+}
+
+.btn-descargar-cv:hover {
+    color: #ffffff !important;
+    background: #243b53 !important;
+    border-color: #243b53 !important;
+    box-shadow: 0 5px 14px rgba(36, 59, 83, 0.20);
+    transform: translateY(-2px);
+}
+
+.btn-descargar-cv mat-icon,
+.btn-cancelar mat-icon {
+    width: 21px;
+    height: 21px;
+    font-size: 21px;
+}
+
+/* ========================================
+   VISTA PREVIA
+======================================== */
 
 .cv-preview {
     position: sticky;
@@ -302,7 +458,9 @@
     font-weight: 700;
 }
 
-/* DOCUMENTO */
+/* ========================================
+   DOCUMENTO CV
+======================================== */
 
 .resume {
     width: 100%;
@@ -392,7 +550,55 @@
     white-space: pre-wrap;
 }
 
-/* TABLETS */
+/* ========================================
+   BOTÓN VOLVER FLOTANTE
+======================================== */
+
+.btn-volver-flotante {
+    display: flex;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgb(102, 90, 90) !important;
+    color: #f09b56 !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+    z-index: 9999;
+}
+
+.btn-volver-flotante mat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    color: #f09b56;
+}
+
+.btn-volver-flotante:hover {
+    transform: scale(1.1);
+}
+
+/* ========================================
+   ACCESIBILIDAD
+======================================== */
+
+.btn-agregar-item:focus-visible,
+.btn-eliminar-item:focus-visible,
+.btn-cancelar:focus-visible,
+.btn-descargar-cv:focus-visible {
+    outline: 3px solid rgba(53, 105, 168, 0.25);
+    outline-offset: 3px;
+}
+
+/* ========================================
+   TABLETS
+======================================== */
 
 @media (max-width: 1100px) {
     .cv-page {
@@ -412,7 +618,9 @@
     }
 }
 
-/* CELULARES */
+/* ========================================
+   CELULARES
+======================================== */
 
 @media (max-width: 600px) {
     .cv-page {
@@ -484,6 +692,22 @@
         padding: 14px;
     }
 
+    /* ELIMINAR: DEBAJO DEL TÍTULO Y A TODO EL ANCHO */
+    .item-heading {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .item-heading .btn-eliminar-item {
+        display: flex;
+        width: 100%;
+        max-width: 100%;
+        min-height: 44px;
+        flex-shrink: 1;
+        margin-top: 4px;
+    }
+
     .form-grid {
         grid-template-columns: minmax(0, 1fr);
         gap: 16px;
@@ -493,14 +717,31 @@
         grid-column: auto;
     }
 
+    .add-item-container {
+        margin-top: 18px;
+        padding-top: 15px;
+    }
+
+    .btn-agregar-item {
+        width: 100%;
+        min-height: 46px;
+    }
+
     .cv-actions {
         align-items: stretch;
-        flex-direction: column;
+        flex-direction: column-reverse;
+        gap: 12px;
         padding: 16px;
     }
 
     .cv-actions button {
         width: 100%;
+    }
+
+    .btn-cancelar,
+    .btn-descargar-cv {
+        width: 100%;
+        min-height: 48px;
     }
 
     .cv-preview {
@@ -516,7 +757,9 @@
     }
 }
 
-/* CELULARES PEQUEÑOS */
+/* ========================================
+   CELULARES PEQUEÑOS
+======================================== */
 
 @media (max-width: 360px) {
     .cv-page {
@@ -538,4 +781,40 @@
     .resume {
         padding: 16px 12px;
     }
+
+
+    /* ========================================
+   SPINNER DE GENERACIÓN DEL CV
+======================================== */
+
+    .spinner-icon {
+        animation: girar-spinner 1s linear infinite;
+    }
+
+    @keyframes girar-spinner {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .btn-descargar-cv:disabled {
+        opacity: 0.75;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .mensaje-generando {
+        flex-basis: 100%;
+        margin: 4px 0 0;
+        color: #3569a8;
+        font-size: 14px;
+        font-weight: 500;
+        text-align: center;
+    }
+
 }

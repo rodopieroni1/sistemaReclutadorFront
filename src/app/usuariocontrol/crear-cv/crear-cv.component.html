@@ -1,7 +1,8 @@
 <div class="cv-page">
 
+
     <header class="cv-header">
-        <button mat-icon-button routerLink="/home" aria-label="Volver">
+        <button mat-fab class="btn-volver-flotante" routerLink="/home" aria-label="Volver">
             <mat-icon>arrow_back</mat-icon>
         </button>
 
@@ -11,11 +12,11 @@
         </div>
     </header>
 
+
     <div class="cv-layout">
 
         <!-- FORMULARIO -->
         <main class="cv-form">
-
             <section class="cv-section">
                 <h2>Datos personales</h2>
                 <p class="section-description">
@@ -40,20 +41,15 @@
             <section class="cv-section">
                 <div class="section-heading">
                     <h2>Experiencia laboral</h2>
-
-                    <button type="button" mat-stroked-button color="primary" (click)="agregarExperiencia()">
-                        <mat-icon>add</mat-icon>
-                        Agregar experiencia
-                    </button>
                 </div>
 
                 <div class="item-form" *ngFor="let experiencia of experiencias; let i = index">
                     <div class="item-heading">
                         <h3>Experiencia {{ i + 1 }}</h3>
 
-                        <button type="button" mat-icon-button color="warn" aria-label="Eliminar experiencia"
-                            (click)="eliminarExperiencia(i)">
-                            <mat-icon>delete</mat-icon>
+                        <button type="button" class="btn-eliminar-item" (click)="eliminarExperiencia(i)">
+                            <mat-icon>delete_outline</mat-icon>
+                            Eliminar
                         </button>
                     </div>
 
@@ -73,13 +69,19 @@
                         <div class="campo">
                             <label [for]="'inicio-' + i">Fecha de inicio</label>
                             <input [id]="'inicio-' + i" type="month" [(ngModel)]="experiencia.fechaInicio"
-                                [name]="'inicio-' + i">
+                                [name]="'inicio-' + i" [max]="obtenerMesActual()"
+                                [class.input-error]="!esFechaExperienciaValida(experiencia)">
                         </div>
 
                         <div class="campo">
                             <label [for]="'fin-' + i">Fecha de finalización</label>
-                            <input [id]="'fin-' + i" type="month" [(ngModel)]="experiencia.fechaFin"
-                                [name]="'fin-' + i">
+                            <input [id]="'fin-' + i" type="month" [(ngModel)]="experiencia.fechaFin" [name]="'fin-' + i"
+                                [min]="experiencia.fechaInicio || null" [max]="obtenerMesActual()"
+                                [class.input-error]="!esFechaExperienciaValida(experiencia)">
+
+                            <small class="error-text" *ngIf="!esFechaExperienciaValida(experiencia)">
+                                La fecha de finalización no puede ser anterior al inicio.
+                            </small>
                         </div>
 
                         <div class="campo campo-completo">
@@ -96,26 +98,27 @@
                 <p *ngIf="experiencias.length === 0" class="empty-message">
                     Todavía no agregaste experiencias laborales.
                 </p>
+
+                <div class="add-item-container">
+                    <button type="button" class="btn-agregar-item" (click)="agregarExperiencia()">
+                        <mat-icon>add</mat-icon>
+                        Agregar otra experiencia
+                    </button>
+                </div>
             </section>
 
             <!-- FORMACIÓN ACADÉMICA -->
             <section class="cv-section">
                 <div class="section-heading">
                     <h2>Formación académica</h2>
-
-                    <button type="button" mat-stroked-button color="primary" (click)="agregarEstudio()">
-                        <mat-icon>add</mat-icon>
-                        Agregar estudio
-                    </button>
                 </div>
 
                 <div class="item-form" *ngFor="let estudio of estudios; let i = index">
                     <div class="item-heading">
                         <h3>Estudio {{ i + 1 }}</h3>
-
-                        <button type="button" mat-icon-button color="warn" aria-label="Eliminar estudio"
-                            (click)="eliminarEstudio(i)">
-                            <mat-icon>delete</mat-icon>
+                        <button type="button" class="btn-eliminar-item" (click)="eliminarEstudio(i)">
+                            <mat-icon>delete_outline</mat-icon>
+                            Eliminar
                         </button>
                     </div>
 
@@ -153,6 +156,13 @@
                 <p *ngIf="estudios.length === 0" class="empty-message">
                     Todavía no agregaste estudios.
                 </p>
+                <div class="add-item-container">
+                    <button type="button" class="btn-agregar-item" (click)="agregarEstudio()">
+
+                        <mat-icon>add</mat-icon>
+                        Agregar otro estudio
+                    </button>
+                </div>
             </section>
 
             <!-- INFORMACIÓN ADICIONAL -->
@@ -170,25 +180,23 @@
                         placeholder="Disponibilidad horaria, objetivos profesionales, conocimientos adicionales u otra información relevante."></textarea>
                 </div>
             </section>
-
             <!-- ACCIONES -->
             <section class="cv-actions">
-                <button type="button" mat-stroked-button routerLink="/home">
-                    Cancelar
+                <button type="button" mat-raised-button color="primary" class="btn-descargar-cv"
+                    (click)="CrearCV($event)" [disabled]="generandoCV || cargandoPerfil">
+                    <mat-icon *ngIf="!generandoCV">
+                        description
+                    </mat-icon>
+                    <mat-icon *ngIf="generandoCV" class="spinner-icon">
+                        autorenew
+                    </mat-icon>
+                    {{ generandoCV ? 'Generando CV...' : 'Descargar CV en Word' }}
                 </button>
-
-                <button type="button" mat-raised-button color="primary" disabled>
-                    <mat-icon>description</mat-icon>
-                    Descargar CV en Word
-                </button>
-
-                <p class="section-description">
-                    La descarga se habilitará cuando conectemos el formulario con el backend.
+                <p *ngIf="generandoCV" class="mensaje-generando" aria-live="polite">
+                    Estamos preparando tu currículum. Por favor, esperá...
                 </p>
             </section>
-
         </main>
-
         <!-- VISTA PREVIA -->
         <aside class="cv-preview">
             <div class="preview-heading">
@@ -210,10 +218,8 @@
 
                 <section *ngIf="experiencias.length > 0">
                     <h3>Experiencia laboral</h3>
-
                     <div class="resume-item" *ngFor="let experiencia of experiencias">
                         <h4>{{ experiencia.puesto || 'Puesto desempeñado' }}</h4>
-
                         <p>{{ experiencia.empresa }}</p>
 
                         <p *ngIf="experiencia.fechaInicio || experiencia.fechaFin">

@@ -14,22 +14,20 @@ export class UserServiceService {
 
   constructor(private http: HttpClient) {}
 
-  getUsers(id: number): Observable<User> {
-    // 👈 VALIDACIÓN CRÍTICA: Extraemos la URL y verificamos que exista y no sea nula/id
+  getUsers(id: number): Observable<any> {
     const baseUrl = environment?.local?.urlApi;
     if (!baseUrl || !id) {
-      console.warn(
-        'UserService: urlApi o ID no válidos. Evitando petición corrupta.',
-        { baseUrl, id },
-      );
-      return throwError(
-        () => new Error('Configuración de API o ID inválidos.'),
-      );
+      return throwError(() => new Error('URL o ID inválidos'));
     }
-
-    return this.http
-      .get<User>(`${baseUrl}perfiles/${id}`) // Usamos template strings para evitar errores de concatenación
-      .pipe(catchError(this.handleError));
+    const url = `${baseUrl.replace(/\/+$/, '')}/perfiles/${id}`;
+    console.log('URL CONSULTADA:', url);
+    console.log('ID DEL PERFIL:', id);
+    return this.http.get<any>(url).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('ERROR HTTP ORIGINAL:', error);
+        return throwError(() => error);
+      }),
+    );
   }
 
   updateUsuario(id: number, formData: FormData): Observable<any> {

@@ -1,4 +1,9 @@
 /* Ajustes exclusivos para celulares */
+.mensaje-multilinea .mat-mdc-snack-bar-label {
+    white-space: pre-wrap !important;
+    line-height: 1.6;
+}
+
 @media screen and (max-width: 768px) {
 
     /* Ocultar mensajes de error de Angular Material */
@@ -24,5 +29,10 @@
         background-color: white !important;
         border-radius: 5px !important;
         overflow: hidden;
+    }
+
+    .mensaje-multilinea .mat-mdc-snack-bar-label {
+        white-space: pre-wrap !important;
+        line-height: 1.6;
     }
 }

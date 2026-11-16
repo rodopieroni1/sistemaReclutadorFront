@@ -23,6 +23,7 @@ export class CabeceraComponent implements OnInit {
   [x: string]: any;
   isMenuOpen: boolean = false;
   userLoginOn: boolean = false;
+  tieneCv: boolean = false;
   userProfileImage: string = '';
   errorMessage: string = '';
   user?: User;
@@ -37,34 +38,29 @@ export class CabeceraComponent implements OnInit {
     private cdRef: ChangeDetectorRef,
     private navigationService: NavigationServiceService,
     private router: Router,
-  ) {
-    this.userServiceService.getUsers(environment.local.userId).subscribe({
-      next: (userData) => {
-        this.user = userData;
-      },
-      error: (errorData) => {
-        console.error(errorData);
-      },
-    });
-  }
-  ngOnInit() {
+  ) {}
+
+  ngOnInit(): void {
+    this.userLoginOn = !!sessionStorage.getItem('token');
+    this.tieneCv = false;
+    this.user = undefined;
+    if (this.userLoginOn) {
+      this.cargarPerfil();
+    }
     const subNombre = this.loginService.currentUserNombre.subscribe(
       (userName) => {
         this.userName = userName;
       },
     );
-    this.userLoginOn = !!sessionStorage.getItem('token');
     const subFoto = this.loginService.currentUserProfileImage.subscribe(
       (imageUrl) => {
         if (imageUrl) {
           console.log('URL de imagen recibida:', imageUrl);
-
           this.userProfileImage = imageUrl;
-          console.log('URL de imagen recibida 2:', this.userProfileImage);
         } else {
           this.userProfileImage = 'assets/default-profile.png';
         }
-        this.cdRef.detectChanges(); // Forzamos actualización visual
+        this.cdRef.detectChanges();
       },
     );
     this.subs.push(subNombre, subFoto);
@@ -136,6 +132,51 @@ export class CabeceraComponent implements OnInit {
     } else {
       this.router.navigate(['/login-user']);
     }
+  }
+
+  CrearCV(): void {
+    if (!this.userLoginOn) {
+      this.router.navigate(['/login-user']);
+      return;
+    }
+
+    if (this.tieneCv) {
+      return;
+    }
+
+    this.router.navigate(['/crear-cv']);
+  }
+
+  private cargarPerfil(): void {
+    const id = Number(sessionStorage.getItem('idPerfil'));
+    console.log('CONSULTANDO CV DEL POSTULANTE:', id);
+    this.tieneCv = false;
+    if (!id || isNaN(id)) {
+      console.error('No se encontró un ID válido');
+      return;
+    }
+
+    this.userServiceService.getUsers(id).subscribe({
+      next: (userData: any) => {
+        console.log('RESPUESTA COMPLETA DEL PERFIL:', userData);
+        console.log('DOCUMENTO URL:', userData.documentoUrl);
+        console.log('UPLOAD CV:', userData.uploadcv);
+
+        this.user = userData;
+        this.tieneCv =
+          typeof userData.documentoUrl === 'string' &&
+          userData.documentoUrl.trim().length > 0;
+
+        console.log('POSTULANTE:', id);
+        console.log('DOCUMENTO:', userData.documentoUrl);
+        console.log('¿TIENE CV?:', this.tieneCv);
+
+        this.cdRef.detectChanges();
+      },
+      error: (error) => {
+        console.error('ERROR AL CONSULTAR EL PERFIL:', error);
+      },
+    });
   }
 
   logout(): void {

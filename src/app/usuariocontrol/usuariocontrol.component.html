@@ -101,30 +101,16 @@
 
             <div class="upload-box">
                 <label>Foto de perfil</label>
-                <!-- Agregamos id="foto" -->
-                <input id="foto" placeholder="seleccionar foto" type="file" (change)="seleccionarArchivo($event,'foto')"
-                    accept="image/*">
+                <input id="foto" type="file" (change)="seleccionarArchivo($event)" accept="image/*">
             </div>
-
             <div class="upload-box">
-                <label>Currículum Vitae</label>
-
-                <input id="cv" type="file" (change)="seleccionarArchivo($event,'cv')" accept=".pdf,.doc,.docx">
-
-                <div class="crear-cv">
-                    <span>¿No tenés un currículum?</span>
-
-                    <button type="button" mat-stroked-button color="primary" routerLink="/crear-cv">
-                        <mat-icon>description</mat-icon>
-                        Crear mi CV
-                    </button>
-                </div>
+                <label>Currículum Vitae (opcional)</label>
+                <input id="cv" type="file" (change)="seleccionarArchivo($event, 'cv')" accept=".pdf,.doc,.docx">
+                <small>Formatos permitidos: PDF, DOC y DOCX. Tamaño máximo: 5 MB.</small>
             </div>
-
-            <!-- Si quieres que el botón se deshabilite si el formulario es inválido, puedes agregar: [disabled]="isSubmitting || !formUsuario.valid" -->
             <button class="btn-guardar" type="submit" [disabled]="isSubmitting">
                 <mat-icon>person_add</mat-icon>
-                Crear Usuario
+                Crear perfil
             </button>
         </div>
     </form>

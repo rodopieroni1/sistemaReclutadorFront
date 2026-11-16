@@ -16,7 +16,7 @@ export class AplicacionServiceService {
 
   constructor(private http: HttpClient) {}
 
-  aplicar(idOferta: number, idPerfil: number): Observable<ResultadoAplicacion> {
+  aplicar(idOferta: number, idPerfil: number): Observable<AplicacionResponse> {
     const body = {
       idOferta: {
         idOferta: idOferta,
@@ -26,8 +26,6 @@ export class AplicacionServiceService {
       },
     };
     console.log(JSON.stringify(body));
-    return this.http.post<ResultadoAplicacion>(this.apiUrl, body, {
-      responseType: 'json',
-    });
+    return this.http.post<AplicacionResponse>(this.apiUrl, body);
   }
 }
