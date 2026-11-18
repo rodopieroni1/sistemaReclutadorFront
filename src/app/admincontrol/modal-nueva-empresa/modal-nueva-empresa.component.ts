@@ -122,6 +122,9 @@ export class ModalNuevaEmpresaComponent implements OnInit {
     this.miFormulario = this.fb.group({
       nombreEmpresa: ['', [Validators.required, Validators.maxLength(100)]],
       direccionEmpresa: ['', [Validators.required, Validators.maxLength(255)]],
+      localidad: [''],
+      provincia: [''],
+      pais: [''],
       historiaEmpresa: ['', Validators.required],
       observacionesEmpresa: [''],
       emailEmpresa: [
@@ -181,6 +184,9 @@ export class ModalNuevaEmpresaComponent implements OnInit {
           this.data.empresa.direccion ||
           this.data.empresa.direccionEmpresa ||
           '',
+        localidad: this.data.empresa.localidad || '',
+        provincia: this.data.empresa.provincia || '',
+        pais: this.data.empresa.pais || '',
         historiaEmpresa:
           this.data.empresa.historiaEmpresa || this.data.empresa.historia || '',
         idEmpresa: this.data.empresa.idEmpresa || this.data.empresa.id || 0,
@@ -253,6 +259,9 @@ export class ModalNuevaEmpresaComponent implements OnInit {
     const formData = new FormData();
     formData.append('nombre', this.miFormulario.value.nombreEmpresa);
     formData.append('direccion', this.miFormulario.value.direccionEmpresa);
+    formData.append('localidad', this.miFormulario.value.localidad || '');
+    formData.append('provincia', this.miFormulario.value.provincia || '');
+    formData.append('pais', this.miFormulario.value.pais || '');
     formData.append('historiaEmpresa', this.miFormulario.value.historiaEmpresa);
     formData.append(
       'observaciones',
@@ -293,6 +302,9 @@ export class ModalNuevaEmpresaComponent implements OnInit {
     const formData = new FormData();
     formData.append('nombre', empresa.nombreEmpresa);
     formData.append('direccion', empresa.direccionEmpresa);
+    formData.append('localidad', empresa.localidad || '');
+    formData.append('provincia', empresa.provincia || '');
+    formData.append('pais', empresa.pais || '');
     formData.append('historiaEmpresa', empresa.historiaEmpresa);
     formData.append('observaciones', empresa.observacionesEmpresa);
     formData.append('email', empresa.emailEmpresa);

@@ -16,6 +16,7 @@ import { environment } from '../environments/environment';
 import { EmpresasComponent } from './empresas/empresas.component';
 import { ModificarPasswordAdminComponent } from './modificar-password-admin/modificar-password-admin.component';
 import { CrearCvComponent } from './usuariocontrol/crear-cv/crear-cv.component';
+import { UbicacionPruebaComponent } from './ubicacion-prueba/ubicacion-prueba.component';
 
 interface JwtPayload {
   exp: number;
@@ -88,6 +89,10 @@ export const routes: Routes = [
     path: 'crear-cv',
     component: CrearCvComponent,
     canActivate: [PostulanteGuard],
+  },
+  {
+    path: 'ubicacion-prueba',
+    component: UbicacionPruebaComponent,
   },
 ];
 

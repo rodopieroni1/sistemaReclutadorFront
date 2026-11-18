@@ -59,6 +59,20 @@
                     La dirección no puede superar los 255 caracteres.
                 </mat-error>
             </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Localidad</mat-label>
+                <input matInput formControlName="localidad" placeholder="Ej.: Santiago del Estero" />
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>Provincia</mat-label>
+                <input matInput formControlName="provincia" placeholder="Ej.: Santiago del Estero" />
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>País</mat-label>
+                <input matInput formControlName="pais" placeholder="Ej.: Argentina" />
+            </mat-form-field>
             <mat-form-field appearance="outline" class="full-width">
                 <mat-label>CUIT</mat-label>
                 <input matInput formControlName="cuitEmpresa" placeholder="Ej.: 30123456789" />
