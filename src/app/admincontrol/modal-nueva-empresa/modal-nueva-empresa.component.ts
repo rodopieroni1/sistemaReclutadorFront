@@ -30,6 +30,7 @@ import { ActivatedRoute } from '@angular/router';
 import { MatSelectModule } from '@angular/material/select';
 import { environment } from '../../../environments/environment';
 import { QuillModule } from 'ngx-quill';
+import { UbicacionService } from '../../ubicacion.service';
 
 export interface ResponseRest<T> {
   success: boolean;
@@ -111,11 +112,15 @@ export class ModalNuevaEmpresaComponent implements OnInit {
       ['clean'],
     ],
   };
+  paises: any[] = [];
+  provincias: any[] = [];
+  localidades: string[] = [];
 
   constructor(
     private http: HttpClient,
     private snackBar: MatSnackBar,
     private fb: FormBuilder,
+    private ubicacionService: UbicacionService,
     public dialogRef: MatDialogRef<ModalNuevaEmpresaComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { accion: string; empresa?: any },
   ) {
@@ -158,6 +163,12 @@ export class ModalNuevaEmpresaComponent implements OnInit {
           this.rubros.find((r) => Number(r.idRubro) === Number(id)) || null;
       }
     });
+    this.ubicacionService.getPaises().subscribe({
+      next: (respuesta) => {
+        this.paises = respuesta.data;
+      },
+      error: (error) => console.error('Error al cargar países:', error),
+    });
   }
 
   asignarDatosFormulario() {
@@ -167,6 +178,12 @@ export class ModalNuevaEmpresaComponent implements OnInit {
       const rubroIdRaw =
         this.data.empresa.idRubro || this.data.empresa.rubro?.idRubro;
       const rubroId = rubroIdRaw ? Number(rubroIdRaw) : '';
+      console.log('EMPRESA RECIBIDA:', this.data.empresa);
+      console.log('UBICACIÓN RECIBIDA:', {
+        localidad: this.data.empresa.localidad,
+        provincia: this.data.empresa.provincia,
+        pais: this.data.empresa.pais,
+      });
       this.miFormulario.patchValue({
         nombreEmpresa:
           this.data.empresa.nombre || this.data.empresa.nombreEmpresa || '',
@@ -192,6 +209,32 @@ export class ModalNuevaEmpresaComponent implements OnInit {
         idEmpresa: this.data.empresa.idEmpresa || this.data.empresa.id || 0,
         idRubro: rubroId,
       });
+
+      const pais = this.miFormulario.get('pais')?.value;
+      const provincia = this.miFormulario.get('provincia')?.value;
+
+      if (pais) {
+        this.ubicacionService.getProvincias(pais).subscribe({
+          next: (respuesta) => {
+            if (!respuesta.error) {
+              this.provincias = respuesta.data.states || [];
+
+              if (provincia) {
+                this.ubicacionService
+                  .getLocalidades(pais, provincia)
+                  .subscribe({
+                    next: (respuestaLocalidades) => {
+                      this.localidades = respuestaLocalidades.data || [];
+                    },
+                    error: (error) =>
+                      console.error('Error al cargar localidades:', error),
+                  });
+              }
+            }
+          },
+          error: (error) => console.error('Error al cargar provincias:', error),
+        });
+      }
       if (rubroId && this.rubros.length > 0) {
         this.rubroSeleccionado =
           this.rubros.find((r) => Number(r.idRubro) === Number(rubroId)) ||
@@ -399,7 +442,6 @@ export class ModalNuevaEmpresaComponent implements OnInit {
     return texto.replace(/\u200B/g, '').length;
   }
 
-  /** * Controla el límite de 600 caracteres. */
   onQuillContentChanged(event: any, campo: string): void {
     const html = event.html || '';
     const cantidad = this.obtenerCantidadCaracteres(html);
@@ -426,5 +468,45 @@ export class ModalNuevaEmpresaComponent implements OnInit {
         control.setErrors(Object.keys(errores).length > 0 ? errores : null);
       }
     }
+  }
+
+  alCambiarPais(): void {
+    const pais = this.miFormulario.get('pais')?.value;
+
+    this.miFormulario.patchValue({
+      provincia: '',
+      localidad: '',
+    });
+
+    this.provincias = [];
+    this.localidades = [];
+
+    if (!pais) return;
+
+    this.ubicacionService.getProvincias(pais).subscribe({
+      next: (respuesta) => {
+        if (!respuesta.error) {
+          this.provincias = respuesta.data.states || [];
+        }
+      },
+      error: (error) => console.error('Error al cargar provincias:', error),
+    });
+  }
+
+  alCambiarProvincia(): void {
+    const pais = this.miFormulario.get('pais')?.value;
+    const provincia = this.miFormulario.get('provincia')?.value;
+
+    this.miFormulario.patchValue({ localidad: '' });
+    this.localidades = [];
+
+    if (!pais || !provincia) return;
+
+    this.ubicacionService.getLocalidades(pais, provincia).subscribe({
+      next: (respuesta) => {
+        this.localidades = respuesta.data || [];
+      },
+      error: (error) => console.error('Error al cargar localidades:', error),
+    });
   }
 }

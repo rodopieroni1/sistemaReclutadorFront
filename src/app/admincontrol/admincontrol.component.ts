@@ -403,6 +403,9 @@ export class AdminControlComponent {
         this.empresas = listaEmpresas.map((empresa: any) => ({
           nombreEmpresa: empresa.nombreEmpresa,
           direccion: empresa.direccion,
+          localidad: empresa.localidad,
+          provincia: empresa.provincia,
+          pais: empresa.pais,
           historiaEmpresa: empresa.historiaEmpresa,
           observaciones: empresa.observaciones,
           email: empresa.email,
@@ -440,6 +443,9 @@ export class AdminControlComponent {
     nombreEmpresa: string;
     email: string;
     direccion: string;
+    localidad: string;
+    provincia: string;
+    pais: string;
     historiaEmpresa: string;
     telefono: string;
     observaciones: string;

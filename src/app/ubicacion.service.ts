@@ -23,9 +23,10 @@ export class UbicacionService {
   }
 
   // Obtener localidades de una provincia
-  getLocalidades(codigoProvincia: string): Observable<any> {
-    return this.http.get<any>(
-      `${this.apiUrl}/subdivisions/${encodeURIComponent(codigoProvincia)}/cities?limit=1000`,
-    );
+  getLocalidades(pais: string, provincia: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/countries/state/cities`, {
+      country: pais,
+      state: provincia,
+    });
   }
 }

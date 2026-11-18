@@ -59,20 +59,35 @@
                     La dirección no puede superar los 255 caracteres.
                 </mat-error>
             </mat-form-field>
+
             <mat-form-field appearance="fill">
-                <mat-label>Localidad</mat-label>
-                <input matInput formControlName="localidad" placeholder="Ej.: Santiago del Estero" />
+                <mat-label>País</mat-label>
+                <mat-select formControlName="pais" (selectionChange)="alCambiarPais()">
+                    <mat-option *ngFor="let pais of paises" [value]="pais.name">
+                        {{ pais.name }}
+                    </mat-option>
+                </mat-select>
             </mat-form-field>
 
             <mat-form-field appearance="fill">
                 <mat-label>Provincia</mat-label>
-                <input matInput formControlName="provincia" placeholder="Ej.: Santiago del Estero" />
+                <mat-select formControlName="provincia" (selectionChange)="alCambiarProvincia()"
+                    [disabled]="provincias.length === 0">
+                    <mat-option *ngFor="let provincia of provincias" [value]="provincia.name">
+                        {{ provincia.name }}
+                    </mat-option>
+                </mat-select>
             </mat-form-field>
 
             <mat-form-field appearance="fill">
-                <mat-label>País</mat-label>
-                <input matInput formControlName="pais" placeholder="Ej.: Argentina" />
+                <mat-label>Localidad</mat-label>
+                <mat-select formControlName="localidad" [disabled]="localidades.length === 0">
+                    <mat-option *ngFor="let localidad of localidades" [value]="localidad">
+                        {{ localidad }}
+                    </mat-option>
+                </mat-select>
             </mat-form-field>
+
             <mat-form-field appearance="outline" class="full-width">
                 <mat-label>CUIT</mat-label>
                 <input matInput formControlName="cuitEmpresa" placeholder="Ej.: 30123456789" />
