@@ -1,0 +1,34 @@
+<h2>Prueba de API geográfica</h2>
+
+<div *ngIf="paises.length > 0">
+    <p>Países cargados: {{ paises.length }}</p>
+
+    <ul>
+        <li *ngFor="let pais of paises">
+            {{ pais.name }}
+        </li>
+    </ul>
+</div>
+<hr>
+
+<h3>Seleccionar país</h3>
+
+<select (change)="cargarProvincias($any($event.target).value)">
+    <option value="">Seleccioná un país</option>
+
+    <option *ngFor="let pais of paises" [value]="pais.name">
+        {{ pais.name }}
+    </option>
+</select>
+
+<h3>Provincias</h3>
+
+<ul>
+    <li *ngFor="let provincia of provincias">
+        {{ provincia.name }}
+    </li>
+</ul>
+
+<p *ngIf="paises.length === 0">
+    Cargando países...
+</p>
