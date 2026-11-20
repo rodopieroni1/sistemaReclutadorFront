@@ -18,6 +18,9 @@ import { Router } from '@angular/router';
 interface Empresa {
   nombreEmpresa: string;
   direccion: string;
+  localidad: string;
+  provincia: string;
+  pais: string;
   historiaEmpresa: string;
   observaciones: string;
   email: string;
@@ -154,6 +157,9 @@ export class AdminControlComponent {
   empresas: {
     nombreEmpresa: string;
     direccion: string;
+    localidad: string;
+    provincia: string;
+    pais: string;
     historiaEmpresa: string;
     observaciones: string;
     email: string;

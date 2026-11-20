@@ -11,17 +11,13 @@ export class UserServiceService {
   [x: string]: any;
   private usuarioPerfilSubject = new BehaviorSubject<any>(null);
   usuarioPerfil$ = this.usuarioPerfilSubject.asObservable();
-
   constructor(private http: HttpClient) {}
-
   getUsers(id: number): Observable<any> {
     const baseUrl = environment?.local?.urlApi;
     if (!baseUrl || !id) {
       return throwError(() => new Error('URL o ID inválidos'));
     }
     const url = `${baseUrl.replace(/\/+$/, '')}/perfiles/${id}`;
-    console.log('URL CONSULTADA:', url);
-    console.log('ID DEL PERFIL:', id);
     return this.http.get<any>(url).pipe(
       catchError((error: HttpErrorResponse) => {
         console.error('ERROR HTTP ORIGINAL:', error);
@@ -37,7 +33,6 @@ export class UserServiceService {
         () => new Error('Configuración de API o ID inválidos.'),
       );
     }
-    console.log('ID del baseUrl:', baseUrl);
     return this.http
       .put(`${baseUrl}/perfiles/${id}`, formData)
       .pipe(catchError(this.handleError));

@@ -8,11 +8,16 @@ import { UserServiceService } from '../perfil/user-service.service';
 import { CabeceraComponent } from '../home/cabecera/cabecera.component';
 import { MatIcon } from '@angular/material/icon';
 import { LoginService } from '../loginuser/auth/login.service';
-
+import { UbicacionService } from '../ubicacion.service';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
 interface Usuario {
   dni: string;
   nombre: string;
   direccion: string;
+  localidad: string;
+  provincia: string;
+  pais: string;
   email: string;
   telefono: string;
   clave: string;
@@ -27,8 +32,9 @@ interface Usuario {
     CommonModule,
     FormsModule,
     RouterModule,
-    CabeceraComponent,
     MatIcon,
+    MatSelectModule,
+    MatOptionModule,
   ],
   templateUrl: './UpdateUser.component.html',
   styleUrls: ['./UpdateUser.component.css'],
@@ -40,6 +46,9 @@ export class UpdateUserComponent implements OnInit {
     dni: '',
     nombre: '',
     direccion: '',
+    localidad: '',
+    provincia: '',
+    pais: '',
     email: '',
     telefono: '',
     clave: '',
@@ -48,12 +57,16 @@ export class UpdateUserComponent implements OnInit {
   };
   foto: File | null = null;
   cv: File | null = null;
+  paises: any[] = [];
+  provincias: any[] = [];
+  localidades: string[] = [];
 
   constructor(
     private usuarioService: UserServiceService,
     private router: Router,
     private http: HttpClient,
     private loginService: LoginService,
+    private ubicacionService: UbicacionService,
   ) {}
 
   ngOnInit(): void {
@@ -67,18 +80,77 @@ export class UpdateUserComponent implements OnInit {
             dni: data.dni ?? '',
             nombre: data.nombre ?? '',
             direccion: data.direccion ?? '',
+            localidad: data.localidad ?? '',
+            provincia: data.provincia ?? '',
+            pais: data.pais ?? '',
             email: data.email ?? '',
             telefono: data.telefono ?? '',
             clave: data.clave ?? '',
             documentoUrl: data.documentoUrl,
             fotoUrl: data.fotoUrl,
           };
+          this.cargarUbicacionGuardada(data.pais, data.provincia);
         },
         error: (err) => {
           alert('No se pudo cargar la información del usuario');
         },
       });
     }
+
+    this.ubicacionService.getPaises().subscribe({
+      next: (respuesta) => {
+        this.paises = respuesta.data;
+      },
+      error: (error) => console.error('Error al cargar países:', error),
+    });
+  }
+
+  cargarUbicacionGuardada(pais: string, provincia: string): void {
+    if (!pais) return;
+
+    this.ubicacionService.getProvincias(pais).subscribe({
+      next: (respuesta) => {
+        this.provincias = respuesta.data.states || [];
+        if (!provincia) return;
+        this.ubicacionService.getLocalidades(pais, provincia).subscribe({
+          next: (respuestaLocalidades) => {
+            this.localidades = respuestaLocalidades.data || [];
+          },
+          error: (error) =>
+            console.error('Error al cargar localidades:', error),
+        });
+      },
+      error: (error) => console.error('Error al cargar provincias:', error),
+    });
+  }
+
+  alCambiarPais(): void {
+    const pais = this.usuario.pais;
+    this.usuario.provincia = '';
+    this.usuario.localidad = '';
+    this.provincias = [];
+    this.localidades = [];
+    if (!pais) return;
+    this.ubicacionService.getProvincias(pais).subscribe({
+      next: (respuesta) => {
+        this.provincias = respuesta.data.states || [];
+      },
+      error: (error) => console.error('Error al cargar provincias:', error),
+    });
+  }
+
+  alCambiarProvincia(): void {
+    const pais = this.usuario.pais;
+    const provincia = this.usuario.provincia;
+    this.usuario.localidad = '';
+    this.localidades = [];
+    if (!pais || !provincia) return;
+    this.ubicacionService.getLocalidades(pais, provincia).subscribe({
+      next: (respuesta) => {
+        this.localidades = respuesta.data || [];
+      },
+      error: (error) => console.error('Error al cargar localidades:', error),
+    });
   }
 
   seleccionarArchivo(event: Event, tipo: 'foto' | 'cv') {
@@ -101,22 +173,23 @@ export class UpdateUserComponent implements OnInit {
 
   actualizarUsuario(event: Event) {
     event.preventDefault();
-    // 2. Construcción del FormData
     const formData = new FormData();
     for (const key in this.usuario) {
       if (key !== 'fotoUrl') {
         formData.append(key, (this.usuario as any)[key]);
       }
     }
-
     if (this.foto) {
       formData.append('foto', this.foto);
     }
-
     if (this.cv) {
       formData.append('uploadcv', this.cv);
     }
-
+    console.log('Ubicación enviada:', {
+      pais: formData.get('pais'),
+      provincia: formData.get('provincia'),
+      localidad: formData.get('localidad'),
+    });
     const id = Number(sessionStorage.getItem('idPerfil'));
     this.usuarioService.updateUsuario(id, formData).subscribe({
       //llamo al backend
@@ -128,6 +201,9 @@ export class UpdateUserComponent implements OnInit {
               dni: data.dni ?? '',
               nombre: data.nombre ?? '',
               direccion: data.direccion ?? '',
+              localidad: data.localidad ?? '',
+              provincia: data.provincia ?? '',
+              pais: data.pais ?? '',
               email: data.email ?? '',
               telefono: data.telefono ?? '',
               clave: data.clave ?? '',

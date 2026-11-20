@@ -232,6 +232,31 @@
   transform: scale(1.1);
 }
 
+/* Estilo de los combobox de ubicación */
+.campo mat-select {
+  display: block;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: 14px;
+  color: #333;
+  box-sizing: border-box;
+  min-height: 44px;
+}
+
+/* Espacio entre los campos */
+.campo mat-select:focus-within {
+  border-color: #64748b;
+  outline: none;
+}
+
+/* Texto cuando no hay una opción seleccionada */
+.campo mat-select .mat-mdc-select-placeholder {
+  color: #888;
+}
+
 @media(max-width:768px) {
   .container {
     margin: 10px;

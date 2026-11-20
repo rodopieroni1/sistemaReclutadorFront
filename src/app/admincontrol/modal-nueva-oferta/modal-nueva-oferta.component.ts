@@ -32,6 +32,7 @@ import { of } from 'rxjs';
 import { MatDividerModule } from '@angular/material/divider';
 import { environment } from '../../../environments/environment';
 import { QuillModule } from 'ngx-quill';
+import { UbicacionService } from '../../ubicacion.service';
 @Component({
   selector: 'app-modal-nueva-oferta',
   standalone: true,
@@ -98,11 +99,16 @@ export class ModalNuevaOfertaComponent implements OnInit {
       ['clean'],
     ],
   };
+  paises: any[] = [];
+  provincias: any[] = [];
+  localidades: string[] = [];
+
   constructor(
     private http: HttpClient,
     public dialogRef: MatDialogRef<ModalNuevaOfertaComponent>,
     private snackBar: MatSnackBar,
     private fb: FormBuilder,
+    private ubicacionService: UbicacionService,
     @Inject(MAT_DIALOG_DATA) public data: { accion: string; oferta?: any },
   ) {
     this.miFormulario = this.fb.group({
@@ -116,7 +122,11 @@ export class ModalNuevaOfertaComponent implements OnInit {
           Validators.pattern(/.*\S.*/),
         ],
       ],
-
+      modalidad: ['PRESENCIAL', Validators.required],
+      direccionTrabajo: [''],
+      paisTrabajo: [''],
+      provinciaTrabajo: [''],
+      localidadTrabajo: [''],
       descripcionOferta: ['', Validators.required],
       estadoOferta: [true, Validators.required],
       idEmpresa: [null, Validators.required],
@@ -128,7 +138,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
 
   ngOnInit(): void {
     this.obtenerEmpresas();
-
+    this.cargarPaises();
     if (this.data.oferta) {
       this.http
         .get<any>(
@@ -136,23 +146,25 @@ export class ModalNuevaOfertaComponent implements OnInit {
         )
         .subscribe({
           next: (response) => {
-            console.log(' Respuesta de oferta:', response);
+            console.log('OFERTA RECUPERADA DEL BACKEND:', response);
 
-            // Solución 2: Extraer el ID de empresa garantizando un fallback numérico
             const idEmpresaCalculado =
               response.empresa?.idEmpresa ??
               response.empresa?.id ??
               response.idEmpresa ??
               this.data.oferta?.empresa?.idEmpresa ??
-              this.data.oferta?.empresa?.id ??
               1;
 
+            // Primero cargamos los datos generales y el país
             this.miFormulario.patchValue({
               idOferta: response.idOferta || this.data.oferta.idOferta,
-              descripcionOferta: response.descripcionOferta || '',
               nombreOferta: response.nombreOferta || '',
-              idEmpresa: idEmpresaCalculado, // Asigna un ID numérico válido siempre
+              descripcionOferta: response.descripcionOferta || '',
+              modalidad: response.modalidad || 'PRESENCIAL',
+              direccionTrabajo: response.direccionTrabajo || '',
+              paisTrabajo: response.paisTrabajo || '',
               estadoOferta: response.estadoOferta,
+              idEmpresa: idEmpresaCalculado,
               fotoOferta: response.fotoOferta || '',
             });
 
@@ -161,6 +173,51 @@ export class ModalNuevaOfertaComponent implements OnInit {
 
             if (this.imagenDesdeBD) {
               this.imagenPreview = `${environment.local.urlApi}/uploads/ofertas/${this.imagenDesdeBD}`;
+            }
+
+            // Recuperamos provincias del país guardado
+            const pais = response.paisTrabajo;
+            const provincia = response.provinciaTrabajo;
+            const localidad = response.localidadTrabajo;
+
+            if (pais) {
+              this.ubicacionService.getProvincias(pais).subscribe({
+                next: (respuesta) => {
+                  this.provincias = respuesta.data?.states || [];
+
+                  // Seleccionamos la provincia después de cargar sus opciones
+                  this.miFormulario.patchValue({
+                    provinciaTrabajo: provincia || '',
+                  });
+
+                  if (pais && provincia) {
+                    this.ubicacionService
+                      .getLocalidades(pais, provincia)
+                      .subscribe({
+                        next: (respuestaLocalidades) => {
+                          this.localidades = respuestaLocalidades.data || [];
+                          // Seleccionamos la localidad después de cargar sus opciones
+                          this.miFormulario.patchValue({
+                            localidadTrabajo: localidad || '',
+                          });
+                          console.log('UBICACIÓN RECUPERADA:', {
+                            pais,
+                            provincia,
+                            localidad,
+                            provincias: this.provincias,
+                            localidades: this.localidades,
+                          });
+                        },
+                        error: (err) => {
+                          console.error('Error recuperando localidades:', err);
+                        },
+                      });
+                  }
+                },
+                error: (err) => {
+                  console.error('Error recuperando provincias:', err);
+                },
+              });
             }
           },
           error: (err) => {
@@ -193,7 +250,55 @@ export class ModalNuevaOfertaComponent implements OnInit {
       },
     });
   }
+  cargarPaises(): void {
+    this.ubicacionService.getPaises().subscribe({
+      next: (respuesta) => {
+        this.paises = respuesta.data || [];
+      },
+      error: (error) => console.error('Error al cargar países:', error),
+    });
+  }
 
+  alCambiarPais(): void {
+    const pais = this.miFormulario.get('paisTrabajo')?.value;
+
+    this.provincias = [];
+    this.localidades = [];
+
+    this.miFormulario.patchValue({
+      provinciaTrabajo: '',
+      localidadTrabajo: '',
+    });
+
+    if (!pais) return;
+
+    this.ubicacionService.getProvincias(pais).subscribe({
+      next: (respuesta) => {
+        this.provincias = respuesta.data?.states || [];
+      },
+      error: (error) => console.error('Error al cargar provincias:', error),
+    });
+  }
+
+  alCambiarProvincia(): void {
+    const pais = this.miFormulario.get('paisTrabajo')?.value;
+    const provincia = this.miFormulario.get('provinciaTrabajo')?.value;
+
+    this.localidades = [];
+
+    this.miFormulario.patchValue({
+      localidadTrabajo: '',
+    });
+
+    if (!pais || !provincia) return;
+
+    this.ubicacionService.getLocalidades(pais, provincia).subscribe({
+      next: (respuesta) => {
+        this.localidades = respuesta.data || [];
+      },
+      error: (error) => console.error('Error al cargar localidades:', error),
+    });
+  }
   guardar(): void {
     // 1. Validar el formulario con Angular Reactive Forms
     if (this.miFormulario.invalid) {
@@ -207,19 +312,21 @@ export class ModalNuevaOfertaComponent implements OnInit {
       );
       return;
     }
-
     const datosOferta = this.miFormulario.getRawValue();
-    console.log('ID del usuario:', this.obtenerIdUsuarioDelToken());
     // 2. Determinar el ID de la empresa de forma segura
     const idEmpresaLimpio = Number(datosOferta.idEmpresa) || 1;
-
     // 3. Armar el FormData directamente
     const formData = new FormData();
     formData.append('nombreOferta', datosOferta.nombreOferta);
     formData.append('descripcionOferta', datosOferta.descripcionOferta);
     formData.append('estadoOferta', String(datosOferta.estadoOferta));
     formData.append('idEmpresa', String(idEmpresaLimpio));
-
+    // Datos de geolocalización
+    formData.append('modalidad', datosOferta.modalidad);
+    formData.append('direccionTrabajo', datosOferta.direccionTrabajo || '');
+    formData.append('paisTrabajo', datosOferta.paisTrabajo || '');
+    formData.append('provinciaTrabajo', datosOferta.provinciaTrabajo || '');
+    formData.append('localidadTrabajo', datosOferta.localidadTrabajo || '');
     // Manejar el envío de la foto
     if (this.archivoSeleccionado) {
       formData.append('fotoOferta', this.archivoSeleccionado.name);
@@ -227,58 +334,56 @@ export class ModalNuevaOfertaComponent implements OnInit {
     } else if (this.imagenDesdeBD) {
       formData.append('fotoOferta', this.imagenDesdeBD);
     }
-
     // 4. Determinar si se crea o se actualiza
     const idOferta = datosOferta.idOferta || this.data?.oferta?.idOferta;
+
     const esCrear = this.accion === 'crear';
 
-    const request$ = esCrear
-      ? this.http.post<HttpResponse<any>>(
-          `${environment.local.urlApi}/ofertas/crear`,
-          formData,
-          { observe: 'response' },
-        )
-      : this.http.put<HttpResponse<any>>(
-          `${environment.local.urlApi}/ofertas/actualizar/${idOferta}`,
-          formData,
-          { observe: 'response' },
-        );
+    if (esCrear) {
+      this.http
+        .post(`${environment.local.urlApi}/ofertas/crear`, formData, {
+          observe: 'response',
+        })
+        .subscribe({
+          next: (response) => {
+            if (response.status === 200 || response.status === 201) {
+              this.snackBar.open('Oferta creada satisfactoriamente', 'Cerrar', {
+                duration: 3000,
+              });
 
-    // 5. Ejecutar la petición
-    request$
-      .pipe(
-        tap((response) => {
-          if (
-            response &&
-            (response.status === 201 || response.status === 200)
-          ) {
-            const mensaje = esCrear
-              ? 'Oferta creada satisfactoriamente'
-              : 'Oferta actualizada satisfactoriamente';
-            this.snackBar.open(mensaje, 'Cerrar', { duration: 3000 });
-            this.datosActualizadosOferta.emit();
-            this.dialogRef.close({ ofertaCreada: true });
-          }
-        }),
-        catchError((error) => {
-          console.error('Error detallado:', error);
-          this.snackBar.open(
-            'Error al procesar la oferta. Verifique la consola.',
-            'Cerrar',
-            { duration: 3000 },
-          );
-          return of(null);
-        }),
-      )
-      .subscribe();
+              this.datosActualizadosOferta.emit();
+              this.dialogRef.close({ ofertaCreada: true });
+            }
+          },
+          error: (err) => {
+            console.error('Error al crear oferta:', err);
+          },
+        });
+    } else {
+      console.log('ENTRANDO A cargarUpdate DESDE guardar()');
+
+      this.cargarUpdate(datosOferta, null);
+    }
   }
 
   cargarUpdate(oferta: any, response: any) {
+    console.log('===== OFERTA RECIBIDA EN cargarUpdate =====');
+    console.log('Oferta completa:', oferta);
+    console.log('Dirección:', oferta.direccionTrabajo);
+    console.log('País:', oferta.paisTrabajo);
+    console.log('Provincia:', oferta.provinciaTrabajo);
+    console.log('Localidad:', oferta.localidadTrabajo);
+    console.log('Modalidad:', oferta.modalidad);
+    console.log('==========================================');
+
     const idOferta =
       this.miFormulario.value.idOferta || this.data.oferta.idOferta;
+
     const fotoCalculada =
       this.miFormulario.value.fotoOferta || this.imagenDesdeBD;
+
     const idEmpresaNum = oferta.empresa?.idEmpresa || oferta.idEmpresa;
+
     if (!idEmpresaNum) {
       this.snackBar.open('Error: El ID de la empresa está vacío.', 'Cerrar', {
         duration: 3000,
@@ -287,10 +392,18 @@ export class ModalNuevaOfertaComponent implements OnInit {
     }
 
     const ofertaPayload = new FormData();
+
     ofertaPayload.append('descripcionOferta', oferta.descripcionOferta);
     ofertaPayload.append('estadoOferta', String(oferta.estadoOferta));
     ofertaPayload.append('fotoOferta', fotoCalculada || '');
     ofertaPayload.append('nombreOferta', oferta.nombreOferta);
+
+    ofertaPayload.append('modalidad', oferta.modalidad || 'PRESENCIAL');
+    ofertaPayload.append('direccionTrabajo', oferta.direccionTrabajo || '');
+    ofertaPayload.append('paisTrabajo', oferta.paisTrabajo || '');
+    ofertaPayload.append('provinciaTrabajo', oferta.provinciaTrabajo || '');
+    ofertaPayload.append('localidadTrabajo', oferta.localidadTrabajo || '');
+
     ofertaPayload.append('idEmpresa', idEmpresaNum.toString());
     ofertaPayload.append('idOferta', idOferta.toString());
 
@@ -301,6 +414,14 @@ export class ModalNuevaOfertaComponent implements OnInit {
         this.archivoSeleccionado.name,
       );
     }
+
+    console.log('===== DATOS QUE SE ENVÍAN AL BACKEND =====');
+
+    ofertaPayload.forEach((valor, clave) => {
+      console.log(clave, valor);
+    });
+
+    console.log('==========================================');
 
     this.http
       .put(
@@ -320,6 +441,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
               'Cerrar',
               { duration: 3000 },
             );
+
             this.datosActualizadosOferta.emit();
             this.dialogRef.close();
           }
@@ -345,10 +467,6 @@ export class ModalNuevaOfertaComponent implements OnInit {
     );
   }
 
-  /**
-   * Cuenta solamente el texto visible de Quill,
-   * sin contar las etiquetas HTML.
-   */
   obtenerCantidadCaracteres(html: string): number {
     if (!html) {
       return 0;
@@ -362,9 +480,6 @@ export class ModalNuevaOfertaComponent implements OnInit {
     return texto.replace(/\u200B/g, '').length;
   }
 
-  /**
-   * Controla el límite de caracteres de la descripción.
-   */
   onDescripcionContentChanged(event: any): void {
     const html = event.html || '';
     const cantidad = this.obtenerCantidadCaracteres(html);

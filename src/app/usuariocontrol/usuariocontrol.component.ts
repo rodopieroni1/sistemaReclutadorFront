@@ -7,26 +7,43 @@ import { NgForm } from '@angular/forms';
 import { environment } from '../../environments/environment';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
+import { OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
+import { UbicacionService } from '../ubicacion.service';
 
 @Component({
   selector: 'app-usuariocontrol',
   standalone: true, // Indica que este componente es independiente
-  imports: [FormsModule, MatIcon, RouterLink], // Agrega FormsModule y MatIcon aquí
+  imports: [
+    FormsModule,
+    MatIcon,
+    RouterLink,
+    CommonModule,
+    MatSelectModule,
+    MatOptionModule,
+  ], // Agrega FormsModule y MatIcon aquí
   templateUrl: './usuariocontrol.component.html',
   styleUrls: ['./usuariocontrol.component.css'],
 })
-export class UsuarioControlComponent {
+export class UsuarioControlComponent implements OnInit {
   @ViewChild('formUsuario') formUsuario!: NgForm;
   nuevoUsuario = {
     dni: '',
     nombre: '',
     direccion: '',
+    pais: '',
+    provincia: '',
+    localidad: '',
     email: '',
     telefono: '',
     clave: '',
     password: '',
   };
-
+  paises: any[] = [];
+  provincias: any[] = [];
+  localidades: string[] = [];
   fotoSeleccionada: File | null = null;
   archivoSeleccionado: File | null = null;
   confirmarPassword: string = '';
@@ -36,8 +53,17 @@ export class UsuarioControlComponent {
   constructor(
     private http: HttpClient,
     private snackBar: MatSnackBar,
+    private ubicacionService: UbicacionService,
   ) {}
 
+  ngOnInit(): void {
+    this.ubicacionService.getPaises().subscribe({
+      next: (respuesta) => {
+        this.paises = respuesta.data;
+      },
+      error: (error) => console.error('Error al cargar países:', error),
+    });
+  }
   seleccionarArchivo(event: Event, tipo?: string): void {
     const input = event.target as HTMLInputElement;
     const archivo = input.files?.[0];
@@ -125,6 +151,9 @@ export class UsuarioControlComponent {
     formData.append('dni', this.nuevoUsuario.dni);
     formData.append('nombre', this.nuevoUsuario.nombre);
     formData.append('direccion', this.nuevoUsuario.direccion);
+    formData.append('pais', this.nuevoUsuario.pais);
+    formData.append('provincia', this.nuevoUsuario.provincia);
+    formData.append('localidad', this.nuevoUsuario.localidad);
     formData.append('email', this.nuevoUsuario.email);
     formData.append('telefono', this.nuevoUsuario.telefono);
     formData.append('clave', this.nuevoUsuario.clave);
@@ -173,6 +202,9 @@ export class UsuarioControlComponent {
       dni: '',
       nombre: '',
       direccion: '',
+      pais: '',
+      provincia: '',
+      localidad: '',
       email: '',
       telefono: '',
       clave: '',
@@ -194,5 +226,44 @@ export class UsuarioControlComponent {
     if (cvInput) {
       cvInput.value = '';
     }
+  }
+
+  alCambiarPais(): void {
+    const pais = this.nuevoUsuario.pais;
+
+    this.provincias = [];
+    this.localidades = [];
+    this.nuevoUsuario.provincia = '';
+    this.nuevoUsuario.localidad = '';
+
+    if (!pais) return;
+
+    this.ubicacionService.getProvincias(pais).subscribe({
+      next: (respuesta) => {
+        this.provincias = respuesta.data?.states || [];
+      },
+      error: (error) => {
+        console.error('Error al cargar provincias:', error);
+      },
+    });
+  }
+
+  alCambiarProvincia(): void {
+    const pais = this.nuevoUsuario.pais;
+    const provincia = this.nuevoUsuario.provincia;
+
+    this.localidades = [];
+    this.nuevoUsuario.localidad = '';
+
+    if (!pais || !provincia) return;
+
+    this.ubicacionService.getLocalidades(pais, provincia).subscribe({
+      next: (respuesta) => {
+        this.localidades = respuesta.data || [];
+      },
+      error: (error) => {
+        console.error('Error al cargar localidades:', error);
+      },
+    });
   }
 }

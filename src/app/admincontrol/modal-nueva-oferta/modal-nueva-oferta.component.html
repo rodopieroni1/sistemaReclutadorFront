@@ -5,39 +5,36 @@
 
 <mat-dialog-content>
     <form [formGroup]="miFormulario" (ngSubmit)="guardar()" id="formOferta" class="form-oferta mejorado">
-        <section class="form-section">
-            <!-- Título -->
 
-            <!-- Título -->
+        <!-- Título y descripción -->
+        <section class="form-section">
+
             <mat-form-field appearance="fill" class="inputModal full-width">
                 <mat-label>Título de la Oferta</mat-label>
 
                 <input matInput placeholder="Ingrese un título para la oferta" formControlName="nombreOferta" />
 
                 <mat-error *ngIf="mostrarError('nombreOferta') &&
-        miFormulario.get('nombreOferta')?.hasError('required')">
+                    miFormulario.get('nombreOferta')?.hasError('required')">
                     El título de la oferta es obligatorio.
                 </mat-error>
 
                 <mat-error *ngIf="mostrarError('nombreOferta') &&
-        miFormulario.get('nombreOferta')?.hasError('minlength')">
+                    miFormulario.get('nombreOferta')?.hasError('minlength')">
                     El título debe tener al menos 3 caracteres.
                 </mat-error>
 
                 <mat-error *ngIf="mostrarError('nombreOferta') &&
-        miFormulario.get('nombreOferta')?.hasError('maxlength')">
+                    miFormulario.get('nombreOferta')?.hasError('maxlength')">
                     El título no puede superar los 100 caracteres.
                     No se podrá guardar este valor.
                 </mat-error>
 
                 <mat-error *ngIf="mostrarError('nombreOferta') &&
-        miFormulario.get('nombreOferta')?.hasError('pattern')">
+                    miFormulario.get('nombreOferta')?.hasError('pattern')">
                     El título no puede contener solamente espacios.
                 </mat-error>
             </mat-form-field>
-
-
-            <!-- Descripción -->
 
             <!-- Descripción -->
             <div class="quill-container full-width grande">
@@ -66,7 +63,7 @@
                 </div>
 
                 <div class="error-campo" *ngIf="mostrarError('descripcionOferta') &&
-            miFormulario.get('descripcionOferta')?.hasError('required')">
+                    miFormulario.get('descripcionOferta')?.hasError('required')">
                     La descripción de la oferta es obligatoria.
                 </div>
 
@@ -76,9 +73,76 @@
                 </div>
             </div>
 
+        </section>
+
+        <!-- Ubicación y modalidad de trabajo -->
+        <section class="form-section">
+
+            <div class="doble-columna">
+
+                <!-- Modalidad -->
+                <mat-form-field appearance="fill">
+                    <mat-label>Modalidad de trabajo</mat-label>
+
+                    <mat-select formControlName="modalidad">
+                        <mat-option value="PRESENCIAL">Presencial</mat-option>
+                        <mat-option value="HIBRIDA">Híbrida</mat-option>
+                        <mat-option value="REMOTA">Remota</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <!-- País -->
+                <mat-form-field appearance="fill">
+                    <mat-label>País</mat-label>
+
+                    <mat-select formControlName="paisTrabajo" (selectionChange)="alCambiarPais()">
+
+                        <mat-option *ngFor="let pais of paises" [value]="pais.name">
+                            {{ pais.name }}
+                        </mat-option>
+
+                    </mat-select>
+                </mat-form-field>
+
+                <!-- Provincia -->
+                <mat-form-field appearance="fill">
+                    <mat-label>Provincia / Estado</mat-label>
+
+                    <mat-select formControlName="provinciaTrabajo" (selectionChange)="alCambiarProvincia()"
+                        [disabled]="!provincias.length">
+
+                        <mat-option *ngFor="let provincia of provincias" [value]="provincia.name">
+                            {{ provincia.name }}
+                        </mat-option>
+
+                    </mat-select>
+                </mat-form-field>
+
+                <!-- Localidad -->
+                <mat-form-field appearance="fill">
+                    <mat-label>Localidad</mat-label>
+
+                    <mat-select formControlName="localidadTrabajo" [disabled]="!localidades.length">
+
+                        <mat-option *ngFor="let localidad of localidades" [value]="localidad">
+                            {{ localidad }}
+                        </mat-option>
+
+                    </mat-select>
+                </mat-form-field>
+
+            </div>
+
+            <!-- Dirección -->
+            <mat-form-field appearance="fill" class="full-width">
+                <mat-label>Dirección del lugar de trabajo</mat-label>
+
+                <input matInput formControlName="direccionTrabajo" placeholder="Ej.: Av. Corrientes 1234">
+            </mat-form-field>
 
         </section>
 
+        <!-- Estado y empresa -->
         <section class="form-section doble-columna">
 
             <!-- Estado -->
@@ -106,7 +170,7 @@
                 </mat-select>
 
                 <mat-error *ngIf="mostrarError('idEmpresa') &&
-          miFormulario.get('idEmpresa')?.hasError('required')">
+                    miFormulario.get('idEmpresa')?.hasError('required')">
                     Debés seleccionar una empresa.
                 </mat-error>
             </mat-form-field>
@@ -115,6 +179,7 @@
 
         <!-- Imagen -->
         <section class="form-section">
+
             <div class="file-upload-container">
 
                 <input type="file" #inputFile accept="image/*" (change)="onArchivoSeleccionado($event)" hidden>
@@ -129,9 +194,11 @@
                     <span class="texto-subir-imagen">
                         Seleccionar / Subir Imagen
                     </span>
+
                 </button>
 
                 <div class="preview-container">
+
                     <img *ngIf="imagenPreview" [src]="imagenPreview" alt="Previsualización" class="preview-img">
 
                     <img *ngIf="!imagenPreview && imagenDesdeBD" [src]="uploadUrl + '/uploads/ofertas/' + imagenDesdeBD"
@@ -140,15 +207,18 @@
                     <div *ngIf="!imagenPreview && !imagenDesdeBD" class="sin-logo">
                         Sin imagen
                     </div>
+
                 </div>
 
             </div>
+
         </section>
 
     </form>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
+
     <button type="button" mat-button (click)="cerrar()">
         Cancelar / Cerrar
     </button>
@@ -156,4 +226,5 @@
     <button type="submit" mat-raised-button color="primary" form="formOferta">
         Guardar
     </button>
+
 </mat-dialog-actions>

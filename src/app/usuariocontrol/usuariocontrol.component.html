@@ -45,7 +45,48 @@
                         required>
                 </div>
             </div>
+            <!-- País -->
+            <div class="campo">
+                <label>País</label>
+                <div class="input-icon">
+                    <mat-icon>public</mat-icon>
+                    <mat-select [(ngModel)]="nuevoUsuario.pais" name="pais" placeholder="Seleccionar país"
+                        (selectionChange)="alCambiarPais()" required>
+                        <mat-option *ngFor="let pais of paises" [value]="pais.name">
+                            {{ pais.name }}
+                        </mat-option>
+                    </mat-select>
+                </div>
+            </div>
 
+            <!-- Provincia -->
+            <div class="campo">
+                <label>Provincia</label>
+                <div class="input-icon">
+                    <mat-icon>location_city</mat-icon>
+                    <mat-select [(ngModel)]="nuevoUsuario.provincia" name="provincia"
+                        placeholder="Seleccionar provincia" [disabled]="!provincias.length"
+                        (selectionChange)="alCambiarProvincia()" required>
+                        <mat-option *ngFor="let provincia of provincias" [value]="provincia.name">
+                            {{ provincia.name }}
+                        </mat-option>
+                    </mat-select>
+                </div>
+            </div>
+
+            <!-- Localidad -->
+            <div class="campo">
+                <label>Localidad</label>
+                <div class="input-icon">
+                    <mat-icon>place</mat-icon>
+                    <mat-select [(ngModel)]="nuevoUsuario.localidad" name="localidad"
+                        placeholder="Seleccionar localidad" [disabled]="!localidades.length" required>
+                        <mat-option *ngFor="let localidad of localidades" [value]="localidad">
+                            {{ localidad }}
+                        </mat-option>
+                    </mat-select>
+                </div>
+            </div>
             <div class="campo">
                 <label>Telefono</label>
                 <div class="input-icon">
