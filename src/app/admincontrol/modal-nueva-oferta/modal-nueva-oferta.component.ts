@@ -87,7 +87,7 @@ export class ModalNuevaOfertaComponent implements OnInit {
   imagenPreview: string | null = null;
   isSubmitting = false;
   uploadUrl = environment.local.urlApi;
-  limiteCaracteresDescripcion = 600;
+  limiteCaracteresDescripcion = 2000;
   caracteresDescripcion = 0;
   quillModules = {
     toolbar: [
@@ -495,12 +495,12 @@ export class ModalNuevaOfertaComponent implements OnInit {
     if (cantidad > this.limiteCaracteresDescripcion) {
       control.setErrors({
         ...(control.errors || {}),
-        maxlength600: true,
+        maxlength2000: true,
       });
-    } else if (control.hasError('maxlength600')) {
+    } else if (control.hasError('maxlength2000')) {
       const errores = { ...(control.errors || {}) };
 
-      delete errores['maxlength600'];
+      delete errores['maxlength2000'];
 
       control.setErrors(Object.keys(errores).length > 0 ? errores : null);
     }

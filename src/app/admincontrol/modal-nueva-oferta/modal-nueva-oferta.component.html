@@ -40,7 +40,7 @@
             <div class="quill-container full-width grande">
                 <label class="quill-label">Descripción de la Oferta</label>
 
-                <span class="quill-subtitle">(Máx. 600 caracteres)</span>
+                <span class="quill-subtitle">(Máx. 2000 caracteres)</span>
 
                 <div class="quill-footer">
                     <span [class.limite-alcanzado]="caracteresDescripcion >= limiteCaracteresDescripcion">
@@ -67,8 +67,8 @@
                     La descripción de la oferta es obligatoria.
                 </div>
 
-                <div class="error-campo" *ngIf="miFormulario.get('descripcionOferta')?.hasError('maxlength600')">
-                    La descripción no puede superar los 600 caracteres.
+                <div class="error-campo" *ngIf="miFormulario.get('descripcionOferta')?.hasError('maxlength2000')">
+                    La descripción no puede superar los 2000 caracteres.
                     No se podrá guardar este valor.
                 </div>
             </div>

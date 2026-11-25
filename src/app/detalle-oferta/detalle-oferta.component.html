@@ -25,6 +25,15 @@
                         <button mat-fab class="btn-volver-flotante" routerLink="/home">
                             <mat-icon>arrow_back</mat-icon>
                         </button>
+                        <br />
+                        <button mat-raised-button color="primary" [disabled]="analizandoCompatibilidad"
+                            (click)="analizarCompatibilidad()">
+
+                            {{ analizandoCompatibilidad
+                            ? 'Analizando tu CV...'
+                            : 'Analizar mi compatibilidad' }}
+
+                        </button>
                     </div>
                 </div>
 
@@ -43,6 +52,36 @@
                     <img class="logo" [src]="apiUrl + '/uploads/ofertas/' + oferta.fotoOferta"
                         alt="Imagen de la oferta">
                 </div>
+            </section>
+            <section class="compatibilidad-panel" *ngIf="compatibilidad">
+
+                <h2>Tu compatibilidad con esta oferta</h2>
+
+                <div class="porcentaje">
+                    {{ compatibilidad.porcentajeCompatibilidad }}%
+                </div>
+
+                <h3>Fortalezas</h3>
+                <ul>
+                    <li *ngFor="let item of compatibilidad.fortalezas">
+                        {{ item }}
+                    </li>
+                </ul>
+
+                <h3>Requisitos cumplidos</h3>
+                <ul>
+                    <li *ngFor="let item of compatibilidad.requisitosCumplidos">
+                        {{ item }}
+                    </li>
+                </ul>
+
+                <h3>Requisitos no acreditados</h3>
+                <ul>
+                    <li *ngFor="let item of compatibilidad.requisitosNoAcreditados">
+                        {{ item }}
+                    </li>
+                </ul>
+
             </section>
 
         </mat-card-content>

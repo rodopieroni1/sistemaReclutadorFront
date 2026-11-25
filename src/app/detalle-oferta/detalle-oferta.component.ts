@@ -11,6 +11,8 @@ import { RouterModule } from '@angular/router'; // 👈 IMPORTANTE
 import { NavigationService } from '../navigation.service.ts.service';
 import { environment } from '../../environments/environment';
 import { CabeceraComponent } from '../home/cabecera/cabecera.component';
+import { CarinaAIService, CompatibilidadDTO } from './carina-ai.service';
+
 @Component({
   selector: 'app-detalle-oferta',
   standalone: true,
@@ -30,11 +32,14 @@ export class DetalleOfertaComponent {
   oferta: any;
   isBtnAplicar: boolean = false;
   apiUrl = environment.local.urlApi;
+  compatibilidad: CompatibilidadDTO | null = null;
+  analizandoCompatibilidad = false;
   constructor(
     private router: Router,
     private snackBar: MatSnackBar,
     private aplicacionService: AplicacionServiceService,
     private navigationService: NavigationService,
+    private carinaAIService: CarinaAIService,
   ) {
     const navegacionActual = this.router.getCurrentNavigation();
     this.oferta = navegacionActual?.extras.state?.['oferta'];
@@ -96,5 +101,35 @@ export class DetalleOfertaComponent {
         );
       },
     });
+  }
+
+  analizarCompatibilidad(): void {
+    if (!this.oferta?.idOferta) {
+      return;
+    }
+
+    this.analizandoCompatibilidad = true;
+    this.compatibilidad = null;
+
+    this.carinaAIService
+      .analizarMiCompatibilidad(this.oferta.idOferta)
+      .subscribe({
+        next: (resultado) => {
+          this.compatibilidad = resultado;
+          this.analizandoCompatibilidad = false;
+        },
+        error: (error) => {
+          this.analizandoCompatibilidad = false;
+
+          const mensaje =
+            error.status === 409
+              ? 'Necesitás cargar un CV antes de analizar tu compatibilidad.'
+              : error.status === 401
+                ? 'Tu sesión venció. Ingresá nuevamente.'
+                : 'No se pudo analizar la compatibilidad. Intentá nuevamente.';
+
+          this.snackBar.open(mensaje, 'Cerrar', { duration: 5000 });
+        },
+      });
   }
 }
